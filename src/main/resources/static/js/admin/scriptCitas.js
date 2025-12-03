@@ -9,7 +9,10 @@ async function cargarCitas() {
     try {
         const res = await fetch(apiUrl);
         if (!res.ok) throw new Error("Error al obtener las citas");
-        const citas = await res.json();
+
+        const citas = await res.json();      // ✅ primero obtienes las citas
+
+        await validarVencimientoCitas(citas); // ✅ ahora sí existe
 
         tablaCitas.innerHTML = "";
 
@@ -20,49 +23,59 @@ async function cargarCitas() {
         citas.forEach(cita => {
             const estado = (cita.estado || "").toLowerCase();
 
-            switch(estado) {
-                case "pendiente": pendientes++; break;
+            switch (estado) {
+                case "pendiente":  pendientes++; break;
                 case "completada": completadas++; break;
-                case "cancelada": canceladas++; break;
+                case "cancelada":  canceladas++; break;
             }
 
             const row = document.createElement("tr");
             row.classList.add("table-row", "border-b", "border-gray-200");
+
             row.innerHTML = `
                 <td class="py-4 px-4">${cita.cliente?.nombre || '-'}</td>
                 <td class="py-4 px-4">${cita.mascota?.nombre || '-'}</td>
                 <td class="py-4 px-4">${cita.motivo || cita.servicio?.nombre || '-'}</td>
                 <td class="py-4 px-4">
-                    ${cita.fecha ? new Date(cita.fecha + "T" + (cita.hora || "00:00")).toLocaleString() : "-"}
+                    ${cita.fecha
+                        ? new Date(cita.fecha + "T" + (cita.hora || "00:00")).toLocaleString()
+                        : "-"
+                    }
                 </td>
                 <td class="py-4 px-4">
                     <span class="status-badge ${
                         estado === 'completada' ? 'status-completed' :
-                        estado === 'pendiente' ? 'status-active' :
-                        estado === 'cancelada' ? 'status-cancelled' : ''
-                    }">${cita.estado || '-'}</span>
+                        estado === 'pendiente'  ? 'status-pending' :
+                        estado === 'cancelada'  ? 'status-cancelled' : ''
+                    }">
+                        ${cita.estado || '-'}
+                    </span>
                 </td>
                 <td class="py-3 px-3 flex space-x-3">
                     <button class="text-yellow-500 hover:text-yellow-700 ${
                         estado === 'cancelada' ? 'opacity-40 cursor-not-allowed' : ''
-                    }" ${estado === 'cancelada' ? 'disabled' : ''} onclick="cambiarEstado(${cita.id}, '${estado}')">
+                    }"
+                    ${estado === 'cancelada' ? 'disabled' : ''}
+                    onclick="cambiarEstado(${cita.id}, '${estado}')">
                         <i class="fas fa-sync-alt"></i>
                     </button>
 
-                    <button class="text-red-500 hover:text-red-700" onclick="eliminarCita(${cita.id})">
+                    <button class="text-red-500 hover:text-red-700"
+                            onclick="eliminarCita(${cita.id})">
                         <i class="fas fa-trash"></i>
                     </button>
                 </td>
             `;
+
             tablaCitas.appendChild(row);
         });
 
-        pendientesCounter.textContent = pendientes;
+        pendientesCounter.textContent  = pendientes;
         completadasCounter.textContent = completadas;
-        canceladasCounter.textContent = canceladas;
+        canceladasCounter.textContent  = canceladas;
 
     } catch (error) {
-        console.error(error);
+        console.error("Error al cargar citas:", error);
     }
 }
 
@@ -125,4 +138,39 @@ document.addEventListener("DOMContentLoaded", cargarCitas);
 async function mostrarPagos() {
     const pagos = await cargarPagos();
     console.log(pagos);
+}
+
+async function validarVencimientoCitas(citas) {
+
+    const ahora = new Date();
+    const toleranciaMin = 20;
+
+    for (const cita of citas) {
+
+        const estado = (cita.estado || "").toLowerCase();
+
+        if (estado !== "pendiente") continue;
+        if (!cita.fecha || !cita.hora) continue;
+
+        const fechaHoraCita = new Date(`${cita.fecha}T${cita.hora}`);
+
+        const limite = new Date(fechaHoraCita.getTime() + toleranciaMin * 60000);
+
+        if (ahora > limite) {
+
+            try {
+                await fetch(`${apiUrl}/${cita.id}`, {
+                    method: "PUT",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({
+                        ...cita,
+                        estado: "CANCELADA"
+                    })
+                });
+
+            } catch (err) {
+                console.error(`Error cancelando cita ${cita.id}`, err);
+            }
+        }
+    }
 }

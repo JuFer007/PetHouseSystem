@@ -31,6 +31,7 @@ public class UsuarioController {
             session.setAttribute("usuario", usuario);
             session.setAttribute("usuarioId", usuario.getId());
             session.setAttribute("rol", usuario.getRol());
+            session.setAttribute("idTrabajador", usuario.getTrabajador().getId());
 
             Map<String, Object> response = new HashMap<>();
             response.put("id", usuario.getId());

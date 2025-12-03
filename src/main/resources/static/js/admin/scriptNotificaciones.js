@@ -52,4 +52,6 @@ async function cargarNotificaciones() {
     }
 }
 
+cargarNotificaciones();
+setInterval(cargarNotificaciones, 30000);
 btn.addEventListener("click", cargarNotificaciones);

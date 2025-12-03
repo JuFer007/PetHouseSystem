@@ -1,10 +1,8 @@
 // ==================== ACTUALIZAR ESTADÍSTICAS DE TARJETAS ====================
 function actualizarEstadisticasHistoriaClinica(historia) {
-    // 1. Estado de Historia Clínica
     const estadoHistoria = historia && historia.mascotaId ? 'Activa' : 'Inactiva';
     document.getElementById('hc-estado').textContent = estadoHistoria;
 
-    // 2. Último Diagnóstico
     if (historia.enfermedades && historia.enfermedades.length > 0) {
         const ultimaEnfermedad = historia.enfermedades[historia.enfermedades.length - 1];
         const nombreEnfermedad = ultimaEnfermedad.enfermedadNombre || 'Sin diagnósticos';
@@ -629,7 +627,7 @@ document.getElementById('formAgregarVacuna').addEventListener('submit', async (e
         proximaDosis: proximaDosisValue !== '' ? proximaDosisValue : null,
         estado: estadoValue,
         numeroDosis: parseInt(dosisInput) || 1,
-        observaciones: observacionesValue.trim() !== '' ? observacionesValue.trim() : null
+        observaciones: observacionesValue.trim().toUpperCase() !== '' ? observacionesValue.trim().toUpperCase() : null
     };
 
     console.log('=== DEBUG VACUNA ===');

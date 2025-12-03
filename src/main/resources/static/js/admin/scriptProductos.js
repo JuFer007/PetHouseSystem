@@ -48,7 +48,6 @@ async function cargarProductos() {
             </tr>
         `;
     });
-
     tbody.innerHTML = html;
 }
 
@@ -101,8 +100,8 @@ async function editarProducto(id) {
 async function guardarProducto() {
 
     const producto = {
-        nombre: document.getElementById("productoNombre").value,
-        categoria: document.getElementById("productoCategoria").value,
+        nombre: document.getElementById("productoNombre").value.toUpperCase(),
+        categoria: document.getElementById("productoCategoria").value.toUpperCase(),
         precio: document.getElementById("productoPrecio").value,
         stock: document.getElementById("productoStock").value,
         activo: true

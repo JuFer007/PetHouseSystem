@@ -66,10 +66,10 @@ async function editarEnfermedad(id) {
         document.getElementById('tituloModalEnfermedad').textContent = 'Editar Enfermedad';
 
         document.getElementById('enfermedadId').value = enfermedad.id;
-        document.getElementById('enfermedadNombre').value = enfermedad.nombre || '';
-        document.getElementById('enfermedadDescripcion').value = enfermedad.descripcion || '';
-        document.getElementById('enfermedadTratamiento').value = enfermedad.tratamiento || '';
-        document.getElementById('enfermedadPrevencion').value = enfermedad.prevencion || '';
+        document.getElementById('enfermedadNombre').value = enfermedad.nombre.toUpperCase() || '';
+        document.getElementById('enfermedadDescripcion').value = enfermedad.descripcion.toUpperCase() || '';
+        document.getElementById('enfermedadTratamiento').value = enfermedad.tratamiento.toUpperCase() || '';
+        document.getElementById('enfermedadPrevencion').value = enfermedad.prevencion.toUpperCase() || '';
 
         abrirModalEditarEnfermedad();
 
@@ -112,10 +112,10 @@ document.getElementById('formCatalogoEnfermedad')?.addEventListener('submit', as
 
     const id = document.getElementById('enfermedadId').value;
     const datos = {
-        nombre: document.getElementById('enfermedadNombre').value,
-        descripcion: document.getElementById('enfermedadDescripcion').value,
-        tratamiento: document.getElementById('enfermedadTratamiento').value,
-        prevencion: document.getElementById('enfermedadPrevencion').value
+        nombre: document.getElementById('enfermedadNombre').value.toUpperCase(),
+        descripcion: document.getElementById('enfermedadDescripcion').value.toUpperCase(),
+        tratamiento: document.getElementById('enfermedadTratamiento').value.toUpperCase(),
+        prevencion: document.getElementById('enfermedadPrevencion').value.toUpperCase()
     };
 
     try {

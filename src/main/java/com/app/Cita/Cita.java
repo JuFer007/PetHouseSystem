@@ -1,4 +1,5 @@
 package com.app.Cita;
+import com.app.Enums.CitaEstado;
 import com.app.Servicio.Servicio;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
@@ -22,7 +23,9 @@ public class Cita {
     private Long id;
     private LocalDate fecha;
     private String motivo;
-    private String estado;
+
+    @Enumerated(EnumType.STRING)
+    private CitaEstado estado;
     private LocalTime hora;
 
     @Column(name = "mascota_id")

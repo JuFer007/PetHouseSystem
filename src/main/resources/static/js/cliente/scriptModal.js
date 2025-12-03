@@ -82,7 +82,6 @@ async function buscarPorDNI() {
 
     } catch (error) {
         console.error("Error DNI:", error);
-        showToast("error", "Error de conexión", "No se pudo obtener los datos del DNI.");
     }
 }
 
@@ -93,9 +92,11 @@ document.getElementById("formCita").addEventListener("submit", async (e) => {
     e.preventDefault();
 
     const servicioId = document.getElementById("servicio").value;
-    console.log("servicioId al enviar:", servicioId, "tipo:", typeof servicioId);
-
     const fechaInput = document.getElementById("fecha").value;
+    const horaInput = document.getElementById("hora").value;
+
+    // ✅ VALIDACIÓN FECHA Y HORARIO
+    if (!validarFechaHora(fechaInput, horaInput)) return;
 
     const datos = {
         cliente: {
@@ -105,44 +106,40 @@ document.getElementById("formCita").addEventListener("submit", async (e) => {
             telefono: document.getElementById("telefono").value,
         },
         mascota: {
-            nombre: document.getElementById("nombreMascota").value,
-            especie: document.getElementById("especie").value,
-            raza: document.getElementById("raza").value,
+            nombre: document.getElementById("nombreMascota").value.toUpperCase(),
+            especie: document.getElementById("especie").value.toUpperCase(),
+            raza: document.getElementById("raza").value.toUpperCase(),
             edad: parseInt(document.getElementById("edad").value) || 0
         },
         cita: {
             fecha: fechaInput,
-            hora: document.getElementById("hora").value,
+            hora: horaInput,
             motivo: document.getElementById("motivo").value,
             estado: "PENDIENTE",
             servicioId: parseInt(servicioId) || null
         }
     };
 
-    console.log("Datos a enviar:", datos);
-
     try {
         const response = await fetch("http://localhost:8080/api/citas", {
             method: "POST",
-            headers: {
-                "Content-Type": "application/json"
-            },
+            headers: { "Content-Type": "application/json" },
             body: JSON.stringify(datos)
         });
 
         if (response.ok) {
             showToast("success", "Cita registrada", "La cita fue agendada exitosamente.");
             closeAppointmentModal();
-            limpiarComboMascotas();
-
+            limpiarCamposModal();
         } else {
             const error = await response.json();
             console.error("Error del servidor:", error);
             showToast("error", "Error al registrar", "No se pudo registrar la cita.");
         }
+
     } catch (error) {
         console.error("Error:", error);
-        showToast("error", "Error de servidor", "No se pudo conectar con el backend.");
+        showToast("error", "Error de conexión", "No se pudo conectar con el servidor.");
     }
 });
 
@@ -191,7 +188,7 @@ async function cargarMascotasDeCliente(clienteId) {
 
     } catch (error) {
         console.error("Error cargando mascotas:", error);
-        showToast("error", "Error", "No se pudieron cargar las mascotas.");
+        console.log("error", "Error", "No se pudieron cargar las mascotas.");
     }
 }
 
@@ -205,12 +202,72 @@ function cargarInfoMascota(m) {
     document.getElementById("edad").value = m.edad;
 }
 
-function limpiarComboMascotas() {
-    const combo = document.getElementById("comboMascotas");
-    combo.innerHTML = `<option value="">Seleccione una mascota</option>`;
+function limpiarCamposModal() {
+    document.getElementById("dni").value = "";
+    document.getElementById("nombre").value = "";
+    document.getElementById("apellido").value = "";
+    document.getElementById("telefono").value = "";
 
     document.getElementById("nombreMascota").value = "";
     document.getElementById("especie").value = "";
     document.getElementById("raza").value = "";
     document.getElementById("edad").value = "";
+
+    document.getElementById("comboMascotas").innerHTML = `<option value="">Seleccione una mascota</option>`;
+    document.getElementById("comboMascotaContainer").classList.add("hidden");
+    document.getElementById("inputNombreMascotaContainer").classList.remove("hidden");
+
+    document.getElementById("servicio").value = "";
+    document.getElementById("fecha").value = "";
+    document.getElementById("hora").value = "";
+    document.getElementById("motivo").value = "";
+}
+
+//valdiar fecha y hora
+function validarFechaHora(fecha, hora) {
+
+    if (!fecha || !hora) {
+        showToast("warning", "Datos incompletos", "Debe seleccionar fecha y hora.");
+        return false;
+    }
+
+    const ahora = new Date();
+    const fechaHoraSeleccionada = new Date(`${fecha}T${hora}`);
+
+    if (fechaHoraSeleccionada < ahora) {
+        showToast(
+            "error",
+            "Fecha inválida",
+            "No puedes reservar una cita en una fecha u hora pasada."
+        );
+        return false;
+    }
+
+    const dia = fechaHoraSeleccionada.getDay();
+    const horaDecimal = fechaHoraSeleccionada.getHours() + (fechaHoraSeleccionada.getMinutes() / 60);
+
+    let horaInicio, horaFin;
+
+    if (dia === 0) {
+        horaInicio = 10;
+        horaFin = 14;
+    } else {
+        horaInicio = 9;
+        horaFin = 20;
+    }
+
+    if (horaDecimal < horaInicio || horaDecimal >= horaFin) {
+        const horarioTexto =
+            dia === 0
+            ? "Domingos: 10:00 AM - 2:00 PM"
+            : "Lunes a Sábado: 9:00 AM - 8:00 PM";
+        showToast(
+            "warning",
+            "Horario no disponible",
+            `La cita debe estar dentro del horario de atención:\n${horarioTexto}`
+        );
+
+        return false;
+    }
+   return true;
 }

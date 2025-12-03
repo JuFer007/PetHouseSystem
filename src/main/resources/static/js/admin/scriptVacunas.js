@@ -69,8 +69,8 @@ async function editarVacunaCatalogo(id) {
 
         document.getElementById('tituloModalVacunaCatalogo').textContent = 'Editar Vacuna';
         document.getElementById('vacunaCatalogoId').value = vacuna.id;
-        document.getElementById('vacunaCatalogoNombre').value = vacuna.nombre;
-        document.getElementById('vacunaCatalogoDescripcion').value = vacuna.descripcion || '';
+        document.getElementById('vacunaCatalogoNombre').value = vacuna.nombre.toUpperCase();
+        document.getElementById('vacunaCatalogoDescripcion').value = vacuna.descripcion.toUpperCase() || '';
         document.getElementById('vacunaCatalogoDosis').value = vacuna.dosisRequeridas || 1;
 
         abrirModalVacuna();
@@ -113,8 +113,8 @@ document.getElementById('formCatalogoVacuna')?.addEventListener('submit', async 
     }
 
     const datos = {
-        nombre: nombre,
-        descripcion: document.getElementById('vacunaCatalogoDescripcion').value.trim(),
+        nombre: nombre.toUpperCase(),
+        descripcion: document.getElementById('vacunaCatalogoDescripcion').value.trim().toUpperCase(),
         dosisRequeridas: dosis
     };
 

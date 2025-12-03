@@ -3,6 +3,8 @@ import com.app.Cliente.Cliente;
 import com.app.Cliente.ClienteRepository;
 import com.app.DTO.CitaDTO;
 import com.app.DTO.CitaResponseDTO;
+import com.app.Enums.CitaEstado;
+import com.app.Enums.PagoEstado;
 import com.app.Mascota.Mascota;
 import com.app.Mascota.MascotaRepository;
 import com.app.Pago.Pago;
@@ -35,7 +37,7 @@ public class CitaService {
         dto.setFecha(cita.getFecha());
         dto.setHora(cita.getHora());
         dto.setMotivo(cita.getMotivo());
-        dto.setEstado(cita.getEstado());
+        dto.setEstado(String.valueOf(cita.getEstado()));
         dto.setMascotaId(cita.getMascotaId());
 
         if (cita.getMascotaId() != null) {
@@ -104,7 +106,7 @@ public class CitaService {
         Cita cita = new Cita();
         cita.setFecha(citaDTO.getCita().getFecha());
         cita.setMotivo(citaDTO.getCita().getMotivo());
-        cita.setEstado(citaDTO.getCita().getEstado());
+        cita.setEstado(CitaEstado.valueOf(String.valueOf(citaDTO.getCita().getEstado())));
         cita.setMascotaId(mascota.getId());
         cita.setHora(citaDTO.getCita().getHora());
 
@@ -126,7 +128,7 @@ public class CitaService {
         Cita citaExistente = citaRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Cita no encontrada"));
 
-        String estadoAnterior = citaExistente.getEstado();
+        String estadoAnterior = String.valueOf(citaExistente.getEstado()).toLowerCase();
 
         citaExistente.setFecha(cita.getFecha());
         citaExistente.setMotivo(cita.getMotivo());
@@ -136,7 +138,7 @@ public class CitaService {
         citaExistente = citaRepository.save(citaExistente);
 
         if (!"COMPLETADA".equalsIgnoreCase(estadoAnterior)
-                && "COMPLETADA".equalsIgnoreCase(citaExistente.getEstado())) {
+                && "COMPLETADA".equalsIgnoreCase(String.valueOf(citaExistente.getEstado()))) {
 
             Cliente cliente = null;
 
@@ -162,7 +164,7 @@ public class CitaService {
                     nuevoPago.setMonto(0.0);
                 }
                 nuevoPago.setMetodoPago("EFECTIVO");
-                nuevoPago.setEstado("PENDIENTE");
+                nuevoPago.setEstado(PagoEstado.valueOf("PENDIENTE"));
                 nuevoPago.setFechaPago(LocalDateTime.now());
 
                 pagoService.save(nuevoPago);

@@ -51,8 +51,8 @@ async function obtenerImagenMascota(mascota) {
             }
             const defaultPerros = [
                 "https://images.dog.ceo/breeds/husky/n02110185_1469.jpg",
-                "https://images.dog.ceo/breeds/labrador/n02099712_5460.jpg",
-                "https://images.dog.ceo/breeds/beagle/n02088364_11136.jpg"
+                "https://images.dog.ceo/breeds/poodle-medium/WhatsApp_Image_2022-08-06_at_4.48.38_PM.jpg",
+                "https://images.dog.ceo/breeds/whippet/n02091134_9671.jpg"
             ];
             return defaultPerros[Math.floor(Math.random() * defaultPerros.length)];
 
@@ -68,23 +68,22 @@ async function obtenerImagenMascota(mascota) {
                 if (data.length > 0) return data[0].url;
             }
             const defaultGatos = [
-                "https://cdn2.thecatapi.com/images/beng.jpg",
-                "https://cdn2.thecatapi.com/images/pers.jpg",
-                "https://cdn2.thecatapi.com/images/siam.jpg"
+                "https://img.freepik.com/foto-gratis/primer-disparo-vertical-lindo-gato-europeo-pelo-corto_181624-34587.jpg?semt=ais_hybrid&w=740&q=80",
+                "https://www.anicura.es/cdn-cgi/image/f=auto,fit=cover,w=640,h=640,g=auto,sharpen=1/AdaptiveImages/powerinit/52437/_SNI2031.jpg?stamp=a2efc90c9d13cd9fdc0f5f7a2e3b2231238dc8cf",
             ];
             return defaultGatos[Math.floor(Math.random() * defaultGatos.length)];
 
         } else if (especieLower.includes('ave') || especieLower.includes('pájaro')) {
             const defaultAves = [
-                "https://upload.wikimedia.org/wikipedia/commons/3/32/House_sparrow04.jpg",
-                "https://upload.wikimedia.org/wikipedia/commons/2/2e/Canary_bird.jpg"
+                "https://content.nationalgeographic.com.es/medio/2022/12/12/aves-1_0931d689_221212154441_1280x720.jpg",
+                "https://upload.wikimedia.org/wikipedia/commons/thumb/d/df/Huismus%2C_man.jpg/1200px-Huismus%2C_man.jpg"
             ];
             return defaultAves[Math.floor(Math.random() * defaultAves.length)];
 
         } else if (especieLower.includes('pez')) {
             const defaultPeces = [
-                "https://upload.wikimedia.org/wikipedia/commons/7/7e/Clown_fish_in_aquarium.jpg",
-                "https://upload.wikimedia.org/wikipedia/commons/3/38/Goldfish3.jpg"
+                "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSzEFSF7hZCYiPOnclzZzqJY7nsypmT3G942A&s",
+                "https://cdn0.bioenciclopedia.com/es/posts/1/7/1/pez_payaso_171_orig.jpg"
             ];
             return defaultPeces[Math.floor(Math.random() * defaultPeces.length)];
 
@@ -94,62 +93,77 @@ async function obtenerImagenMascota(mascota) {
 
     } catch (err) {
         console.error('Error obteniendo imagen:', err);
-        return "https://upload.wikimedia.org/wikipedia/commons/6/66/Generic_pet_image.png";
+        return "https://images.dog.ceo/breeds/terrier-boston/bostonTerrier_000001.jpg";
     }
 }
 
-// Función para cargar mascotas
+//Función para cargar mascotas
 async function cargarMascotas() {
     try {
         const response = await fetch('/api/clientes/clienteMascota');
         const clientes = await response.json();
+
         const contenedor = document.getElementById('contenedor-mascotas');
         contenedor.innerHTML = '';
 
+        const cardsPromises = [];
+
         for (const cliente of clientes) {
             const nombreDueno = `${cliente.nombre} ${cliente.apellido}`;
+
             for (const mascota of cliente.mascotas) {
 
-                const imagenMascota = await obtenerImagenMascota(mascota);
+                cardsPromises.push(
+                    (async () => {
+                        const imagenMascota = await obtenerImagenMascota(mascota);
 
-                const card = document.createElement('div');
-                card.classList.add(
-                    'chart-container',
-                    'module-card',
-                    'cursor-pointer',
-                    'hover:shadow-lg',
-                    'transition-shadow'
+                        const card = document.createElement('div');
+                        card.classList.add(
+                            'chart-container',
+                            'module-card',
+                            'cursor-pointer',
+                            'hover:shadow-lg',
+                            'transition-shadow'
+                        );
+
+                        card.onclick = () =>
+                            abrirModalEditarMascota(mascota.id, nombreDueno, cliente.id);
+
+                        card.innerHTML = `
+                            <div class="flex items-start justify-between mb-4">
+                                <div>
+                                    <h4 class="text-lg font-semibold text-gray-800">${mascota.nombre}</h4>
+                                    <p class="text-sm text-gray-500">${mascota.raza}</p>
+                                </div>
+
+                                <div class="w-16 h-16 rounded-lg flex items-center justify-center overflow-hidden">
+                                    <img src="${imagenMascota}" alt="${mascota.nombre}"
+                                         class="object-cover w-full h-full">
+                                </div>
+                            </div>
+
+                            <div class="space-y-2">
+                                <p class="text-sm text-gray-600">
+                                    <span class="font-semibold">Dueño:</span> ${nombreDueno}
+                                </p>
+                                <p class="text-sm text-gray-600">
+                                    <span class="font-semibold">Especie:</span> ${mascota.especie}
+                                </p>
+                                <p class="text-sm text-gray-600">
+                                    <span class="font-semibold">Edad:</span>
+                                    ${mascota.edad} ${mascota.edad === 1 ? 'año' : 'años'}
+                                </p>
+                            </div>
+                        `;
+
+                        return card;
+                    })()
                 );
-
-                card.onclick = () =>
-                    abrirModalEditarMascota(mascota.id, nombreDueno, cliente.id);
-
-                card.innerHTML = `
-                    <div class="flex items-start justify-between mb-4">
-                        <div>
-                            <h4 class="text-lg font-semibold text-gray-800">${mascota.nombre}</h4>
-                            <p class="text-sm text-gray-500">${mascota.raza}</p>
-                        </div>
-                        <div class="w-16 h-16 rounded-lg flex items-center justify-center overflow-hidden">
-                            <img src="${imagenMascota}" alt="${mascota.nombre}" class="object-cover w-full h-full">
-                        </div>
-                    </div>
-                    <div class="space-y-2">
-                        <p class="text-sm text-gray-600"><span class="font-semibold">Dueño:</span> ${nombreDueno}</p>
-                        <p class="text-sm text-gray-600"><span class="font-semibold">Especie:</span> ${mascota.especie}</p>
-                        <p class="text-sm text-gray-600">
-                          <span class="font-semibold">Edad:</span>
-                          ${mascota.edad} ${mascota.edad === 1 ? 'año' : 'años'}
-                        </p>
-                    </div>
-                `;
-
-                contenedor.appendChild(card);
             }
         }
-
-        console.log(`${contenedor.children.length} mascotas cargadas`);
-
+        const cards = await Promise.all(cardsPromises);
+        cards.forEach(card => contenedor.appendChild(card));
+        console.log(`${cards.length} mascotas cargadas`);
     } catch (error) {
         console.error('Error cargando mascotas:', error);
     }
@@ -162,16 +176,16 @@ function abrirModalEditarMascota(mascotaId, nombreDueno, clienteId) {
         .then(mascota => {
             mascotaActual = {
                 id: mascota.id,
-                nombre: mascota.nombre,
-                especie: mascota.especie,
-                raza: mascota.raza,
+                nombre: mascota.nombre.toLowerCase(),
+                especie: mascota.especie.toLowerCase(),
+                raza: mascota.raza.toLowerCase(),
                 edad: mascota.edad,
                 clienteId: clienteId
             };
 
-            document.getElementById('editarNombreMascota').value = mascota.nombre || '';
-            document.getElementById('editarEspecie').value = mascota.especie || '';
-            document.getElementById('editarRaza').value = mascota.raza || '';
+            document.getElementById('editarNombreMascota').value = mascota.nombre.toUpperCase() || '';
+            document.getElementById('editarEspecie').value = mascota.especie.toUpperCase() || '';
+            document.getElementById('editarRaza').value = mascota.raza.toUpperCase() || '';
             document.getElementById('editarEdadMascota').value = mascota.edad ?? '';
             document.getElementById('editarDueno').value = nombreDueno;
 
@@ -179,7 +193,7 @@ function abrirModalEditarMascota(mascotaId, nombreDueno, clienteId) {
             modal.classList.remove('hidden');
             modal.style.display = 'flex';
         })
-        .catch(err => console.error('❌ Error al cargar mascota:', err));
+        .catch(err => console.error('Error al cargar mascota:', err));
 }
 
 function cerrarModalMascota() {
@@ -230,7 +244,7 @@ document.addEventListener('DOMContentLoaded', () => {
         e.preventDefault();
         if (!mascotaActual) return;
 
-        const nombre = inputNombre.value.trim();
+        const nombre = inputNombre.value.trim().toUpperCase();
         const edad = parseInt(inputEdad.value);
         if (!nombre || isNaN(edad) || edad < 0 || edad > 30) return;
 

@@ -1,4 +1,5 @@
 package com.app.DTO;
+import com.app.Enums.PagoEstado;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -14,6 +15,6 @@ public class PagoDTO {
     private Long idCita;
     private Double monto;
     private String metodoPago;
-    private String estado;
+    private PagoEstado estado;
     private String fechaPago;
 }

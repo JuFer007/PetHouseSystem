@@ -1,4 +1,5 @@
 package com.app.Trabajador;
+import com.app.Enums.CargoTrabajador;
 import com.app.Usuario.Usuario;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
@@ -18,7 +19,9 @@ public class Trabajador {
     private Long id;
     private String nombre;
     private String apellido;
-    private String cargo;
+
+    @Enumerated(EnumType.STRING)
+    private CargoTrabajador cargo;
     private Double salario;
     private String telefono;
     private boolean activo = true;

@@ -1,5 +1,6 @@
 package com.app.Pago;
 import com.app.Cliente.Cliente;
+import com.app.Enums.PagoEstado;
 import jakarta.persistence.*;
 import lombok.*;
 import java.time.LocalDateTime;
@@ -34,7 +35,8 @@ public class Pago {
     private LocalDateTime fechaPago;
 
     @Column(nullable = false)
-    private String estado;
+    @Enumerated(EnumType.STRING)
+    private PagoEstado estado;
 
     @Column(name = "id_cita")
     private Long idCita;

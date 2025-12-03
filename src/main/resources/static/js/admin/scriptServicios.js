@@ -128,8 +128,8 @@ function abrirModalServicio(id = null) {
         fetch(`${apiServiciosUrl}/${id}`)
             .then(res => res.json())
             .then(servicio => {
-                nombre.value = servicio.nombre;
-                descripcion.value = servicio.descripcion || '';
+                nombre.value = servicio.nombre.toUpperCase();
+                descripcion.value = servicio.descripcion.toUpperCase() || '';
                 precio.value = servicio.precio;
                 titulo.textContent = "Editar Servicio";
 
@@ -158,8 +158,8 @@ function cerrarModalServicio() {
 document.getElementById("formServicio").addEventListener("submit", async (e) => {
     e.preventDefault();
 
-    const nombre = document.getElementById("servicioNombre").value;
-    const descripcion = document.getElementById("servicioDescripcion").value;
+    const nombre = document.getElementById("servicioNombre").value.toUpperCase();
+    const descripcion = document.getElementById("servicioDescripcion").value.toUpperCase();
     const precio = parseFloat(document.getElementById("servicioPrecio").value);
     const imagenFile = document.getElementById("servicioImagen").files[0];
 

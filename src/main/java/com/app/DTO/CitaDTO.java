@@ -1,5 +1,6 @@
 package com.app.DTO;
 import com.app.Cliente.Cliente;
+import com.app.Enums.CitaEstado;
 import com.app.Mascota.Mascota;
 import lombok.Data;
 import java.time.LocalDate;
@@ -16,7 +17,7 @@ public class CitaDTO {
         private LocalDate fecha;
         private LocalTime hora;
         private String motivo;
-        private String estado;
+        private CitaEstado estado;
         private Long servicioId;
     }
 }

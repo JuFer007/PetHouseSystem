@@ -66,18 +66,27 @@ async function guardarTrabajador() {
         return showToast("error", "Error", "Complete todos los campos correctamente.");
     }
 
+    if (!editingId && dni) {
+        const existe = await dniExisteEnBD(dni);
+
+        if (existe) {
+            return showToast("error", "DNI duplicado", "Este DNI ya está registrado.");
+        }
+    }
+
     const trabajador = {
-        nombre,
-        apellido,
-        cargo,
+        nombre: nombre.toUpperCase(),
+        apellido: apellido.toUpperCase(),
+        cargo: cargo.toUpperCase(),
         salario,
-        telefono,
+        telefono: telefono.toUpperCase(),
         activo,
+
         usuario: {
-            correoElectronico: correo,
+            correoElectronico: correo.toUpperCase(),
             activo: true,
             password: "123456",
-            rol: cargo
+            rol: cargo.toUpperCase()
         }
     };
 
@@ -256,6 +265,18 @@ async function editarTrabajador(id) {
     } catch (err) {
         console.error(err);
         showToast("error", "Error", "No se pudo cargar el trabajador.");
+    }
+}
+
+async function dniExisteEnBD(dni) {
+    try {
+        const res = await fetch(`http://localhost:8080/api/trabajadores/dni/${dni}`);
+        if (res.status === 200) return true;
+        if (res.status === 404) return false;
+        return false;
+    } catch (err) {
+        console.error("Error validando DNI:", err);
+        return false;
     }
 }
 

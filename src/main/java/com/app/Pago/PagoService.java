@@ -1,5 +1,6 @@
 package com.app.Pago;
 import com.app.DTO.PagoDTO;
+import com.app.Enums.PagoEstado;
 import com.app.Servicio.ServicioService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -63,7 +64,7 @@ public class PagoService {
 
     public Pago cambiarEstado(Long id, String nuevoEstado) {
         Pago pago = findById(id);
-        pago.setEstado(nuevoEstado);
+        pago.setEstado(PagoEstado.valueOf(nuevoEstado));
         return pagoRepository.save(pago);
     }
 

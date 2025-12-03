@@ -2,7 +2,6 @@ const { spawn } = require('child_process');
 
 const services = [
   { name: 'Clima', path: './clima-service/server.js', port: 3001 },
-  { name: 'Email', path: './email-service/server.js', port: 3002 },
   { name: 'Excel', path: './excel-service/server.js', port: 3003 },
   { name: 'Factura', path: './factura-service/server.js', port: 3004 },
   { name: 'Index', path: './index-service/server.js', port: 3005 },

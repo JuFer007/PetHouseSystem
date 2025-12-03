@@ -31,11 +31,11 @@ public class MascotaEnfermedad {
     @Column(name = "fecha_diagnostico")
     private LocalDate fechaDiagnostico;
 
-    private String sintomas;         // Síntomas específicos de esta mascota
-    private String observaciones;    // Notas del veterinario
+    private String sintomas;
+    private String observaciones;
 
     @Enumerated(EnumType.STRING)
-    private EstadoEnfermedad estado; // EN_TRATAMIENTO, RECUPERADO, CRONICO
+    private EstadoEnfermedad estado;
 
     @Column(name = "fecha_recuperacion")
     private LocalDate fechaRecuperacion;
