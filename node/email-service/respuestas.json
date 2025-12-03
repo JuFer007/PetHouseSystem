@@ -1,0 +1,21 @@
+{
+  "vacunas": {
+    "keywords": ["vacuna", "vacunas", "vacunacion", "vacunación"],
+    "asunto": "Información sobre vacunas - PetHouse",
+    "mensaje": "Hola {nombre},\n\nGracias por tu consulta sobre vacunas. Te recomendamos traer a tu mascota para una revisión y así indicarte cuáles vacunas necesita y en qué orden aplicarlas.\n\nRecuerda que puedes agendar una cita en nuestra página web.\n\nSaludos,\nPetHouse"
+  },
+  "cachorros": {
+    "keywords": ["cachorro", "perrito", "cachorrito"],
+    "asunto": "Cuidados para tu cachorro - PetHouse",
+    "mensaje": "Hola {nombre},\n\nGracias por tu mensaje sobre tu cachorro. Nuestro equipo puede guiarte sobre cuidados, alimentación y vacunas apropiadas para su edad.\n\nSaludos,\nPetHouse"
+  },
+  "emergencia": {
+    "keywords": ["emergencia", "urgente", "urgencia"],
+    "asunto": "Emergencia - PetHouse",
+    "mensaje": "Hola {nombre},\n\nHemos recibido tu mensaje de emergencia. Por favor, llama directamente a nuestra clínica al +51 987 654 321 para asistencia inmediata.\n\nSaludos,\nPetHouse"
+  },
+  "default": {
+    "asunto": "Respuesta a tu consulta en PetHouse",
+    "mensaje": "Hola {nombre},\n\nGracias por contactarnos en PetHouse. \n\nNuestro equipo se pondrá en contacto contigo lo antes posible.\n\nSaludos,\nPetHouse"
+  }
+}

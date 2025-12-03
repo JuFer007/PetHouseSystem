@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ticket Veterinaria</title>
+    <link rel="stylesheet" href="http://localhost:3005/style.css">
+</head>
+<body>
+<div class="ticket">
+    <!-- CABECERA -->
+    <div class="cabecera">
+        <div class="logo">
+            <img class="img" src="http://localhost:3005/recursos/logo.png" alt="Logo">
+        </div>
+        <div class="negocio">VETERINARIA PETHOUSE</div>
+        <div class="info-negocio">Av. José Balta 456 - Chiclayo</div>
+        <div class="info-negocio">Celular: 944707103</div>
+        <div class="info-negocio">Email: contacto@pethouse.com</div>
+        <div class="info-negocio">Atención 24 horas</div>
+    </div>
+
+    <!-- INFO TICKET -->
+    <div class="info-ticket"><strong>N° ATENCIÓN:</strong> {{numeroAtencion}}</div>
+    <div class="info-ticket"><strong>FECHA:</strong> {{fecha}}</div>
+    <div class="info-ticket"><strong>HORA:</strong> {{hora}}</div>
+
+    <hr class="separador">
+
+    <!-- INFO CLIENTE -->
+    <div class="seccion-titulo">DATOS DEL PROPIETARIO</div>
+    <div class="info-ticket"><strong>CLIENTE:</strong> {{cliente}}</div>
+    <div class="info-ticket"><strong>DNI:</strong> {{dni}}</div>
+    <div class="info-ticket"><strong>TELÉFONO:</strong> {{telefono}}</div>
+
+    <!-- INFO MASCOTA -->
+    <div class="seccion-titulo">DATOS DE LA MASCOTA</div>
+    <div class="info-mascota">
+        <div><strong>Nombre:</strong> {{nombreMascota}}</div>
+        <div><strong>Especie:</strong> {{especie}}</div>
+        <div><strong>Raza:</strong> {{raza}}</div>
+        <div><strong>Edad:</strong> {{edad}}</div>
+    </div>
+
+    <div class="info-ticket"><strong>VETERINARIO:</strong> {{veterinario}}</div>
+
+    <hr class="separador">
+
+    <!-- SERVICIOS -->
+    <div class="tabla-servicios">
+        <div class="tabla-header">
+            <div class="col-concepto">CONCEPTO</div>
+            <div class="col-monto">MONTO</div>
+        </div>
+        <div id="servicios">
+            {{servicios}}
+        </div>
+    </div>
+
+    <hr class="separador">
+
+    <!-- Metodo DE PAGO -->
+    <div class="info-ticket"><strong>MÉTODO DE PAGO:</strong> {{metodoPago}}</div>
+
+    <!-- OBSERVACIONES -->
+    <div class="info-ticket" style="margin-top: 8px;">
+        <strong>OBSERVACIONES:</strong><br>
+        <span style="font-size: 9px;">{{observaciones}}</span>
+    </div>
+
+    <!-- TOTALES -->
+    <div class="totales">
+        <div class="fila-total">
+            <div class="desc-total">SubTotal:</div>
+            <div class="precio-total"><span class="moneda">S/.</span>{{subtotal}}</div>
+        </div>
+        <div class="fila-total">
+            <div class="desc-total">Descuento:</div>
+            <div class="precio-total"><span class="moneda">S/.</span>{{descuento}}</div>
+        </div>
+        <div class="fila-total final">
+            <div class="desc-total">TOTAL:</div>
+            <div class="precio-total"><span class="moneda">S/.</span>{{total}}</div>
+        </div>
+    </div>
+
+    <hr class="separador-doble">
+
+    <!-- PIE DE PÁGINA -->
+    <div class="pie">
+        <div class="mensaje">¡GRACIAS POR CONFIAR EN NOSOTROS!</div>
+        <div class="contacto">El cuidado de tu mascota es nuestra prioridad</div>
+        <div class="contacto">@VeterinariaPetHouse</div>
+        <div style="margin-top: 8px;">━━━━━━━━━━━━━━━━━━━━━━</div>
+    </div>
+</div>
+</body>
+</html>

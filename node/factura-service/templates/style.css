@@ -1,0 +1,158 @@
+@media print {
+  body { margin: 0; padding: 0; }
+}
+body {
+  font-family: 'Courier New', monospace;
+  width: 80mm;
+  margin: 0 auto;
+  padding: 8px;
+  background: #fff;
+  font-size: 11px;
+  line-height: 1.3;
+}
+.ticket {
+  background: white;
+  padding: 0 5mm;
+}
+.cabecera {
+  text-align: center;
+  margin-bottom: 8px;
+  border-bottom: 1px dashed #000;
+  padding-bottom: 8px;
+}
+.logo {
+  font-size: 18px;
+  font-weight: bold;
+  margin: 5px 0;
+  letter-spacing: 1px;
+}
+.img {
+  width: 80px;
+}
+.negocio {
+  font-size: 13px;
+  font-weight: bold;
+  margin: 3px 0;
+}
+.info-negocio {
+  font-size: 9px;
+  margin: 2px 0;
+  color: #333;
+}
+.separador {
+  border: none;
+  border-top: 1px dashed #000;
+  margin: 6px 0;
+}
+.separador-doble {
+  border: none;
+  border-top: 2px solid #000;
+  margin: 6px 0;
+}
+.info-ticket {
+  font-size: 10px;
+  margin: 3px 0;
+}
+.info-ticket strong {
+  display: inline-block;
+  width: 100px;
+}
+.seccion-titulo {
+  font-weight: bold;
+  font-size: 10px;
+  margin: 8px 0 4px 0;
+  text-decoration: underline;
+}
+.info-mascota {
+  background: #f5f5f5;
+  padding: 6px;
+  margin: 6px 0;
+  border-radius: 3px;
+  font-size: 10px;
+}
+.info-mascota div {
+  margin: 2px 0;
+}
+.tabla-servicios {
+  width: 100%;
+  margin: 8px 0;
+}
+.tabla-header {
+  display: flex;
+  justify-content: space-between;
+  font-weight: bold;
+  font-size: 10px;
+  margin-bottom: 4px;
+  padding-bottom: 2px;
+  border-bottom: 1px solid #000;
+}
+.tabla-header .col-concepto {
+  flex: 1;
+}
+.tabla-header .col-monto {
+  width: 80px;
+  text-align: right;
+}
+.servicio {
+  display: flex;
+  justify-content: space-between;
+  margin: 4px 0;
+  font-size: 10px;
+  padding: 3px 0;
+}
+.servicio .concepto {
+  flex: 1;
+  padding-right: 10px;
+}
+.servicio .monto {
+  width: 80px;
+  text-align: right;
+  white-space: nowrap;
+}
+.servicio .fecha-servicio {
+  font-size: 8px;
+  color: #666;
+  margin-top: 2px;
+}
+.totales {
+  margin-top: 8px;
+  border-top: 1px dashed #000;
+  padding-top: 6px;
+}
+.fila-total {
+  display: flex;
+  justify-content: space-between;
+  margin: 3px 0;
+  font-size: 11px;
+}
+.fila-total.final {
+  font-weight: bold;
+  font-size: 13px;
+  margin-top: 5px;
+  padding-top: 5px;
+  border-top: 2px solid #000;
+}
+.desc-total {
+  flex: 1;
+}
+.precio-total {
+  width: 80px;
+  text-align: right;
+  display: flex;
+  justify-content: flex-end;
+  gap: 2px;
+}
+.pie {
+  text-align: center;
+  margin-top: 10px;
+  padding-top: 8px;
+  border-top: 1px dashed #000;
+  font-size: 9px;
+}
+.pie .mensaje {
+  margin: 5px 0;
+  font-weight: bold;
+}
+.pie .contacto {
+  margin: 3px 0;
+}

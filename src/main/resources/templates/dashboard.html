@@ -1,0 +1,1389 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PetHouse - Dashboard Administrativo</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="/css/styleDashboard.css">
+</head>
+<body class="overflow-x-hidden">
+<!-- Sidebar -->
+<aside class="sidebar fixed left-0 top-0 h-screen w-64 text-white z-40">
+    <div class="p-6 border-b border-gray-700">
+        <div class="flex items-center space-x-3">
+            <div class="w-12 h-12 bg-white rounded-lg flex items-center justify-center">
+                <img src="/recursos/logo.png" class="text-2xl">
+            </div>
+            <div>
+                <h2 class="text-xl font-bold">PetHouse</h2>
+                <p class="text-xs text-gray-400">Admin Panel</p>
+            </div>
+        </div>
+    </div>
+
+    <nav class="p-4 h-full text-base">
+        <!-- PRINCIPAL -->
+        <div class="mb-6">
+            <p class="text-xs text-gray-400 uppercase mb-2 px-4">Principal</p>
+            <a href="#" onclick="showModule('dashboard')"
+               class="sidebar-item active flex items-center px-4 py-3 rounded-lg"
+               data-roles="ADMIN,VETERINARIO,RECEPCIONISTA">
+                <i class="fas fa-home w-6 text-lg"></i>
+                <span class="ml-3">Dashboard</span>
+            </a>
+        </div>
+        <!-- GESTIÓN -->
+        <div class="mb-6">
+            <p class="text-xs text-gray-400 uppercase mb-2 px-4">Gestión</p>
+
+            <a href="#" onclick="showModule('citas')"
+               class="sidebar-item flex items-center px-4 py-3 rounded-lg"
+               data-roles="ADMIN,VETERINARIO">
+                <i class="fas fa-calendar-alt w-6 text-lg"></i>
+                <span class="ml-3">Citas</span>
+            </a>
+
+            <a href="#" onclick="showModule('servicios')"
+               class="sidebar-item flex items-center px-4 py-3 rounded-lg"
+               data-roles="ADMIN">
+                <i class="fas fa-briefcase-medical w-6 text-lg"></i>
+                <span class="ml-3">Servicios</span>
+            </a>
+
+            <a href="#" onclick="showModule('productos')"
+               class="sidebar-item flex items-center px-4 py-3 rounded-lg"
+               data-roles="ADMIN">
+                <i class="fas fa-box w-6 text-lg"></i>
+                <span class="ml-3">Productos</span>
+            </a>
+
+            <a href="#" onclick="showModule('pagos')"
+               class="sidebar-item flex items-center px-4 py-3 rounded-lg"
+               data-roles="ADMIN,RECEPCIONISTA">
+                <i class="fas fa-credit-card w-6 text-lg"></i>
+                <span class="ml-3">Pagos</span>
+            </a>
+
+            <a href="#" onclick="showModule('ventas')"
+               class="sidebar-item flex items-center px-4 py-3 rounded-lg"
+               data-roles="ADMIN">
+                <i class="fas fa-shopping-cart w-6 text-lg"></i>
+                <span class="ml-3">Ventas</span>
+            </a>
+        </div>
+
+        <!-- MASCOTAS Y PERSONAS -->
+        <div class="mb-6">
+            <p class="text-xs text-gray-400 uppercase mb-2 px-4">
+                Mascotas y Personas
+            </p>
+
+            <a href="#" onclick="showModule('trabajadores')"
+               class="sidebar-item flex items-center px-4 py-3 rounded-lg"
+               data-roles="ADMIN">
+                <i class="fas fa-user-tie w-6 text-lg"></i>
+                <span class="ml-3">Trabajadores</span>
+            </a>
+
+            <a href="#" onclick="showModule('clientes')"
+               class="sidebar-item flex items-center px-4 py-3 rounded-lg"
+               data-roles="ADMIN,RECEPCIONISTA">
+                <i class="fas fa-users w-6 text-lg"></i>
+                <span class="ml-3">Clientes</span>
+            </a>
+
+            <a href="#" onclick="showModule('mascotas')"
+               class="sidebar-item flex items-center px-4 py-3 rounded-lg"
+               data-roles="ADMIN,VETERINARIO">
+                <i class="fas fa-dog w-6 text-lg"></i>
+                <span class="ml-3">Mascotas</span>
+            </a>
+
+            <a href="#" onclick="showModule('catalogo-enfermedades')"
+               class="sidebar-item flex items-center px-4 py-3 rounded-lg"
+               data-roles="ADMIN,VETERINARIO">
+                <i class="fas fa-virus w-6 text-lg"></i>
+                <span class="ml-3">Enfermedades</span>
+            </a>
+
+            <a href="#" onclick="showModule('catalogo-vacunas')"
+               class="sidebar-item flex items-center px-4 py-3 rounded-lg"
+               data-roles="ADMIN,VETERINARIO">
+                <i class="fas fa-syringe w-6 text-lg"></i>
+                <span class="ml-3">Vacunas</span>
+            </a>
+
+            <a href="#" onclick="showModule('historia-clinica')"
+               class="sidebar-item flex items-center px-4 py-3 rounded-lg"
+               data-roles="ADMIN,VETERINARIO">
+                <i class="fas fa-notes-medical w-6 text-lg"></i>
+                <span class="ml-3">Historia Clínica</span>
+            </a>
+        </div>
+    </nav>
+</aside>
+
+<!-- Main Content -->
+<main class="ml-64 min-h-screen">
+    <!-- Top Bar -->
+    <header class="bg-white shadow-sm sticky top-0 z-30">
+        <div class="flex items-center justify-between px-8 py-4">
+            <div class="flex items-center space-x-4">
+                <h1 class="text-2xl font-bold text-gray-800">Dashboard</h1>
+                <span class="text-gray-400">|</span>
+                <p class="text-gray-600" id="header-title">Bienvenido de nuevo</p>
+            </div>
+
+            <div class="flex items-center space-x-6">
+                <!-- CLIMA -->
+                <div id="climaHeader" class="flex items-center space-x-1 text-gray-700">
+                    <img id="iconClima" style="width:50px; height:50px;" src="" alt="Ícono clima">
+                    <span id="tempClima">--°C</span>
+                </div>
+
+                <div class="relative">
+                    <button id="btnNotificaciones" class="relative focus:outline-none">
+                        <i class="fas fa-bell text-2xl text-gray-600"></i>
+                        <span id="badgeNotificaciones" class="absolute -top-1 -right-1 bg-red-500 text-white text-xs w-5 h-5 rounded-full flex items-center justify-center">3</span>
+                    </button>
+
+                    <!-- DROPDOWN DE NOTIFICACIONES -->
+                    <div id="dropdownNotificaciones"
+                         class="hidden absolute right-0 mt-3 w-80 bg-white shadow-xl rounded-lg overflow-hidden z-50">
+                        <div class="px-4 py-3 bg-gray-100 font-semibold text-gray-700">
+                            Notificaciones
+                        </div>
+                        <ul id="listaNotificaciones">
+                            <!-- Las notificaciones se cargarán aquí -->
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- USUARIO INFO CON DROPDOWN -->
+                <div class="relative" id="user-dropdown">
+                    <!-- Contenedor del avatar y nombre + dropdown -->
+                    <div class="flex items-center space-x-3 cursor-pointer" id="user-dropdown-toggle">
+                        <img id="user-avatar" src="https://ui-avatars.com/api/?name=Cargando&background=00CED1&color=fff"
+                             class="w-10 h-10 rounded-full" alt="Cargando">
+                        <div>
+                            <p id="user-name" class="font-semibold text-gray-800">Cargando...</p>
+                            <p id="user-role" class="text-xs text-gray-500">Usuario</p>
+                        </div>
+                    </div>
+
+                    <!-- Dropdown -->
+                    <div id="user-dropdown-menu"
+                         class="absolute right-0 mt-2 w-40 bg-white border rounded-lg shadow-lg opacity-0 invisible transition-all duration-200 z-10">
+                        <button onclick="cerrarSesion()"
+                                class="w-full px-4 py-2 text-black-500 bg-white rounded-lg hover:bg-cyan-500 flex items-center gap-2 transition-colors duration-200">
+                            <i class="fas fa-sign-out-alt"></i>
+                            <span>Salir</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Dashboard Content -->
+    <div class="p-8">
+
+        <!-- DASHBOARD MODULE -->
+        <div id="dashboard" class="module-content active">
+            <!-- Stats Cards -->
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+                <div class="stat-card bg-white rounded-2xl p-6 shadow-lg animate-fade-in">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-gray-600 text-sm mb-1">Citas Hoy</p>
+                            <h3 id="stats-citas" class="text-3xl font-bold text-gray-800">0</h3>
+                            <p class="text-green-500 text-sm mt-2">
+                                <i class="fas fa-arrow-up"></i> +12% vs ayer
+                            </p>
+                        </div>
+                        <div class="w-16 h-16 bg-gradient-to-br from-cyan-400 to-cyan-600 rounded-xl flex items-center justify-center">
+                            <i class="fas fa-calendar-check text-3xl text-white"></i>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="stat-card bg-white rounded-2xl p-6 shadow-lg animate-fade-in" style="animation-delay: 0.1s">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-gray-600 text-sm mb-1">Clientes Activos</p>
+                            <h3 id="stat-clientes" class="text-3xl font-bold text-gray-800">0</h3>
+                            <p class="text-green-500 text-sm mt-2">
+                                <i class="fas fa-arrow-up"></i> +8% este mes
+                            </p>
+                        </div>
+                        <div class="w-16 h-16 bg-gradient-to-br from-blue-400 to-blue-600 rounded-xl flex items-center justify-center">
+                            <i class="fas fa-users text-3xl text-white"></i>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="stat-card bg-white rounded-2xl p-6 shadow-lg animate-fade-in" style="animation-delay: 0.2s">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-gray-600 text-sm mb-1">Ventas del Mes</p>
+                            <h3 id="stat-ventas" class="text-3xl font-bold text-gray-800">S/. 0</h3>
+                            <p class="text-green-500 text-sm mt-2">
+                                <i class="fas fa-arrow-up"></i> +23% vs mes pasado
+                            </p>
+                        </div>
+                        <div class="w-16 h-16 bg-gradient-to-br from-green-400 to-green-600 rounded-xl flex items-center justify-center">
+                            <i class="fas fa-dollar-sign text-3xl text-white"></i>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="stat-card bg-white rounded-2xl p-6 shadow-lg animate-fade-in" style="animation-delay: 0.3s">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-gray-600 text-sm mb-1">Mascotas Registradas</p>
+                            <h3 id="stat-mascotas" class="text-3xl font-bold text-gray-800">0</h3>
+                            <p class="text-cyan-500 text-sm mt-2">
+                                <i class="fas fa-paw"></i> Total en sistema
+                            </p>
+                        </div>
+                        <div class="w-16 h-16 bg-gradient-to-br from-purple-400 to-purple-600 rounded-xl flex items-center justify-center">
+                            <i class="fas fa-dog text-3xl text-white"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Recent Activity -->
+            <div class="grid lg:grid-cols-2 gap-6">
+                <div class="chart-container">
+                    <h3 class="text-xl font-bold text-gray-800 mb-4">Actividad Reciente</h3>
+                    <div id="actividad-reciente" class="space-y-4">
+                        <div class="flex items-center space-x-4 p-3 hover:bg-gray-50 rounded-lg transition">
+                            <div class="w-10 h-10 bg-cyan-100 rounded-full flex items-center justify-center">
+                                <i class="fas fa-calendar-check text-cyan-500"></i>
+                            </div>
+                            <div class="flex-1">
+                                <p class="font-semibold text-gray-800">Nueva cita agendada</p>
+                                <p class="text-sm text-gray-500">Cliente: María González - Mascota: Max</p>
+                            </div>
+                            <span class="text-xs text-gray-400">Hace 5 min</span>
+                        </div>
+
+                        <div class="flex items-center space-x-4 p-3 hover:bg-gray-50 rounded-lg transition">
+                            <div class="w-10 h-10 bg-green-100 rounded-full flex items-center justify-center">
+                                <i class="fas fa-shopping-cart text-green-500"></i>
+                            </div>
+                            <div class="flex-1">
+                                <p class="font-semibold text-gray-800">Venta realizada</p>
+                                <p class="text-sm text-gray-500">Producto: Alimento Premium - S/. 125.00</p>
+                            </div>
+                            <span class="text-xs text-gray-400">Hace 12 min</span>
+                        </div>
+
+                        <div class="flex items-center space-x-4 p-3 hover:bg-gray-50 rounded-lg transition">
+                            <div class="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center">
+                                <i class="fas fa-user-plus text-blue-500"></i>
+                            </div>
+                            <div class="flex-1">
+                                <p class="font-semibold text-gray-800">Nuevo cliente registrado</p>
+                                <p class="text-sm text-gray-500">Carlos Pérez con mascota Luna</p>
+                            </div>
+                            <span class="text-xs text-gray-400">Hace 1 hora</span>
+                        </div>
+
+                        <div class="flex items-center space-x-4 p-3 hover:bg-gray-50 rounded-lg transition">
+                            <div class="w-10 h-10 bg-purple-100 rounded-full flex items-center justify-center">
+                                <i class="fas fa-syringe text-purple-500"></i>
+                            </div>
+                            <div class="flex-1">
+                                <p class="font-semibold text-gray-800">Vacunación completada</p>
+                                <p class="text-sm text-gray-500">Mascota: Rocky - Vacuna antirrábica</p>
+                            </div>
+                            <span class="text-xs text-gray-400">Hace 2 horas</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="chart-container">
+                    <h3 class="text-xl font-bold text-gray-800 mb-4">Citas de Hoy</h3>
+                    <div id="citas-hoy" class="space-y-3">
+                        <div class="flex items-center justify-between p-4 bg-cyan-50 rounded-lg border-l-4 border-cyan-500">
+                            <div class="flex items-center space-x-3">
+                                <div class="text-center">
+                                    <p class="text-2xl font-bold text-cyan-600">09:00</p>
+                                    <p class="text-xs text-gray-500">AM</p>
+                                </div>
+                                <div>
+                                    <p class="font-semibold text-gray-800">Juan Rodríguez</p>
+                                    <p class="text-sm text-gray-600">Consulta General - Firulais</p>
+                                </div>
+                            </div>
+                            <span class="badge bg-cyan-500 text-white">En espera</span>
+                        </div>
+
+                        <div class="flex items-center justify-between p-4 bg-green-50 rounded-lg border-l-4 border-green-500">
+                            <div class="flex items-center space-x-3">
+                                <div class="text-center">
+                                    <p class="text-2xl font-bold text-green-600">10:30</p>
+                                    <p class="text-xs text-gray-500">AM</p>
+                                </div>
+                                <div>
+                                    <p class="font-semibold text-gray-800">Ana Torres</p>
+                                    <p class="text-sm text-gray-600">Vacunación - Michi</p>
+                                </div>
+                            </div>
+                            <span class="badge bg-green-500 text-white">En proceso</span>
+                        </div>
+
+                        <div class="flex items-center justify-between p-4 bg-gray-50 rounded-lg border-l-4 border-gray-300">
+                            <div class="flex items-center space-x-3">
+                                <div class="text-center">
+                                    <p class="text-2xl font-bold text-gray-600">11:00</p>
+                                    <p class="text-xs text-gray-500">AM</p>
+                                </div>
+                                <div>
+                                    <p class="font-semibold text-gray-800">Pedro Castillo</p>
+                                    <p class="text-sm text-gray-600">Control - Bobby</p>
+                                </div>
+                            </div>
+                            <span class="badge bg-gray-400 text-white">Programada</span>
+                        </div>
+
+                        <div class="flex items-center justify-between p-4 bg-gray-50 rounded-lg border-l-4 border-gray-300">
+                            <div class="flex items-center space-x-3">
+                                <div class="text-center">
+                                    <p class="text-2xl font-bold text-gray-600">14:00</p>
+                                    <p class="text-xs text-gray-500">PM</p>
+                                </div>
+                                <div>
+                                    <p class="font-semibold text-gray-800">Laura Díaz</p>
+                                    <p class="text-sm text-gray-600">Cirugía menor - Pelusa</p>
+                                </div>
+                            </div>
+                            <span class="badge bg-gray-400 text-white">Programada</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- CITAS MODULE -->
+        <div id="citas" class="module-content">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+                <div class="stat-card bg-white rounded-2xl p-6 shadow-lg">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-gray-600 text-sm mb-1">Citas Pendientes</p>
+                            <h3 class="text-3xl font-bold text-gray-800">12</h3>
+                        </div>
+                        <div class="w-16 h-16 bg-gradient-to-br from-orange-400 to-orange-600 rounded-xl flex items-center justify-center">
+                            <i class="fas fa-hourglass-half text-3xl text-white"></i>
+                        </div>
+                    </div>
+                </div>
+                <div class="stat-card bg-white rounded-2xl p-6 shadow-lg">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-gray-600 text-sm mb-1">Citas Completadas</p>
+                            <h3 class="text-3xl font-bold text-gray-800">156</h3>
+                        </div>
+                        <div class="w-16 h-16 bg-gradient-to-br from-green-400 to-green-600 rounded-xl flex items-center justify-center">
+                            <i class="fas fa-check-circle text-3xl text-white"></i>
+                        </div>
+                    </div>
+                </div>
+                <div class="stat-card bg-white rounded-2xl p-6 shadow-lg">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-gray-600 text-sm mb-1">Canceladas</p>
+                            <h3 class="text-3xl font-bold text-gray-800">8</h3>
+                        </div>
+                        <div class="w-16 h-16 bg-gradient-to-br from-red-400 to-red-600 rounded-xl flex items-center justify-center">
+                            <i class="fas fa-times-circle text-3xl text-white"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Modulo de citas -->
+            <div class="chart-container">
+                <div class="flex items-center justify-between mb-6">
+                    <h3 class="text-xl font-bold text-gray-800">Gestión de Citas</h3>
+                </div>
+                <div class="overflow-x-auto">
+                    <table class="w-full">
+                        <thead>
+                        <tr class="border-b-2 border-gray-200">
+                            <th class="text-left py-3 px-4 text-gray-700 font-semibold">Cliente</th>
+                            <th class="text-left py-3 px-4 text-gray-700 font-semibold">Mascota</th>
+                            <th class="text-left py-3 px-4 text-gray-700 font-semibold">Tipo de Cita</th>
+                            <th class="text-left py-3 px-4 text-gray-700 font-semibold">Fecha y Hora</th>
+                            <th class="text-left py-3 px-4 text-gray-700 font-semibold">Estado</th>
+                            <th class="text-left py-3 px-4 text-gray-700 font-semibold">Acciones</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr class="table-row border-b border-gray-200">
+                            <td class="py-4 px-4">María González</td>
+                            <td class="py-4 px-4">Max (Labrador)</td>
+                            <td class="py-4 px-4">Consulta General</td>
+                            <td class="py-4 px-4">09/12/2024 - 14:30</td>
+                            <td class="py-4 px-4"><span class="status-badge status-active">En espera</span></td>
+                            <td class="py-4 px-4">
+                                <button class="text-cyan-500 hover:text-cyan-700"><i class="fas fa-edit"></i></button>
+                                <button class="text-red-500 hover:text-red-700 ml-3"><i class="fas fa-trash"></i></button>
+                            </td>
+                        </tr>
+                        <tr class="table-row border-b border-gray-200">
+                            <td class="py-4 px-4">Ana Torres</td>
+                            <td class="py-4 px-4">Michi (Gato)</td>
+                            <td class="py-4 px-4">Vacunación</td>
+                            <td class="py-4 px-4">09/12/2024 - 10:30</td>
+                            <td class="py-4 px-4"><span class="status-badge status-completed">Completada</span></td>
+                            <td class="py-4 px-4">
+                                <button class="text-cyan-500 hover:text-cyan-700"><i class="fas fa-edit"></i></button>
+                                <button class="text-red-500 hover:text-red-700 ml-3"><i class="fas fa-trash"></i></button>
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- SERVICIOS MODULE -->
+        <div id="servicios" class="module-content">
+            <div class="mb-8">
+                <button class="btn-primary" onclick="abrirModalServicio()">
+                    <i class="fas fa-plus mr-2"></i> Agregar Servicio
+                </button>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" id="serviciosGrid">
+                <!-- Se cargan dinámicamente los servicios aquí -->
+            </div>
+        </div>
+
+        <!-- Modal -->
+        <div id="modalServicio" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden z-50">
+            <div class="bg-white rounded-2xl w-11/12 max-w-3xl p-6 relative flex flex-col md:flex-row gap-6 shadow-lg">
+                <!-- Imagen actual -->
+                <div class="w-full md:w-1/3 mt-4 flex flex-col items-center">
+                    <img id="servicioImagenPreview" src="" alt="Imagen Servicio"
+                         class="w-full h-64 object-cover rounded-lg border mb-2">
+
+                    <label class="block text-gray-700 text-center text-sm mt-2 mb-1">
+                        Subir nueva imagen
+                    </label>
+
+                    <!-- BOTÓN PERSONALIZADO -->
+                    <label for="servicioImagen" class="custom-file-btn mt-4">
+                        <i class="fas fa-upload mr-2"></i> Seleccionar imagen
+                    </label>
+
+                    <!-- INPUT FILE OCULTO -->
+                    <input type="file" id="servicioImagen" class="hidden" accept="image/*">
+                </div>
+
+                <!-- Información del servicio -->
+                <div class="flex-1">
+                    <h3 id="modalTitulo" class="text-xl font-bold mb-4">Agregar Servicio</h3>
+                    <form id="formServicio" class="flex flex-col gap-3">
+                        <div>
+                            <label class="block text-gray-700">Nombre</label>
+                            <input type="text" id="servicioNombre" class="w-full border rounded px-3 py-2" required>
+                        </div>
+                        <div>
+                            <label class="block text-gray-700">Descripción</label>
+                            <textarea id="servicioDescripcion" class="w-full border rounded px-3 py-2"></textarea>
+                        </div>
+                        <div>
+                            <label class="block text-gray-700">Precio</label>
+                            <input type="number" id="servicioPrecio" class="w-full border rounded px-3 py-2" step="0.01" required>
+                        </div>
+
+                        <div class="flex justify-end gap-3 mt-4">
+                            <button type="submit" class="btn-primary" id="btnGuardarServicio">Guardar</button>
+                        </div>
+                    </form>
+                </div>
+
+                <button class="absolute top-4 right-4 text-gray-500 hover:text-gray-700" onclick="cerrarModalServicio()">
+                    <i class="fas fa-times text-xl"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- PRODUCTOS MODULE -->
+        <div id="productos" class="module-content">
+            <div class="mb-8">
+                <button class="btn-primary" onclick="abrirModalNuevoProducto()">
+                    <i class="fas fa-plus mr-2"></i> Nuevo Producto
+                </button>
+                <button class="btn-primary" onclick="exportarExcel()">
+                    <i class="fas fa-download mr-2"></i> Exportar
+                </button>
+            </div>
+
+            <div class="chart-container">
+                <h3 class="text-xl font-bold text-gray-800 mb-6">Inventario de Productos</h3>
+                <div class="overflow-x-auto">
+                    <table class="w-full">
+                        <thead>
+                        <tr class="border-b-2 border-gray-200">
+                            <th class="text-left py-3 px-4 text-gray-700 font-semibold">ID</th>
+                            <th class="text-left py-3 px-4 text-gray-700 font-semibold">Imagen</th>
+                            <th class="text-left py-3 px-4 text-gray-700 font-semibold">Producto</th>
+                            <th class="text-left py-3 px-4 text-gray-700 font-semibold">Categoría</th>
+                            <th class="text-left py-3 px-4 text-gray-700 font-semibold">Precio</th>
+                            <th class="text-left py-3 px-4 text-gray-700 font-semibold">Stock</th>
+                            <th class="text-left py-3 px-4 text-gray-700 font-semibold">Acciones</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                            <!-- Carga dinamica -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Modal Producto -->
+        <div id="modalProducto" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden z-50">
+            <div class="bg-white rounded-xl shadow-xl w-[850px] max-w-full p-6 relative">
+
+                <!-- Botón cerrar -->
+                <button onclick="cerrarModalProducto()" class="absolute top-3 right-3 text-gray-500 hover:text-black">
+                    <i class="fas fa-times text-xl"></i>
+                </button>
+
+                <h2 id="modalTituloProducto" class="text-2xl font-bold mb-5">Agregar Producto</h2>
+
+                <div class="grid grid-cols-2 gap-6">
+
+                    <!-- COLUMNA IZQUIERDA - IMAGEN -->
+                    <div class="flex flex-col items-center">
+                        <img id="productoImagenPreview"
+                             src=""
+                             class="w-64 h-64 object-cover rounded-lg border shadow">
+
+                        <label class="mt-4 w-full">
+                            <span class="block font-semibold mb-1">Seleccionar imagen</span>
+                            <input type="file" id="productoImagen" accept="image/*"
+                                   class="w-full border p-2 rounded cursor-pointer">
+                        </label>
+                    </div>
+
+                    <!-- COLUMNA DERECHA - FORMULARIO -->
+                    <div>
+                        <label class="block mb-3">
+                            <span class="font-semibold">Nombre</span>
+                            <input type="text" id="productoNombre"
+                                   class="w-full border px-3 py-2 rounded mt-1">
+                        </label>
+
+                        <label class="block mb-3">
+                            <span class="font-semibold">Categoría</span>
+                            <input type="text" id="productoCategoria"
+                                   class="w-full border px-3 py-2 rounded mt-1">
+                        </label>
+
+                        <label class="block mb-3">
+                            <span class="font-semibold">Precio (S/.)</span>
+                            <input type="number" id="productoPrecio" step="0.10"
+                                   class="w-full border px-3 py-2 rounded mt-1">
+                        </label>
+
+                        <label class="block mb-3">
+                            <span class="font-semibold">Stock</span>
+                            <input type="number" id="productoStock"
+                                   class="w-full border px-3 py-2 rounded mt-1">
+                        </label>
+
+                        <button onclick="guardarProducto()"
+                                class="bg-cyan-600 hover:bg-cyan-700 text-white px-4 py-2 rounded w-full mt-2">
+                            Guardar
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- VENTAS MODULE -->
+        <div id="ventas" class="module-content">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+                <div class="stat-card bg-white rounded-2xl p-6 shadow-lg">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-gray-600 text-sm mb-1">Ventas Totales</p>
+                            <h3 id="ventaHoy" class="text-3xl font-bold text-gray-800">S/. 2,450</h3>
+                        </div>
+                        <div class="w-16 h-16 bg-gradient-to-br from-green-400 to-green-600 rounded-xl flex items-center justify-center">
+                            <i class="fas fa-shopping-bag text-3xl text-white"></i>
+                        </div>
+                    </div>
+                </div>
+                <div class="stat-card bg-white rounded-2xl p-6 shadow-lg">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-gray-600 text-sm mb-1">Total de Transacciones</p>
+                            <h3 id="totalTransacciones" class="text-3xl font-bold text-gray-800">156</h3>
+                        </div>
+                        <div class="w-16 h-16 bg-gradient-to-br from-blue-400 to-blue-600 rounded-xl flex items-center justify-center">
+                            <i class="fas fa-receipt text-3xl text-white"></i>
+                        </div>
+                    </div>
+                </div>
+                <div class="stat-card bg-white rounded-2xl p-6 shadow-lg">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-gray-600 text-sm mb-1">Ticket Promedio</p>
+                            <h3 id="ticketPromedio" class="text-3xl font-bold text-gray-800">S/. 294.23</h3>
+                        </div>
+                        <div class="w-16 h-16 bg-gradient-to-br from-cyan-400 to-cyan-600 rounded-xl flex items-center justify-center">
+                            <i class="fas fa-chart-line text-3xl text-white"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="chart-container">
+                <h3 class="text-xl font-bold text-gray-800 mb-6">Últimas Ventas</h3>
+                <div class="overflow-x-auto">
+                    <table class="w-full" id="tablaVentas">
+                        <thead>
+                        <tr class="border-b-2 border-gray-200">
+                            <th class="text-left py-3 px-4 text-gray-700 font-semibold">ID Venta</th>
+                            <th class="text-left py-3 px-4 text-gray-700 font-semibold">Cliente</th>
+                            <th class="text-left py-3 px-4 text-gray-700 font-semibold">Producto</th>
+                            <th class="text-left py-3 px-4 text-gray-700 font-semibold">Monto</th>
+                            <th class="text-left py-3 px-4 text-gray-700 font-semibold">Fecha</th>
+                        </tr>
+                        </thead>
+                        <!-- Carga dinamica -->
+                        <tbody></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- PAGOS MODULE -->
+        <div id="pagos" class="module-content">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+                <div class="stat-card bg-white rounded-2xl p-6 shadow-lg">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-gray-600 text-sm mb-1">Pagos Completados</p>
+                            <h3 id="pagosCompletados" class="text-3xl font-bold text-gray-800">234</h3>
+                        </div>
+                        <div class="w-16 h-16 bg-gradient-to-br from-green-400 to-green-600 rounded-xl flex items-center justify-center">
+                            <i class="fas fa-check-double text-3xl text-white"></i>
+                        </div>
+                    </div>
+                </div>
+                <div class="stat-card bg-white rounded-2xl p-6 shadow-lg">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-gray-600 text-sm mb-1">Pagos Pendientes</p>
+                            <h3 id="pagosPendientes" class="text-3xl font-bold text-gray-800">12</h3>
+                        </div>
+                        <div class="w-16 h-16 bg-gradient-to-br from-orange-400 to-orange-600 rounded-xl flex items-center justify-center">
+                            <i class="fas fa-hourglass-half text-3xl text-white"></i>
+                        </div>
+                    </div>
+                </div>
+                <div class="stat-card bg-white rounded-2xl p-6 shadow-lg">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-gray-600 text-sm mb-1">Ingresos Totales</p>
+                            <h3 id="ingresosTotales" class="text-3xl font-bold text-gray-800">S/. 45,890</h3>
+                        </div>
+                        <div class="w-16 h-16 bg-gradient-to-br from-cyan-400 to-cyan-600 rounded-xl flex items-center justify-center">
+                            <i class="fas fa-wallet text-3xl text-white"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="chart-container">
+                <h3 class="text-xl font-bold text-gray-800 mb-6">Registro de Pagos</h3>
+                <div class="overflow-x-auto">
+                    <table id="tablaPagos" class="w-full">
+                        <thead>
+                        <tr class="border-b-2 border-gray-200">
+                            <th class="py-3 px-4 text-gray-700 font-semibold">Concepto</th>
+                            <th class="text-center py-3 px-4 text-gray-700 font-semibold">Monto</th>
+                            <th class="text-center py-3 px-4 text-gray-700 font-semibold">Método</th>
+                            <th class="text-center py-3 px-4 text-gray-700 font-semibold">Fecha</th>
+                            <th class="text-center py-3 px-4 text-gray-700 font-semibold">Estado</th>
+                            <th class="text-center py-3 px-4 text-gray-700 font-semibold">Acciones</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <!-- Carga dinamica -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- TRABAJADORES MODULE -->
+        <div id="trabajadores" class="module-content">
+            <div class="mb-8">
+                <button class="btn-primary" onclick="abrirModal(false)">
+                    <i class="fas fa-plus mr-2"></i> Agregar Trabajador
+                </button>
+            </div>
+
+            <div id="contenedorTrabajadores" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
+                <!-- Carga dinamica -->
+            </div>
+
+            <!-- MODAL PARA AGREGAR / EDITAR TRABAJADOR -->
+            <div id="modalTrabajador" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden z-50">
+                <div class="bg-white rounded-xl shadow-lg w-full max-w-lg p-6 relative">
+                    <button class="absolute top-3 right-3 text-gray-500 hover:text-gray-700" onclick="cerrarModal()">
+                        <i class="fas fa-times"></i>
+                    </button>
+                    <h3 id="modalTitle" class="text-xl font-semibold mb-4">Agregar Trabajador</h3>
+
+                    <div class="space-y-4">
+                        <!-- BUSCAR POR DNI -->
+                        <div id="divDNI">
+                            <label class="block font-semibold text-gray-700">DNI</label>
+                            <div class="flex gap-2">
+                                <input type="text" id="dniInput" class="border rounded p-2 flex-1" placeholder="Número de DNI">
+                                <button class="btn-primary" onclick="buscarPorDNI()">Buscar</button>
+                            </div>
+                        </div>
+
+                        <div>
+                            <label class="block font-semibold text-gray-700">Nombre</label>
+                            <input type="text" id="nombreInput" class="border rounded p-2 w-full">
+                        </div>
+                        <div>
+                            <label class="block font-semibold text-gray-700">Apellido</label>
+                            <input type="text" id="apellidoInput" class="border rounded p-2 w-full">
+                        </div>
+                        <div>
+                            <label class="block font-semibold text-gray-700">Cargo</label>
+                            <select id="cargoInput" class="border rounded p-2 w-full">
+                                <option value="">Seleccione...</option>
+                                <option value="VETERINARIO">Veterinario</option>
+                                <option value="RECEPCIONISTA">Recepcionista</option>
+                                <option value="ADMINISTRADOR">Administrador</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block font-semibold text-gray-700">Salario</label>
+                            <input type="number" id="salarioInput" class="border rounded p-2 w-full" min="0" step="0.01">
+                        </div>
+                        <div>
+                            <label class="block font-semibold text-gray-700">Teléfono</label>
+                            <input type="text" id="telefonoInput" class="border rounded p-2 w-full">
+                        </div>
+                        <div>
+                            <label class="block font-semibold text-gray-700">Correo Electrónico</label>
+                            <input type="email" id="correoInput" class="border rounded p-2 w-full">
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <input type="checkbox" id="activoInput">
+                            <label for="activoInput" class="font-semibold text-gray-700">Activo</label>
+                        </div>
+                    </div>
+
+                    <div class="mt-6 flex justify-end gap-2">
+                        <button class="btn-primary" onclick="guardarTrabajador()">Guardar</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- CLIENTES MODULE -->
+        <div id="clientes" class="module-content">
+            <div class="chart-container">
+                <h3 class="text-xl font-bold text-gray-800 mb-6">Gestión de Clientes</h3>
+                <div class="overflow-x-auto">
+                    <table id="tabla-clientes" class="w-full">
+                        <thead>
+                        <tr class="border-b-2 border-gray-200">
+                            <th class="text-left py-3 px-4 text-gray-700 font-semibold">Nombre y Apellidos</th>
+                            <th class="text-left py-3 px-4 text-gray-700 font-semibold">DNI</th>
+                            <th class="text-left py-3 px-4 text-gray-700 font-semibold">Teléfono</th>
+                            <th class="text-left py-3 px-4 text-gray-700 font-semibold">Mascotas</th>
+                            <th class="text-left py-3 px-4 text-gray-700 font-semibold">N° de Mascotas</th>
+                            <th class="text-center py-3 px-4 text-gray-700 font-semibold">Acciones</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <!-- Aquí se llenará con JS -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- MODAL MEJORADO PARA EDITAR CLIENTE -->
+            <div id="modalEditarCliente" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50" style="display: none;">
+                <div class="bg-white rounded-lg w-1/3 p-6 relative">
+                    <!-- Botón cerrar X -->
+                    <button type="button" id="btnCerrarX" class="absolute top-2 right-2 text-gray-500 hover:text-gray-800">
+                        <i class="fas fa-times"></i>
+                    </button>
+
+                    <h2 class="text-xl font-bold mb-4">Editar Cliente</h2>
+
+                    <form id="formEditarCliente">
+                        <div class="mb-3">
+                            <label class="block font-semibold mb-1">Nombre</label>
+                            <input type="text" id="editarNombre" class="border w-full p-2 rounded" disabled>
+                        </div>
+                        <div class="mb-3">
+                            <label class="block font-semibold mb-1">Apellido</label>
+                            <input type="text" id="editarApellido" class="border w-full p-2 rounded" disabled>
+                        </div>
+                        <div class="mb-3">
+                            <label class="block font-semibold mb-1">DNI</label>
+                            <input type="text" id="editarDni" class="border w-full p-2 rounded" disabled>
+                        </div>
+                        <div class="mb-3">
+                            <label class="block font-semibold mb-1">Teléfono</label>
+                            <input
+                                    type="text"
+                                    id="editarTelefono"
+                                    class="border w-full p-2 rounded"
+                                    placeholder="Ej: 987654321"
+                                    maxlength="9"
+                            >
+                            <span id="errorTelefono" class="text-red-500 text-sm hidden">Debe ingresar exactamente 9 dígitos</span>
+                        </div>
+                        <div class="flex justify-end mt-4">
+                            <button type="button" id="btnCancelar" class="bg-gray-300 px-4 py-2 rounded mr-2">Cancelar</button>
+                            <button type="submit" class="btn-primary">Guardar</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- MASCOTAS MODULE -->
+        <div id="mascotas" class="module-content">
+
+            <div id="contenedor-mascotas" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <!-- Las tarjetas se llenarán dinámicamente -->
+            </div>
+            <!-- MODAL EDITAR MASCOTA -->
+            <div id="modalEditarMascota" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50" style="display: none;">
+                <div class="bg-white rounded-lg w-1/3 p-6 relative">
+                    <!-- Botón cerrar X -->
+                    <button type="button" id="btnCerrarMascotaX" class="absolute top-2 right-2 text-gray-500 hover:text-gray-800">
+                        <i class="fas fa-times"></i>
+                    </button>
+
+                    <h2 class="text-xl font-bold mb-4">Editar Mascota</h2>
+
+                    <form id="formEditarMascota">
+                        <div class="mb-3">
+                            <label class="block font-semibold mb-1">Nombre</label>
+                            <input
+                                    type="text"
+                                    id="editarNombreMascota"
+                                    class="border w-full p-2 rounded"
+                                    placeholder="Nombre de la mascota"
+                                    maxlength="50"
+                            >
+                            <span id="errorNombreMascota" class="text-red-500 text-sm hidden">El nombre es requerido</span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="block font-semibold mb-1">Especie</label>
+                            <input type="text" id="editarEspecie" class="border w-full p-2 rounded bg-gray-50 text-gray-600" disabled>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="block font-semibold mb-1">Raza</label>
+                            <input type="text" id="editarRaza" class="border w-full p-2 rounded bg-gray-50 text-gray-600" disabled>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="block font-semibold mb-1">Edad (años)</label>
+                            <input
+                                    type="text"
+                                    id="editarEdadMascota"
+                                    class="border w-full p-2 rounded"
+                                    placeholder="Ej: 5"
+                                    maxlength="2"
+                            >
+                            <span id="errorEdadMascota" class="text-red-500 text-sm hidden">La edad debe ser un número entre 0 y 30</span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="block font-semibold mb-1">Dueño</label>
+                            <input type="text" id="editarDueno" class="border w-full p-2 rounded bg-gray-50 text-gray-600" disabled>
+                        </div>
+
+                        <div class="flex justify-end mt-4">
+                            <button type="button" id="btnCancelarMascota" class="bg-gray-300 px-4 py-2 rounded mr-2">Cancelar</button>
+                            <button type="submit" class="btn-primary">Guardar</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- ENFERMADES MODULE -->
+        <div id="catalogo-enfermedades" class="module-content">
+            <div class="flex justify-between items-center mb-8">
+                <button onclick="abrirModalNuevaEnfermedad()" class="btn-primary">
+                    <i class="fas fa-plus mr-2"></i> Nueva Enfermedad
+                </button>
+            </div>
+
+            <div class="chart-container">
+                <h3 class="text-xl font-bold text-gray-800 mb-6">Enfermedades Registradas</h3>
+                <div class="overflow-x-auto">
+                    <table id="tabla-catalogo-enfermedades" class="w-full">
+                        <thead>
+                        <tr class="border-b-2 border-gray-200">
+                            <th class="text-left py-3 px-4 text-gray-700 font-semibold">Nombre</th>
+                            <th class="text-left py-3 px-4 text-gray-700 font-semibold">Descripción</th>
+                            <th class="text-left py-3 px-4 text-gray-700 font-semibold">Tratamiento</th>
+                            <th class="text-center py-3 px-4 text-gray-700 font-semibold">Acciones</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <!-- Se llena dinámicamente -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Modal Catálogo Enfermedad -->
+            <div id="modalCatalogoEnfermedad" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50" style="display: none;">
+                <div class="bg-white rounded-lg w-1/2 p-6 relative">
+                    <button type="button" onclick="cerrarModalEnfermedad()" class="absolute top-2 right-2 text-gray-500 hover:text-gray-800">
+                        <i class="fas fa-times"></i>
+                    </button>
+
+                    <h2 id="tituloModalEnfermedad" class="text-xl font-bold mb-4">Nueva Enfermedad</h2>
+
+                    <form id="formCatalogoEnfermedad">
+                        <input type="hidden" id="enfermedadId">
+
+                        <div class="mb-4">
+                            <label class="block font-semibold mb-1">Nombre *</label>
+                            <input type="text" id="enfermedadNombre" class="border w-full p-2 rounded" required>
+                        </div>
+
+                        <div class="mb-4">
+                            <label class="block font-semibold mb-1">Descripción</label>
+                            <textarea id="enfermedadDescripcion" class="border w-full p-2 rounded" rows="3"></textarea>
+                        </div>
+
+                        <div class="mb-4">
+                            <label class="block font-semibold mb-1">Tratamiento Recomendado</label>
+                            <textarea id="enfermedadTratamiento" class="border w-full p-2 rounded" rows="3"></textarea>
+                        </div>
+
+                        <div class="mb-4">
+                            <label class="block font-semibold mb-1">Prevención</label>
+                            <textarea id="enfermedadPrevencion" class="border w-full p-2 rounded" rows="2"></textarea>
+                        </div>
+
+                        <div class="flex justify-end gap-3 mt-6">
+                            <button type="button" onclick="cerrarModalEnfermedad()" class="bg-gray-300 px-4 py-2 rounded">Cancelar</button>
+                            <button type="submit" class="btn-primary">Guardar</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- VACUNAS MODULE -->
+        <div id="catalogo-vacunas" class="module-content">
+            <div class="flex justify-between items-center mb-8">
+                <button onclick="abrirModalVacunaNueva()" class="btn-primary">
+                    <i class="fas fa-plus mr-2"></i> Nueva Vacuna
+                </button>
+            </div>
+
+            <div class="chart-container">
+                <h3 class="text-xl font-bold text-gray-800 mb-6">Cátalogo de Vacunas</h3>
+                <div class="overflow-x-auto">
+                    <table id="tabla-catalogo-vacunas" class="w-full">
+                        <thead>
+                        <tr class="border-b-2 border-gray-200">
+                            <th class="text-left py-3 px-4 text-gray-700 font-semibold">Nombre</th>
+                            <th class="text-left py-3 px-4 text-gray-700 font-semibold">Descripción</th>
+                            <th class="text-center py-3 px-4 text-gray-700 font-semibold">Dosis Requeridas</th>
+                            <th class="text-center py-3 px-4 text-gray-700 font-semibold">Acciones</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <!-- Se llena dinámicamente -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div id="modalCatalogoVacuna" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50" style="display: none;">
+                <div class="bg-white rounded-lg w-1/2 p-6 relative">
+                    <button type="button" onclick="cerrarModalVacunaCatalogo()" class="absolute top-2 right-2 text-gray-500 hover:text-gray-800">
+                        <i class="fas fa-times"></i>
+                    </button>
+
+                    <h2 id="tituloModalVacunaCatalogo" class="text-xl font-bold mb-4">Nueva Vacuna</h2>
+
+                    <form id="formCatalogoVacuna">
+                        <input type="hidden" id="vacunaCatalogoId">
+
+                        <div class="mb-4">
+                            <label class="block font-semibold mb-1">Nombre *</label>
+                            <input type="text" id="vacunaCatalogoNombre" class="border w-full p-2 rounded" required>
+                        </div>
+
+                        <div class="mb-4">
+                            <label class="block font-semibold mb-1">Descripción</label>
+                            <textarea id="vacunaCatalogoDescripcion" class="border w-full p-2 rounded" rows="3"></textarea>
+                        </div>
+
+                        <div class="mb-4">
+                            <label class="block font-semibold mb-1">Dosis Requeridas *</label>
+                            <input type="number" id="vacunaCatalogoDosis" class="border w-full p-2 rounded" min="1" value="1" required>
+                        </div>
+
+                        <div class="flex justify-end gap-3 mt-6">
+                            <button type="button" onclick="cerrarModalVacunaCatalogo()" class="bg-gray-300 px-4 py-2 rounded">Cancelar</button>
+                            <button type="submit" class="btn-primary">Guardar</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- HISTORIA CLINICA MODULE -->
+        <div id="historia-clinica" class="module-content">
+            <!-- Estadísticas Rápidas (REDUCIDAS) -->
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
+                <!-- Historia Clínica -->
+                <div class="stat-card bg-white rounded-2xl p-4 shadow-lg">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-gray-600 text-xs mb-1">Historia Clínica</p>
+                            <h3 id="hc-estado" class="text-2xl font-bold text-gray-800">Activa</h3>
+                        </div>
+                        <div class="w-12 h-12 bg-gradient-to-br from-blue-400 to-blue-600 rounded-xl flex items-center justify-center">
+                            <i class="fas fa-paw text-2xl text-white"></i>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Último Diagnóstico -->
+                <div class="stat-card bg-white rounded-2xl p-4 shadow-lg">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-gray-600 text-xs mb-1">Último Diagnóstico</p>
+                            <h3 id="hc-ultimo-diagnostico" class="text-xl font-bold text-gray-800">Sin diagnósticos</h3>
+                        </div>
+                        <div class="w-12 h-12 bg-gradient-to-br from-red-300 to-red-500 rounded-xl flex items-center justify-center">
+                            <i class="fas fa-notes-medical text-2xl text-white"></i>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Próxima Vacuna -->
+                <div class="stat-card bg-white rounded-2xl p-4 shadow-lg">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-gray-600 text-xs mb-1">Próxima Vacuna</p>
+                            <h3 id="hc-proxima-vacuna" class="text-xl font-bold text-gray-800">Todas aplicadas</h3>
+                        </div>
+                        <div class="w-12 h-12 bg-gradient-to-br from-orange-400 to-orange-600 rounded-xl flex items-center justify-center">
+                            <i class="fas fa-syringe text-2xl text-white"></i>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Dosis Aplicadas -->
+                <div class="stat-card bg-white rounded-2xl p-4 shadow-lg">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-gray-600 text-xs mb-1">Dosis Aplicadas</p>
+                            <h3 id="hc-dosis-aplicadas" class="text-2xl font-bold text-gray-800">0</h3>
+                        </div>
+                        <div class="w-12 h-12 bg-gradient-to-br from-green-400 to-green-600 rounded-xl flex items-center justify-center">
+                            <i class="fas fa-check-circle text-2xl text-white"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Selector de Mascota (REDUCIDO) -->
+            <div class="chart-container mb-4 relative">
+                <label class="block font-semibold mb-2 text-sm">Seleccionar Mascota</label>
+                <input type="text" id="buscadorMascotaHistoria" class="border w-full p-2 rounded-lg text-sm" placeholder="Escribe el nombre de la mascota">
+                <ul id="listaSugerenciasMascota" class="absolute z-10 w-full bg-white border rounded-lg max-h-60 overflow-y-auto hidden"></ul>
+            </div>
+
+            <!-- Contenedor de Historia Clínica -->
+            <div id="contenedor-historia" style="display: none;">
+                <!-- Información de la Mascota (COMPACTO) -->
+                <div class="chart-container mb-4">
+                    <!-- Header compacto con foto de perfil -->
+                    <div class="bg-gradient-to-r from-cyan-400 to-cyan-600 rounded-t-2xl p-4 -mx-6 -mt-6 mb-4">
+                        <div class="flex items-center gap-3">
+                            <div class="w-14 h-14 bg-white rounded-full flex items-center justify-center shadow-lg">
+                                <i class="fas fa-paw text-2xl text-cyan-500"></i>
+                            </div>
+                            <div class="text-white">
+                                <h3 id="hc-mascota-nombre" class="text-xl font-bold mb-0.5">-</h3>
+                                <p class="text-cyan-100 text-xs flex items-center gap-2">
+                                    <i class="fas fa-heart text-xs"></i>
+                                    <span id="hc-mascota-especie">-</span>
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Grid de información compacto -->
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
+
+                        <!-- Información de la Mascota -->
+                        <div class="bg-cyan-50 rounded-xl p-3 border border-cyan-200 shadow-sm hover:shadow-md transition-all">
+                            <div class="flex items-center gap-2 mb-2">
+                                <div class="w-7 h-7 bg-gradient-to-br from-cyan-400 to-cyan-600 rounded-lg flex items-center justify-center">
+                                    <i class="fas fa-dog text-white text-xs"></i>
+                                </div>
+                                <h4 class="font-bold text-gray-800 text-sm">Mascota</h4>
+                            </div>
+                            <div class="space-y-1.5 text-xs">
+                                <div class="flex justify-between items-center">
+                                    <span class="text-gray-600">Raza:</span>
+                                    <span id="hc-mascota-raza" class="font-semibold text-gray-800 text-right">-</span>
+                                </div>
+                                <div class="h-px bg-cyan-200"></div>
+                                <div class="flex justify-between items-center">
+                                    <span class="text-gray-600">Edad:</span>
+                                    <span id="hc-mascota-edad" class="font-semibold text-gray-800 text-right">-</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Información del Dueño -->
+                        <div class="bg-cyan-50 rounded-xl p-3 border border-cyan-200 shadow-sm hover:shadow-md transition-all">
+                            <div class="flex items-center gap-2 mb-2">
+                                <div class="w-7 h-7 bg-gradient-to-br from-cyan-400 to-cyan-600 rounded-lg flex items-center justify-center">
+                                    <i class="fas fa-user text-white text-xs"></i>
+                                </div>
+                                <h4 class="font-bold text-gray-800 text-sm">Propietario</h4>
+                            </div>
+                            <div class="space-y-1.5 text-xs">
+                                <div class="flex flex-col gap-0.5">
+                                    <span class="text-gray-600">Nombre:</span>
+                                    <span id="hc-dueno-nombre" class="font-semibold text-gray-800 break-words">-</span>
+                                </div>
+                                <div class="h-px bg-cyan-200"></div>
+                                <div class="flex justify-between items-center">
+                                    <span class="text-gray-600">Teléfono:</span>
+                                    <a id="hc-dueno-telefono-link" href="tel:-" class="font-semibold text-cyan-600 hover:text-cyan-700 transition flex items-center gap-1">
+                                        <i class="fas fa-phone text-xs"></i>
+                                        <span id="hc-dueno-telefono">-</span>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Resumen de Salud -->
+                        <div class="bg-cyan-50 rounded-xl p-3 border border-cyan-200 shadow-sm hover:shadow-md transition-all">
+                            <div class="flex items-center gap-2 mb-2">
+                                <div class="w-7 h-7 bg-gradient-to-br from-cyan-400 to-cyan-600 rounded-lg flex items-center justify-center">
+                                    <i class="fas fa-heartbeat text-white text-xs"></i>
+                                </div>
+                                <h4 class="font-bold text-gray-800 text-sm">Estado de Salud</h4>
+                            </div>
+                            <div class="space-y-1.5 text-xs">
+                                <div class="flex flex-col gap-0.5">
+                                    <span class="text-gray-600">Último Dx:</span>
+                                    <span id="hc-ultimo-diagnostico-mini" class="font-semibold text-gray-800 break-words text-xs">Sin diagnósticos</span>
+                                </div>
+                                <div class="h-px bg-cyan-200"></div>
+                                <div class="flex flex-col gap-0.5">
+                                    <span class="text-gray-600">Próxima Vac:</span>
+                                    <span id="hc-proxima-vacuna-mini" class="font-semibold text-gray-800 break-words text-xs">Todas aplicadas</span>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+
+                <!-- Enfermedades (TABLA COMPACTA) -->
+                <div class="chart-container mb-4">
+                    <div class="flex justify-between items-center mb-3">
+                        <h4 class="text-lg font-bold text-gray-800">Enfermedades Registradas</h4>
+                        <button onclick="abrirModalAgregarEnfermedad()" class="btn-primary text-sm px-4 py-2">
+                            <i class="fas fa-plus mr-1"></i> Agregar Diagnóstico
+                        </button>
+                    </div>
+                    <div class="overflow-x-auto">
+                        <table id="tabla-hc-enfermedades" class="w-full text-sm">
+                            <thead>
+                            <tr class="border-b-2 border-gray-200">
+                                <th class="text-left py-2 px-3 text-gray-700 font-semibold">Enfermedad</th>
+                                <th class="text-left py-2 px-3 text-gray-700 font-semibold">Síntomas</th>
+                                <th class="text-left py-2 px-3 text-gray-700 font-semibold">Fecha Diagnóstico</th>
+                                <th class="text-left py-2 px-3 text-gray-700 font-semibold">Estado</th>
+                                <th class="text-center py-2 px-3 text-gray-700 font-semibold">Acciones</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr><td colspan="5" class="text-center py-3 text-gray-500">No hay enfermedades registradas</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Vacunas (TABLA COMPACTA) -->
+                <div class="chart-container">
+                    <div class="flex justify-between items-center mb-3">
+                        <h4 class="text-lg font-bold text-gray-800">Vacunas Aplicadas</h4>
+                        <button onclick="abrirModalAgregarVacuna()" class="btn-primary text-sm px-4 py-2">
+                            <i class="fas fa-plus mr-1"></i> Registrar Vacuna
+                        </button>
+                    </div>
+                    <div class="overflow-x-auto">
+                        <table id="tabla-hc-vacunas" class="w-full text-sm">
+                            <thead>
+                            <tr class="border-b-2 border-gray-200">
+                                <th class="text-left py-2 px-3 text-gray-700 font-semibold">Vacuna</th>
+                                <th class="text-left py-2 px-3 text-gray-700 font-semibold">Fecha Aplicación</th>
+                                <th class="text-left py-2 px-3 text-gray-700 font-semibold">Próxima Dosis</th>
+                                <th class="text-center py-2 px-3 text-gray-700 font-semibold">Dosis N°</th>
+                                <th class="text-left py-2 px-3 text-gray-700 font-semibold">Estado</th>
+                                <th class="text-center py-2 px-3 text-gray-700 font-semibold">Acciones</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr><td colspan="6" class="text-center py-3 text-gray-500">No hay vacunas registradas</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==================== MODALES ==================== -->
+
+        <!-- Modal Enfermedad -->
+        <div id="modalAgregarEnfermedad" class="fixed inset-0 bg-black bg-opacity-50 hidden flex items-center justify-center z-50">
+            <div class="bg-white rounded-lg w-full max-w-2xl p-6 relative max-h-[90vh] overflow-y-auto mx-4">
+                <button type="button" onclick="cerrarModalAgregarEnfermedad()" class="absolute top-4 right-4 text-gray-500 hover:text-gray-800 text-xl">
+                    <i class="fas fa-times"></i>
+                </button>
+                <h2 id="titulo-modal-enfermedad" class="text-2xl font-bold mb-6 text-gray-800">Registrar Diagnóstico</h2>
+                <form id="formAgregarEnfermedad">
+                    <input type="hidden" id="hc-enfermedad-id" value="">
+                    <div class="mb-4">
+                        <label class="block font-semibold mb-2 text-gray-700">Seleccionar Enfermedad *</label>
+                        <select id="hc-enfermedad-select" class="border w-full p-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" required>
+                            <option value="">-- Seleccione --</option>
+                        </select>
+                    </div>
+                    <div class="mb-4">
+                        <label class="block font-semibold mb-2 text-gray-700">Fecha Diagnóstico *</label>
+                        <input type="date" id="hc-enfermedad-fecha" class="border w-full p-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" required>
+                    </div>
+                    <div class="mb-4">
+                        <label class="block font-semibold mb-2 text-gray-700">Estado *</label>
+                        <select id="hc-enfermedad-estado" class="border w-full p-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" required>
+                            <option value="EN_TRATAMIENTO">En Tratamiento</option>
+                            <option value="RECUPERADO">Recuperado</option>
+                            <option value="CRONICO">Crónico</option>
+                        </select>
+                    </div>
+                    <div class="mb-4">
+                        <label class="block font-semibold mb-2 text-gray-700">Síntomas Observados</label>
+                        <textarea id="hc-enfermedad-sintomas" class="border w-full p-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" rows="3" placeholder="Describa los síntomas observados..."></textarea>
+                    </div>
+                    <div class="mb-6">
+                        <label class="block font-semibold mb-2 text-gray-700">Observaciones del Veterinario</label>
+                        <textarea id="hc-enfermedad-observaciones" class="border w-full p-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" rows="3" placeholder="Notas adicionales del veterinario..."></textarea>
+                    </div>
+                    <div class="flex justify-end gap-3 mt-6">
+                        <button type="button" onclick="cerrarModalAgregarEnfermedad()" class="bg-gray-300 hover:bg-gray-400 text-gray-800 px-6 py-2 rounded-lg font-semibold transition">Cancelar</button>
+                        <button type="submit" class="btn-primary px-6 py-2" id="btn-guardar-enfermedad">Guardar Diagnóstico</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- Modal Vacuna -->
+        <div id="modalAgregarVacuna" class="fixed inset-0 bg-black bg-opacity-50 hidden flex items-center justify-center z-50">
+            <div class="bg-white rounded-lg w-full max-w-2xl p-6 relative max-h-[90vh] overflow-y-auto mx-4">
+                <button type="button" onclick="cerrarModalAgregarVacuna()" class="absolute top-4 right-4 text-gray-500 hover:text-gray-800 text-xl">
+                    <i class="fas fa-times"></i>
+                </button>
+                <h2 id="titulo-modal-vacuna" class="text-2xl font-bold mb-6 text-gray-800">Registrar Vacuna</h2>
+                <form id="formAgregarVacuna">
+                    <input type="hidden" id="hc-vacuna-id" value="">
+                    <div class="mb-4">
+                        <label class="block font-semibold mb-2 text-gray-700">Seleccionar Vacuna *</label>
+                        <select id="hc-vacuna-select" class="border w-full p-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" required>
+                            <option value="">Seleccione</option>
+                        </select>
+                    </div>
+                    <div class="grid grid-cols-2 gap-4 mb-4">
+                        <div>
+                            <label class="block font-semibold mb-2 text-gray-700">Fecha Aplicación *</label>
+                            <input type="date" id="hc-vacuna-fecha" class="border w-full p-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" required>
+                        </div>
+                        <div>
+                            <label class="block font-semibold mb-2 text-gray-700">Próxima Dosis</label>
+                            <input type="date" id="hc-vacuna-proxima" class="border w-full p-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                        </div>
+                    </div>
+                    <div class="mb-4">
+                        <label class="block font-semibold mb-2 text-gray-700">Estado *</label>
+                        <select id="hc-vacuna-estado" class="border w-full p-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" required>
+                            <option value="VIGENTE">Vigente</option>
+                            <option value="PENDIENTE">Pendiente</option>
+                            <option value="VENCIDA">Vencida</option>
+                        </select>
+                    </div>
+                    <div class="mb-4">
+                        <label class="block font-semibold mb-2 text-gray-700">Número de Dosis *</label>
+                        <input type="number" id="hc-vacuna-dosis" class="border w-full p-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" min="1" value="1" required>
+                    </div>
+                    <div class="mb-6">
+                        <label class="block font-semibold mb-2 text-gray-700">Observaciones</label>
+                        <textarea id="hc-vacuna-observaciones" class="border w-full p-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" rows="3" placeholder="Notas adicionales..."></textarea>
+                    </div>
+                    <div class="flex justify-end gap-3 mt-6">
+                        <button type="button" onclick="cerrarModalAgregarVacuna()" class="bg-gray-300 hover:bg-gray-400 text-gray-800 px-6 py-2 rounded-lg font-semibold transition">Cancelar</button>
+                        <button type="submit" class="btn-primary px-6 py-2" id="btn-guardar-vacuna">Guardar Vacuna</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</main>
+<script src="/js/admin/scriptModulos.js"></script>
+<script src="/js/admin/scriptClima.js"></script>
+<script src="/js/admin/scriptNotificaciones.js"></script>
+<script src="/js/admin/scriptDashboard.js"></script>
+<script src="/js/scriptToast.js"></script>
+<script src="/js/admin/scriptCitas.js"></script>
+<script src="/js/admin/scriptServicios.js"></script>
+<script src="/js/admin/scriptProductos.js"></script>
+<script src="/js/admin/scriptVentas.js"></script>
+<script src="/js/admin/scriptPagos.js"></script>
+<script src="/js/admin/scriptTrabajadores.js"></script>
+<script src="/js/admin/scriptClientes.js"></script>
+<script src="/js/admin/scriptMascotas.js"></script>
+<script src="/js/admin/scriptEnfermedades.js"></script>
+<script src="/js/admin/scriptVacunas.js"></script>
+<script src="/js/admin/scriptHistoriaClinica.js"></script>
+<script src="/js/login/scriptSesion.js"></script>
+</body>
+</html>

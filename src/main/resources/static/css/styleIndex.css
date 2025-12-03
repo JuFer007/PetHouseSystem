@@ -1,0 +1,347 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+
+* {
+    font-family: 'Poppins', sans-serif;
+}
+
+:root {
+    --primary: #00CED1;
+    --primary-dark: #00B8BA;
+    --secondary: #1E3A5F;
+    --accent: #87CEEB;
+    --light: #F0F8FF;
+}
+
+body {
+    background: #f9fafb;
+}
+
+.hero-gradient {
+    background: linear-gradient(135deg, var(--light) 0%, #E0F4F5 100%);
+}
+
+.card-hover {
+    transition: all 0.3s ease;
+}
+
+.card-hover:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 20px 40px rgba(0, 206, 209, 0.2);
+}
+
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.6);
+    backdrop-filter: blur(4px);
+    overflow-y: auto;
+    padding: 40px 20px;
+}
+
+.modal.active {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.modal-content {
+    background: white;
+    border-radius: 20px;
+    padding: 40px;
+    box-shadow: 0 25px 50px rgba(0, 0, 0, 0.3);
+    position: relative;
+    width: 100%;
+    max-width: 1400px;
+    animation: slideDown 0.3s ease-out;
+}
+
+@keyframes slideDown {
+    from {
+        opacity: 0;
+        transform: translateY(-30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.section-divider {
+    border-left: 3px solid #06b6d4;
+    padding-left: 20px;
+}
+
+.btn-primary {
+    background: linear-gradient(135deg, #06b6d4 0%, #0891b2 100%);
+    transition: all 0.3s ease;
+}
+
+.btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 25px rgba(6, 182, 212, 0.4);
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+@keyframes slideUp {
+    from { transform: translateY(50px); opacity: 0; }
+    to { transform: translateY(0); opacity: 1; }
+}
+
+@keyframes slideInRight {
+    from { transform: translateX(100%); }
+    to { transform: translateX(0); }
+}
+
+@keyframes slideOutRight {
+    from { transform: translateX(0); }
+    to { transform: translateX(100%); }
+}
+
+.cart-badge {
+    position: absolute;
+    top: -8px;
+    right: -8px;
+    background: #FF6B6B;
+    color: white;
+    border-radius: 50%;
+    width: 20px;
+    height: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    font-weight: bold;
+}
+
+.scroll-fade {
+    opacity: 0;
+    transform: translateY(30px);
+    transition: all 0.6s ease;
+}
+
+.scroll-fade.visible {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+nav {
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(10px);
+}
+
+.product-img {
+    height: 200px;
+    object-fit: cover;
+}
+
+/* Estilos mejorados para el carrito lateral */
+#cartOverlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.6);
+    backdrop-filter: blur(4px);
+    z-index: 999;
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.3s ease;
+}
+
+#cartOverlay.active {
+    opacity: 1;
+    visibility: visible;
+}
+
+#cartSidebar {
+    position: fixed;
+    top: 0;
+    right: 0;
+    width: 420px;
+    max-width: 90vw;
+    height: 100vh;
+    background: white;
+    box-shadow: -5px 0 30px rgba(0, 0, 0, 0.2);
+    z-index: 1000;
+    transform: translateX(100%);
+    transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+#cartSidebar.active {
+    transform: translateX(0);
+}
+
+.cart-item {
+    transition: all 0.3s ease;
+}
+
+.cart-item:hover {
+    background: #f9fafb;
+}
+
+.cart-header {
+    background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+    color: white;
+}
+
+.cart-footer {
+    background: #f9fafb;
+    border-top: 2px solid #e5e7eb;
+}
+
+.empty-cart-icon {
+    font-size: 4rem;
+    color: #d1d5db;
+}
+
+/* Animación para items del carrito */
+.cart-item-enter {
+    animation: slideInItem 0.3s ease;
+}
+
+@keyframes slideInItem {
+    from {
+        opacity: 0;
+        transform: translateX(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+/* Scroll personalizado para el carrito */
+#cart-items::-webkit-scrollbar {
+    width: 8px;
+}
+
+#cart-items::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 10px;
+}
+
+#cart-items::-webkit-scrollbar-thumb {
+    background: var(--primary);
+    border-radius: 10px;
+}
+
+#cart-items::-webkit-scrollbar-thumb:hover {
+    background: var(--primary-dark);
+}
+
+/* Estilos para el modal de pago */
+.payment-method {
+    transition: all 0.2s ease;
+}
+
+.payment-method.selected {
+    border-color: #06b6d4;
+    background: #f0fdff;
+    box-shadow: 0 4px 12px rgba(6, 182, 212, 0.15);
+}
+
+.payment-method .payment-check {
+    opacity: 0;
+    transition: opacity 0.2s ease;
+}
+
+.payment-method.selected .payment-check {
+    opacity: 1;
+    color: #06b6d4;
+}
+
+/* Actualizar el badge del carrito para que se muestre/oculte correctamente */
+.cart-badge {
+    position: absolute;
+    top: -8px;
+    right: -8px;
+    background: linear-gradient(135deg, #ef4444, #dc2626);
+    color: white;
+    font-size: 11px;
+    font-weight: bold;
+    min-width: 20px;
+    height: 20px;
+    border-radius: 10px;
+    display: none; /* Cambiado de flex a none por defecto */
+    align-items: center;
+    justify-content: center;
+    padding: 0 6px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    animation: bounceIn 0.5s ease;
+}
+
+@keyframes bounceIn {
+    0% { transform: scale(0); }
+    50% { transform: scale(1.2); }
+    100% { transform: scale(1); }
+}
+
+/* Actualizar altura de imagen de producto */
+.product-img {
+    height: 250px; /* Cambiado de 200px a 250px */
+    object-fit: cover;
+    transition: transform 0.3s ease;
+}
+
+/* Agregar hover effect a las imágenes de productos */
+.card-hover:hover .product-img {
+    transform: scale(1.05);
+}
+
+/* Mejorar el sidebar del carrito */
+#cartSidebar {
+    position: fixed;
+    top: 0;
+    right: 0;
+    width: 420px;
+    max-width: 90vw;
+    height: 100vh;
+    background: white;
+    box-shadow: -5px 0 30px rgba(0, 0, 0, 0.2);
+    z-index: 1000;
+    transform: translateX(100%);
+    transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    display: flex;
+    flex-direction: column;
+}
+
+/* Mejorar items del carrito */
+.cart-item {
+    transition: all 0.2s ease;
+    border: 1px solid #e5e7eb;
+}
+
+.cart-item:hover {
+    background: #f9fafb;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+/* Animación para estado vacío del carrito */
+.empty-cart-icon {
+    font-size: 3rem;
+    color: #d1d5db;
+    animation: emptyCartPulse 2s ease-in-out infinite;
+}
+
+@keyframes emptyCartPulse {
+    0%, 100% { opacity: 0.3; transform: scale(1); }
+    50% { opacity: 0.5; transform: scale(1.05); }
+}
+
+/* Mejorar el área scrolleable del carrito */
+#cart-items {
+    flex-grow: 1;
+    overflow-y: auto;
+    padding: 0 1.5rem 1rem;
+}

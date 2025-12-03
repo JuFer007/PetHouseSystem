@@ -1,0 +1,503 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PetHouse - Veterinaria Profesional</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="/css/styleIndex.css">
+</head>
+<body class="bg-gray-50">
+<!-- Navbar -->
+<nav class="fixed w-full top-0 z-50 shadow-md">
+    <div class="container mx-auto px-4 py-4 flex items-center justify-between">
+        <div class="flex items-center space-x-5">
+            <img src="/recursos/logo.png" alt="PetHouse Logo" style="height: 62px;">
+        </div>
+
+        <div class="hidden md:flex space-x-8 items-center">
+            <a href="#inicio" class="text-gray-700 hover:text-cyan-500 transition relative group">
+                Inicio
+                <span class="absolute left-0 bottom-0 w-0 h-[2px] bg-cyan-500 transition-all duration-300 group-hover:w-full"></span>
+            </a>
+            <a href="#servicios" class="text-gray-700 hover:text-cyan-500 transition relative group">
+                Servicios
+                <span class="absolute left-0 bottom-0 w-0 h-[2px] bg-cyan-500 transition-all duration-300 group-hover:w-full"></span>
+            </a>
+            <a href="#productos" class="text-gray-700 hover:text-cyan-500 transition relative group">
+                Productos
+                <span class="absolute left-0 bottom-0 w-0 h-[2px] bg-cyan-500 transition-all duration-300 group-hover:w-full"></span>
+            </a>
+            <a href="#contacto" class="text-gray-700 hover:text-cyan-500 transition relative group">
+                Contacto
+                <span class="absolute left-0 bottom-0 w-0 h-[2px] bg-cyan-500 transition-all duration-300 group-hover:w-full"></span>
+            </a>
+            <button class="relative hover:scale-110 transition-transform" onclick="window.location.href='/login'">
+                <i class="fas fa-user text-2xl text-cyan-500"></i>
+            </button>
+            <button onclick="openCartModal()" class="relative hover:scale-110 transition-transform">
+                <i class="fas fa-shopping-cart text-2xl text-cyan-500"></i>
+                <span id="cart-count" class="cart-badge">0</span>
+            </button>
+        </div>
+
+        <button class="md:hidden text-gray-700" onclick="toggleMenu()">
+            <i class="fas fa-bars text-2xl"></i>
+        </button>
+    </div>
+
+    <!-- Mobile Menu -->
+    <div id="mobile-menu" class="hidden md:hidden bg-white shadow-lg">
+        <div class="flex flex-col space-y-4 p-4">
+            <a href="#inicio" class="text-gray-700 hover:text-cyan-500">Inicio</a>
+            <a href="#servicios" class="text-gray-700 hover:text-cyan-500">Servicios</a>
+            <a href="#productos" class="text-gray-700 hover:text-cyan-500">Productos</a>
+            <a href="#contacto" class="text-gray-700 hover:text-cyan-500">Contacto</a>
+        </div>
+    </div>
+</nav>
+
+<!-- Hero Section -->
+<section id="inicio" class="relative pt-32 pb-32 px-4 bg-cover bg-center bg-no-repeat transition-all duration-700">
+    <div class="absolute inset-0 bg-black/40"></div>
+    <div class="relative container mx-auto">
+        <div class="flex flex-col md:flex-row items-center justify-between">
+            <div class="md:w-1/2 mb-12 md:mb-0 max-w-xl">
+                <h1 class="text-6xl md:text-7xl font-bold text-white leading-tight mb-6">
+                    Cuidamos a tu <span class="text-cyan-400">mejor amigo</span>
+                </h1>
+
+                <p class="text-2xl text-white/90 mb-10">
+                    Atención veterinaria profesional con amor y dedicación
+                </p>
+
+                <div class="flex flex-col sm:flex-row gap-4">
+                    <button onclick="openAppointmentModal()" class="btn-primary px-10 py-4 rounded-full font-semibold text-white text-lg">
+                        <i class="fas fa-calendar-alt mr-2"></i>Agendar Cita
+                    </button>
+
+                    <a href="#servicios" class="bg-white text-cyan-500 px-10 py-4 rounded-full font-semibold border-2 border-cyan-500 hover:bg-cyan-50 transition text-center text-lg">
+                        Ver Servicios
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Servicios -->
+<section id="servicios" class="py-20 px-4">
+    <div class="container mx-auto">
+        <h2 class="text-4xl font-bold text-center text-gray-800 mb-4">Nuestros Servicios</h2>
+        <p class="text-center text-gray-600 mb-12">Atención integral para tu mascota</p>
+
+        <div id="servicios-container" class="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
+            <!-- Cards dinámicamente -->
+        </div>
+    </div>
+</section>
+
+<!-- Productos -->
+<section id="productos" class="py-20 px-4 bg-white">
+    <div class="container mx-auto">
+        <h2 class="text-4xl font-bold text-center text-gray-800 mb-4">Productos para tu Mascota</h2>
+        <p class="text-center text-gray-600 mb-12">Todo lo que necesitas en un solo lugar</p>
+
+        <div id="productos-container" class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+            <!-- Carga dinamica -->
+        </div>
+    </div>
+</section>
+
+<!-- Contacto -->
+<section id="contacto" class="py-20 px-4 bg-gray-50">
+    <div class="container mx-auto">
+        <h2 class="text-4xl font-bold text-center text-gray-800 mb-4">Contáctanos</h2>
+        <p class="text-center text-gray-600 mb-12">Estamos aquí para ayudarte</p>
+
+        <div class="grid md:grid-cols-2 gap-12">
+            <!-- Columna izquierda: Datos de contacto + mapa -->
+            <div class="space-y-8 flex flex-col">
+                <div class="grid sm:grid-cols-2 gap-6">
+                    <div class="flex items-start space-x-4">
+                        <div class="w-12 h-12 bg-cyan-100 rounded-full flex items-center justify-center flex-shrink-0">
+                            <i class="fas fa-map-marker-alt text-cyan-500"></i>
+                        </div>
+                        <div>
+                            <h3 class="font-semibold text-lg mb-1">Dirección</h3>
+                            <p class="text-gray-600">Av. José Balta 456 - Chiclayo</p>
+                        </div>
+                    </div>
+
+                    <div class="flex items-start space-x-4">
+                        <div class="w-12 h-12 bg-cyan-100 rounded-full flex items-center justify-center flex-shrink-0">
+                            <i class="fas fa-phone text-cyan-500"></i>
+                        </div>
+                        <div>
+                            <h3 class="font-semibold text-lg mb-1">Teléfono</h3>
+                            <p class="text-gray-600">+51 944 707 103</p>
+                        </div>
+                    </div>
+
+                    <div class="flex items-start space-x-4">
+                        <div class="w-12 h-12 bg-cyan-100 rounded-full flex items-center justify-center flex-shrink-0">
+                            <i class="fas fa-envelope text-cyan-500"></i>
+                        </div>
+                        <div>
+                            <h3 class="font-semibold text-lg mb-1">Email</h3>
+                            <p class="text-gray-600">contacto@pethouse.com</p>
+                        </div>
+                    </div>
+
+                    <div class="flex items-start space-x-4">
+                        <div class="w-12 h-12 bg-cyan-100 rounded-full flex items-center justify-center flex-shrink-0">
+                            <i class="fas fa-clock text-cyan-500"></i>
+                        </div>
+                        <div>
+                            <h3 class="font-semibold text-lg mb-1">Horario</h3>
+                            <p class="text-gray-600">Lun - Sáb: 9:00 AM - 8:00 PM</p>
+                            <p class="text-gray-600">Dom: 10:00 AM - 2:00 PM</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="rounded-2xl overflow-hidden shadow-lg h-80">
+                    <iframe
+                            src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3920.0000000000005!2d-79.8390000!3d-6.7760000!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x904cfa0000000000%3A0x0000000000000000!2sAv.%20Jos%C3%A9%20Balta%20456%2C%20Chiclayo%2C%20Lambayeque%2C%20Per%C3%BA!5e0!3m2!1ses!2spe!4v1700000000000"
+                            width="100%" height="100%" style="border:0;" allowfullscreen="" loading="lazy">
+                    </iframe>
+                </div>
+            </div>
+
+            <!-- Columna derecha: Formulario -->
+            <div class="bg-white rounded-2xl shadow-lg p-8">
+                <h3 class="text-2xl font-semibold mb-6 mt-3 text-gray-800">Envíanos un mensaje</h3>
+                <form id="contactForm" class="space-y-4 mt-2">
+                    <input type="text" name="nombre" placeholder="Nombre completo" class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:border-cyan-500 mt-4" required>
+                    <input type="email" name="email" placeholder="Correo electrónico" class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:border-cyan-500 mt-4" required>
+                    <textarea name="mensaje" placeholder="Mensaje" rows="4" class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:border-cyan-500 mt-4" required></textarea>
+                    <button type="submit" class="btn-primary w-full py-3 rounded-lg font-semibold mt-6">
+                        Enviar Mensaje
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</section>
+
+
+<!-- Footer -->
+<footer class="bg-gray-800 text-white py-12 px-4">
+    <div class="container mx-auto">
+        <div class="grid md:grid-cols-3 gap-8 mb-8">
+            <div>
+                <img src="/recursos/logo.png" alt="PetHouse" class="h-16 mb-4">
+                <p class="text-gray-400">Cuidando a tus mascotas con amor y profesionalismo desde 2020</p>
+            </div>
+            <div>
+                <h4 class="font-semibold text-lg mb-4">Enlaces Rápidos</h4>
+                <ul class="space-y-2">
+                    <li><a href="#inicio" class="text-gray-400 hover:text-cyan-400 transition">Inicio</a></li>
+                    <li><a href="#servicios" class="text-gray-400 hover:text-cyan-400 transition">Servicios</a></li>
+                    <li><a href="#productos" class="text-gray-400 hover:text-cyan-400 transition">Productos</a></li>
+                    <li><a href="#contacto" class="text-gray-400 hover:text-cyan-400 transition">Contacto</a></li>
+                </ul>
+            </div>
+            <div>
+                <h4 class="font-semibold text-lg mb-4">Síguenos</h4>
+                <div class="flex space-x-4">
+                    <a href="#" class="w-10 h-10 bg-cyan-500 rounded-full flex items-center justify-center hover:bg-cyan-600 transition">
+                        <i class="fab fa-facebook-f"></i>
+                    </a>
+                    <a href="#" class="w-10 h-10 bg-cyan-500 rounded-full flex items-center justify-center hover:bg-cyan-600 transition">
+                        <i class="fab fa-instagram"></i>
+                    </a>
+                    <a href="#" class="w-10 h-10 bg-cyan-500 rounded-full flex items-center justify-center hover:bg-cyan-600 transition">
+                        <i class="fab fa-whatsapp"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+        <div class="border-t border-gray-700 pt-8 text-center text-gray-400">
+            <p>&copy; 2025 PetHouse. Todos los derechos reservados.</p>
+        </div>
+    </div>
+</footer>
+
+<!-- Modal de Cita -->
+<div id="appointmentModal" class="modal">
+    <div class="modal-content">
+        <div class="flex justify-between items-center mb-5">
+            <h2 class="text-2xl font-bold text-gray-800">
+                <i class="fas fa-calendar-check text-cyan-500 mr-2"></i>
+                Agendar Cita
+            </h2>
+            <button onclick="closeAppointmentModal()" class="text-gray-400 hover:text-gray-600 hover:bg-gray-100 w-9 h-9 rounded-full flex items-center justify-center transition">
+                <i class="fas fa-times text-xl"></i>
+            </button>
+        </div>
+
+        <form id="formCita" class="space-y-4">
+            <!-- Sección 1: Datos del Dueño -->
+            <div class="section-divider">
+                <h3 class="font-semibold text-gray-700 mb-3">
+                    <i class="fas fa-user mr-2 text-cyan-500"></i>
+                    Datos del Dueño
+                </h3>
+
+                <div class="grid grid-cols-1 md:grid-cols-5 gap-3">
+                    <!-- DNI con botón -->
+                    <div>
+                        <label class="block text-gray-700 mb-1.5 font-medium">DNI</label>
+                        <div class="flex gap-1.5">
+                            <input type="text" id="dni" maxlength="8" class="flex-1 px-3 py-2 text-sm rounded-lg border border-gray-300 focus:outline-none focus:border-cyan-500 focus:ring-1 focus:ring-cyan-200 transition" placeholder="12345678" required>
+                            <button type="button" onclick="buscarPorDNI()" class="px-3 bg-cyan-500 text-white rounded-lg hover:bg-cyan-600 transition">
+                                <i class="fas fa-search text-sm"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div>
+                        <label class="block text-gray-700 mb-1.5 font-medium">Nombre</label>
+                        <input type="text" id="nombre" class="w-full px-3 py-2 text-sm rounded-lg border border-gray-300 focus:outline-none focus:border-cyan-500 focus:ring-1 focus:ring-cyan-200 transition" placeholder="Nombre" required>
+                    </div>
+                    <div>
+                        <label class="block text-gray-700 mb-1.5 font-medium">Apellido</label>
+                        <input type="text" id="apellido" class="w-full px-3 py-2 text-sm rounded-lg border border-gray-300 focus:outline-none focus:border-cyan-500 focus:ring-1 focus:ring-cyan-200 transition" placeholder="Apellido" required>
+                    </div>
+                    <div>
+                        <label class="block text-gray-700 mb-1.5 font-medium">Teléfono</label>
+                        <input type="tel" id="telefono" class="w-full px-3 py-2 text-sm rounded-lg border border-gray-300 focus:outline-none focus:border-cyan-500 focus:ring-1 focus:ring-cyan-200 transition" placeholder="+51 999 999 999" required>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Sección 2: Datos de la Mascota -->
+            <div class="section-divider">
+                <h3 class="font-semibold text-gray-700 mb-3">
+                    <i class="fas fa-paw mr-2 text-cyan-500"></i>
+                    Datos de la Mascota
+                </h3>
+
+                <div id="comboMascotaContainer" class="hidden">
+                    <label class="block text-gray-700 mb-1.5 font-medium">Mascota</label>
+                    <select id="comboMascotas" class="w-full px-3 py-2 text-sm rounded-lg border border-gray-300">
+                        <option value="">Seleccione una mascota</option>
+                    </select>
+                </div>
+
+                <div id="inputNombreMascotaContainer" class="grid grid-cols-1 md:grid-cols-4 gap-3">
+                    <div>
+                        <label class="block text-gray-700 mb-1.5 font-medium">Nombre</label>
+                        <input id="nombreMascota" type="text" class="w-full px-3 py-2 text-sm rounded-lg border border-gray-300 focus:outline-none focus:border-cyan-500 focus:ring-1 focus:ring-cyan-200 transition" placeholder="Nombre" required>
+                    </div>
+
+                    <div>
+                        <label class="block text-gray-700 mb-1.5 font-medium">Especie</label>
+                        <select id="especie" class="w-full px-3 py-2 text-sm rounded-lg border border-gray-300 focus:outline-none focus:border-cyan-500 focus:ring-1 focus:ring-cyan-200 transition" required>
+                            <option value="">Seleccionar</option>
+                            <option>Perro</option>
+                            <option>Gato</option>
+                            <option>Ave</option>
+                            <option>Conejo</option>
+                            <option>Otro</option>
+                        </select>
+                    </div>
+
+                    <div>
+                        <label class="block text-gray-700 mb-1.5 font-medium">Raza</label>
+                        <input type="text" id="raza" class="w-full px-3 py-2 text-sm rounded-lg border border-gray-300 focus:outline-none focus:border-cyan-500 focus:ring-1 focus:ring-cyan-200 transition" placeholder="Raza">
+                    </div>
+
+                    <div>
+                        <label class="block text-gray-700 mb-1.5 font-medium">Edad (años)</label>
+                        <input type="number" id="edad" min="0" class="w-full px-3 py-2 text-sm rounded-lg border border-gray-300 focus:outline-none focus:border-cyan-500 focus:ring-1 focus:ring-cyan-200 transition" placeholder="0">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Sección 3: Detalles de la Cita -->
+            <div class="section-divider">
+                <h3 class="font-semibold text-gray-700 mb-3">
+                    <i class="fas fa-calendar-alt mr-2 text-cyan-500"></i>
+                    Detalles de la Cita
+                </h3>
+
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-3 mb-3">
+                    <div>
+                        <label class="block text-gray-700 mb-1.5 font-medium">Servicio</label>
+                        <select name="servicio" id="servicio" class="w-full px-3 py-2 text-sm rounded-lg border border-gray-300 focus:outline-none focus:border-cyan-500 focus:ring-1 focus:ring-cyan-200 transition" required>
+                            <option value="">Cargando servicios...</option>
+                        </select>
+                    </div>
+
+                    <div>
+                        <label class="block text-gray-700 mb-1.5 font-medium">Fecha</label>
+                        <input type="date" id="fecha" class="w-full px-3 py-2 text-sm rounded-lg border border-gray-300 focus:outline-none focus:border-cyan-500 focus:ring-1 focus:ring-cyan-200 transition" required>
+                    </div>
+
+                    <div>
+                        <label class="block text-gray-700 mb-1.5 font-medium">Hora</label>
+                        <input type="time" id="hora" class="w-full px-3 py-2 text-sm rounded-lg border border-gray-300 focus:outline-none focus:border-cyan-500 focus:ring-1 focus:ring-cyan-200 transition" required>
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block text-gray-700 mb-1.5 font-medium">Motivo de la consulta (Opcional)</label>
+                    <textarea id="motivo" rows="2" class="w-full px-3 py-2 text-sm rounded-lg border border-gray-300 focus:outline-none focus:border-cyan-500 focus:ring-1 focus:ring-cyan-200 transition resize-none" placeholder="Describe el motivo de la consulta"></textarea>
+                </div>
+            </div>
+
+            <!-- Botón de envío -->
+            <div class="flex justify-end pt-2">
+                <button type="submit" class="btn-primary px-6 py-2.5 rounded-lg font-semibold text-white shadow-lg">
+                    <i class="fas fa-check mr-2"></i>Confirmar Reserva
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Overlay difuminado para el carrito -->
+<div id="cartOverlay" onclick="closeCartModal()"></div>
+
+<!-- Sidebar Carrito Mejorado -->
+<div id="cartSidebar">
+    <div class="h-full flex flex-col">
+        <!-- Header del carrito -->
+        <div class="cart-header px-6 py-4">
+            <div class="flex justify-between items-center">
+                <div>
+                    <h2 class="text-xl font-bold">Mi Carrito</h2>
+                </div>
+                <button onclick="closeCartModal()" class="hover:bg-white/20 p-2 rounded-full transition">
+                    <i class="fas fa-times text-xl"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- Items del carrito -->
+        <div id="cart-items" class="flex-grow overflow-y-auto px-6 py-3">
+            <!-- Estado vacío -->
+            <div id="empty-cart-state" class="flex flex-col items-center justify-center h-full text-center">
+                <i class="fas fa-shopping-cart empty-cart-icon mb-3 text-3xl text-gray-400"></i>
+                <h3 class="text-base font-semibold text-gray-700 mb-1">Tu carrito está vacío</h3>
+                <p class="text-sm text-gray-500 mb-4">Agrega productos para comenzar tu compra</p>
+            </div>
+            <!-- Aquí se insertarán los items del carrito dinámicamente -->
+        </div>
+
+        <!-- Footer del carrito -->
+        <div class="cart-footer px-6 py-4">
+            <div class="space-y-2 mb-3">
+                <div class="flex justify-between text-gray-600 text-sm">
+                    <span>Subtotal:</span>
+                    <span id="cart-subtotal" class="font-semibold">S/. 0.00</span>
+                </div>
+                <div class="border-t pt-2 flex justify-between items-center">
+                    <span class="text-base font-bold text-gray-800">Total:</span>
+                    <span id="cart-total" class="text-xl font-bold text-cyan-500">S/. 0.00</span>
+                </div>
+            </div>
+
+            <button onclick="checkout()"
+                    class="flex items-center justify-center gap-2 w-full py-2.5 px-5 bg-cyan-500 hover:bg-cyan-600 text-white font-bold text-base rounded-lg shadow-md hover:shadow-xl transition-all duration-200">
+                <i class="fas fa-credit-card"></i>
+                Proceder al pago
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- Modal de Pago Mejorado -->
+<div id="paymentModal" class="modal">
+    <div class="modal-content max-w-md">
+        <!-- Header -->
+        <div class="flex justify-between items-center mb-6 pb-4 border-b border-gray-200">
+            <div>
+                <h2 class="text-2xl font-bold text-gray-800">Método de Pago</h2>
+                <p class="text-sm text-gray-500 mt-1">Selecciona cómo deseas pagar</p>
+            </div>
+            <button onclick="closePaymentModal()" class="text-gray-400 w-10 h-10 rounded-full flex items-center justify-center bg-gray-100 hover:bg-gray-200 transition">
+                <i class="fas fa-times text-lg"></i>
+            </button>
+        </div>
+
+        <form id="formPago" onsubmit="procesarPago(event)" class="space-y-5">
+            <!-- Total a pagar -->
+            <div class="bg-gradient-to-br from-cyan-500 to-cyan-600 rounded-2xl p-6 text-white shadow-lg text-center">
+                <p class="text-cyan-100 text-sm mb-1">Total a pagar</p>
+                <p id="payment-total" class="text-4xl font-bold">S/. 0.00</p>
+            </div>
+
+            <!-- Métodos de pago -->
+            <div class="space-y-3">
+                <!-- Yape -->
+                <button type="button" onclick="selectPaymentMethod('Yape')"
+                        class="payment-method w-full flex items-center gap-4 p-4 border-2 border-gray-200 rounded-xl transition hover:shadow-lg">
+                    <div class="w-12 h-12 bg-purple-500 rounded-xl flex items-center justify-center">
+                        <i class="fas fa-mobile-alt text-xl text-white"></i>
+                    </div>
+                    <div class="flex-1 text-left">
+                        <p class="font-semibold text-gray-800">Yape</p>
+                        <p class="text-xs text-gray-500">Pago instantáneo</p>
+                    </div>
+                    <i class="fas fa-check-circle text-2xl text-gray-300 payment-check"></i>
+                </button>
+
+                <!-- Plin -->
+                <button type="button" onclick="selectPaymentMethod('Plin')"
+                        class="payment-method w-full flex items-center gap-4 p-4 border-2 border-gray-200 rounded-xl transition hover:shadow-lg">
+                    <div class="w-12 h-12 bg-cyan-500 rounded-xl flex items-center justify-center">
+                        <i class="fas fa-wallet text-xl text-white"></i>
+                    </div>
+                    <div class="flex-1 text-left">
+                        <p class="font-semibold text-gray-800">Plin</p>
+                        <p class="text-xs text-gray-500">Pago rápido</p>
+                    </div>
+                    <i class="fas fa-check-circle text-2xl text-gray-300 payment-check"></i>
+                </button>
+
+                <!-- Efectivo -->
+                <button type="button" onclick="selectPaymentMethod('Efectivo')"
+                        class="payment-method w-full flex items-center gap-4 p-4 border-2 border-gray-200 rounded-xl transition hover:shadow-lg">
+                    <div class="w-12 h-12 bg-green-500 rounded-xl flex items-center justify-center">
+                        <i class="fas fa-money-bill-wave text-xl text-white"></i>
+                    </div>
+                    <div class="flex-1 text-left">
+                        <p class="font-semibold text-gray-800">Efectivo</p>
+                        <p class="text-xs text-gray-500">Paga en tienda</p>
+                    </div>
+                    <i class="fas fa-check-circle text-2xl text-gray-300 payment-check"></i>
+                </button>
+            </div>
+
+            <!-- Campo oculto -->
+            <input type="hidden" id="metodo-pago-seleccionado" name="metodoPago" required>
+
+            <!-- Botones -->
+            <div class="flex gap-3 pt-2">
+                <button type="button" onclick="closePaymentModal()"
+                        class="flex-1 px-6 py-3 border border-gray-300 text-gray-700 rounded-xl font-semibold bg-white hover:bg-gray-50 transition">
+                    Cancelar
+                </button>
+                <button type="submit"
+                        class="flex-1 btn-primary px-6 py-3 rounded-xl font-semibold text-white shadow-lg hover:shadow-xl transition">
+                    <i class="fas fa-check mr-2"></i>Confirmar
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Scripts -->
+<script src="/js/scriptToast.js"></script>
+<script src="/js/cliente/scriptHero.js"></script>
+<script src="/js/cliente/scriptServicios.js"></script>
+<script src="/js/cliente/scriptProductos.js"></script>
+<script src="/js/cliente/scriptEmail.js"></script>
+<script src="/js/cliente/scriptModal.js"></script>
+<script src="/js/cliente/scriptCarrito.js"></script>
+<script src="/js/cliente/scriptNavbar.js"></script>
+</body>
+</html>
