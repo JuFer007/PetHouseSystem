@@ -1,4 +1,11 @@
 package com.app.DTO;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
 
 public class ProductoEstadisticasDTO {
     private Long productoId;
@@ -7,9 +14,9 @@ public class ProductoEstadisticasDTO {
     private Double precio;
     private Integer stockActual;
     private String urlImagen;
-    private boolean activo;
-    private Integer totalVendido;
-    private Integer vecesVendido;
+    private Boolean activo;
+    private Long totalVendido;
+    private Long vecesVendido;
     private Double ingresoTotal;
     private Double ingresoPromedioPorVenta;
 }

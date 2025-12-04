@@ -1,4 +1,5 @@
 package com.app.Trabajador;
+import com.app.Enums.CargoTrabajador;
 import com.app.Usuario.Usuario;
 import com.app.Usuario.UsuarioService;
 import lombok.RequiredArgsConstructor;
@@ -27,8 +28,8 @@ public class TrabajadorService {
         return trabajadorRepository.findByActivo(activo);
     }
 
-    public List<Trabajador> findByCargo(String cargo) {
-        return trabajadorRepository.findByCargo(cargo);
+    public List<Trabajador> findByCargo(CargoTrabajador cargo) {
+        return trabajadorRepository.findByCargo(CargoTrabajador.valueOf(String.valueOf(cargo)));
     }
 
     public List<Trabajador> findByNombreOApellido(String texto) {

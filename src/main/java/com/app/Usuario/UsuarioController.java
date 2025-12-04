@@ -1,16 +1,10 @@
 package com.app.Usuario;
 import com.app.DTO.UsuarioDTO;
-import com.app.Enums.RolUsuario;
-import com.app.Horario.Horario;
 import com.app.Horario.HorarioRepository;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import java.time.DayOfWeek;
-import java.time.LocalDate;
-import java.time.LocalTime;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -25,65 +19,10 @@ public class UsuarioController {
     @PostMapping("/inicioSesion")
     public ResponseEntity<?> login(@RequestBody UsuarioDTO loginRequest, HttpSession session) {
         try {
-            Usuario usuario = usuarioService.findByCorreoElectronico(
-                    loginRequest.getCorreoElectronico()
-            );
-
-            if (!usuarioService.verificarPassword(
-                    loginRequest.getPassword(),
-                    usuario.getPassword())) {
-                return ResponseEntity.status(401)
-                        .body(Map.of("message", "Contraseña incorrecta"));
-            }
-
-            if (!usuario.isActivo()) {
-                return ResponseEntity.status(403)
-                        .body(Map.of("message", "Usuario desactivado"));
-            }
-
-            if (usuario.getRol() == RolUsuario.VETERINARIO) {
-                LocalTime horaActual = LocalTime.now();
-                DayOfWeek diaActual = LocalDate.now().getDayOfWeek();
-
-                List<Horario> horarios = horarioRepository
-                        .findByTrabajadorYHorario(
-                                usuario.getTrabajador().getId(),
-                                diaActual,
-                                horaActual
-                        );
-
-                if (horarios.isEmpty()) {
-                    return ResponseEntity.status(403).body(
-                            Map.of("message",
-                                    "No puede iniciar sesión fuera de su horario de trabajo")
-                    );
-                }
-            }
-
-            session.setAttribute("usuario", usuario);
-            session.setAttribute("usuarioId", usuario.getId());
-            session.setAttribute("rol", usuario.getRol());
-            session.setAttribute("idTrabajador", usuario.getTrabajador().getId());
-
-            Map<String, Object> response = new HashMap<>();
-            response.put("id", usuario.getId());
-            response.put("correoElectronico", usuario.getCorreoElectronico());
-            response.put("rol", usuario.getRol());
-            response.put("activo", usuario.isActivo());
-
-            if (usuario.getTrabajador() != null) {
-                Map<String, Object> trabajadorData = new HashMap<>();
-                trabajadorData.put("id", usuario.getTrabajador().getId());
-                trabajadorData.put("nombre", usuario.getTrabajador().getNombre());
-                trabajadorData.put("apellido", usuario.getTrabajador().getApellido());
-                trabajadorData.put("cargo", usuario.getTrabajador().getCargo());
-                response.put("trabajador", trabajadorData);
-            }
-
+            Map<String, Object> response = usuarioService.login(loginRequest, session, horarioRepository);
             return ResponseEntity.ok(response);
-        } catch (Exception e) {
-            return ResponseEntity.status(404)
-                    .body(Map.of("message", "Usuario no encontrado"));
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(401).body(Map.of("message", e.getMessage()));
         }
     }
 
@@ -132,27 +71,10 @@ public class UsuarioController {
 
     @GetMapping("/session")
     public ResponseEntity<?> getSession(HttpSession session) {
-        Usuario usuario = (Usuario) session.getAttribute("usuario");
-
-        if (usuario == null) {
-            return ResponseEntity.status(401).body(Map.of("message", "No hay sesión activa"));
+        try {
+            return ResponseEntity.ok(usuarioService.obtenerSesion(session));
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(401).body(Map.of("message", e.getMessage()));
         }
-
-        Map<String, Object> response = new HashMap<>();
-        response.put("id", usuario.getId());
-        response.put("correoElectronico", usuario.getCorreoElectronico());
-        response.put("rol", usuario.getRol());
-        response.put("activo", usuario.isActivo());
-
-        if (usuario.getTrabajador() != null) {
-            Map<String, Object> trabajadorData = new HashMap<>();
-            trabajadorData.put("id", usuario.getTrabajador().getId());
-            trabajadorData.put("nombre", usuario.getTrabajador().getNombre());
-            trabajadorData.put("apellido", usuario.getTrabajador().getApellido());
-            trabajadorData.put("cargo", usuario.getTrabajador().getCargo());
-            trabajadorData.put("telefono", usuario.getTrabajador().getTelefono());
-            response.put("trabajador", trabajadorData);
-        }
-        return ResponseEntity.ok(response);
     }
 }

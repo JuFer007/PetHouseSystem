@@ -1,7 +1,7 @@
 function togglePassword() {
     const passwordInput = document.getElementById('password');
     const eyeIcon = document.getElementById('eye-icon');
-    
+
     if (passwordInput.type === 'password') {
         passwordInput.type = 'text';
         eyeIcon.classList.remove('fa-eye');
@@ -15,10 +15,10 @@ function togglePassword() {
 
 document.getElementById('loginForm').addEventListener('submit', async (e) => {
     e.preventDefault();
-    
-    const correoElectronico = document.getElementById('correoElectronico').value;
-    const password = document.getElementById('password').value;
-    
+
+    const correoElectronico = document.getElementById('correoElectronico').value.trim();
+    const password = document.getElementById('password').value.trim();
+
     try {
         const response = await fetch('/api/usuarios/inicioSesion', {
             method: 'POST',
@@ -30,25 +30,37 @@ document.getElementById('loginForm').addEventListener('submit', async (e) => {
                 password
             })
         });
-        
-        const data = await response.json();
-        
-        if (response.ok) {
-            localStorage.setItem('usuario', JSON.stringify(data));
-            
-            showToast('success', 'Inicio de sesión exitoso', "Bienvenido(a) al sistema");
 
-            setTimeout(() => {
-                window.location.href = '/dashboard';
-            }, 1000);
-        } else {
-            showToast('error', data.message || 'Error al iniciar sesión', "Intente nuevamente");
+        const data = await response.json();
+
+        console.log("LOGIN RESPONSE:", data);
+
+        if (!response.ok) {
+            showToast('error', data.message || 'Error al iniciar sesión');
+            return;
         }
+
+        localStorage.setItem('usuario', JSON.stringify(data));
+
+        showToast('success', 'Inicio de sesión exitoso', 'Bienvenido(a)');
+
+        setTimeout(() => {
+
+            if (data.rol === 'CLIENTE') {
+                window.location.href = '/';
+
+            } else {
+                window.location.href = '/dashboard';
+            }
+
+        }, 800);
+
     } catch (error) {
         console.error('Error:', error);
         showToast('error', 'Error de conexión. Intente nuevamente.');
     }
 });
+
 
 function loginWithGmail() {
     showToast('info', 'Función de Gmail en desarrollo');

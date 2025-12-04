@@ -24,4 +24,9 @@ public class HomeController {
     public String returnRegistro() {
         return "register";
     }
+
+    @RequestMapping("/perfil")
+    public String returnPerfil() {
+        return "perfil";
+    }
 }

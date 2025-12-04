@@ -1,4 +1,5 @@
 package com.app.Trabajador;
+import com.app.Enums.CargoTrabajador;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -28,7 +29,16 @@ public class TrabajadorController {
 
     @GetMapping("/cargo/{cargo}")
     public ResponseEntity<List<Trabajador>> getByCargo(@PathVariable String cargo) {
-        return ResponseEntity.ok(trabajadorService.findByCargo(cargo));
+
+        CargoTrabajador cargoEnum;
+
+        try {
+            cargoEnum = CargoTrabajador.valueOf(cargo.toUpperCase());
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().build();
+        }
+
+        return ResponseEntity.ok(trabajadorService.findByCargo(CargoTrabajador.valueOf(String.valueOf(cargoEnum))));
     }
 
     @GetMapping("/buscar")

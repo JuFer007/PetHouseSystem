@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mi Perfil - PetHouse</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="icon" type="image/png" href="/recursos/logo.png">
+    <link rel="stylesheet" href="/css/styleIndex.css">
+</head>
+<body class="bg-gray-50">
+<!-- Navbar (igual que index.html, pero con botón de perfil activo) -->
+<nav class="fixed w-full top-0 z-50 shadow-md bg-white">
+    <div class="container mx-auto px-4 py-4 flex items-center justify-between">
+        <div class="flex items-center space-x-5">
+            <img src="/recursos/logo.png" alt="PetHouse Logo" style="height: 62px;">
+        </div>
+
+        <div class="hidden md:flex space-x-8 items-center">
+            <a href="/index#inicio" class="text-gray-700 hover:text-cyan-500 transition">Inicio</a>
+            <a href="/index#servicios" class="text-gray-700 hover:text-cyan-500 transition">Servicios</a>
+            <a href="/index#productos" class="text-gray-700 hover:text-cyan-500 transition">Productos</a>
+            <button class="relative hover:scale-110 transition-transform">
+                <i class="fas fa-user text-2xl text-cyan-500"></i>
+            </button>
+            <button onclick="cerrarSesion()" class="text-red-500 hover:text-red-700">
+                <i class="fas fa-sign-out-alt text-2xl"></i>
+            </button>
+        </div>
+    </div>
+</nav>
+
+<!-- Perfil del Cliente -->
+<section class="pt-32 pb-20 px-4">
+    <div class="container mx-auto max-w-6xl">
+        <!-- Header del perfil -->
+        <div class="bg-white rounded-2xl shadow-lg p-8 mb-8">
+            <div class="flex items-center space-x-6">
+                <div class="w-24 h-24 bg-gradient-to-br from-cyan-400 to-cyan-600 rounded-full flex items-center justify-center">
+                    <i class="fas fa-user text-4xl text-white"></i>
+                </div>
+                <div>
+                    <h1 id="nombreCliente" class="text-3xl font-bold text-gray-800">Cargando...</h1>
+                    <p id="dniCliente" class="text-gray-600">DNI: ...</p>
+                    <p id="telefonoCliente" class="text-gray-600">Teléfono: ...</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tabs -->
+        <div class="bg-white rounded-2xl shadow-lg mb-8">
+            <div class="flex border-b">
+                <button onclick="cambiarTab('citas')" id="tabCitas" class="flex-1 py-4 text-center font-semibold transition border-b-2 border-cyan-500 text-cyan-500">
+                    <i class="fas fa-calendar-alt mr-2"></i>Mis Citas
+                </button>
+                <button onclick="cambiarTab('mascotas')" id="tabMascotas" class="flex-1 py-4 text-center font-semibold transition text-gray-600 hover:text-cyan-500">
+                    <i class="fas fa-paw mr-2"></i>Mis Mascotas
+                </button>
+                <button onclick="cambiarTab('compras')" id="tabCompras" class="flex-1 py-4 text-center font-semibold transition text-gray-600 hover:text-cyan-500">
+                    <i class="fas fa-shopping-bag mr-2"></i>Mis Compras
+                </button>
+            </div>
+
+            <!-- Contenido de Citas -->
+            <div id="contenidoCitas" class="p-8">
+                <div class="grid md:grid-cols-2 gap-6" id="listaCitas">
+                    <!-- Se llena dinámicamente -->
+                </div>
+            </div>
+
+            <!-- Contenido de Mascotas -->
+            <div id="contenidoMascotas" class="p-8 hidden">
+                <div class="grid md:grid-cols-3 gap-6" id="listaMascotas">
+                    <!-- Se llena dinámicamente -->
+                </div>
+            </div>
+
+            <!-- Contenido de Compras -->
+            <div id="contenidoCompras" class="p-8 hidden">
+                <div class="space-y-4" id="listaCompras">
+                    <!-- Se llena dinámicamente -->
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<script src="/js/scriptToast.js"></script>
+<script src="/js/cliente/scriptPerfil.js"></script>
+</body>
+</html>

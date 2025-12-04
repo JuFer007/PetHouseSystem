@@ -3,6 +3,7 @@ import com.app.DTO.CitaResponseDTO;
 import com.app.Cita.CitaService;
 import com.app.Cliente.Cliente;
 import com.app.DTO.TicketDTO;
+import com.app.Enums.CargoTrabajador;
 import com.app.Mascota.Mascota;
 import com.app.Pago.Pago;
 import com.app.Pago.PagoService;
@@ -38,7 +39,7 @@ public class TicketService {
                 .findFirst()
                 .orElse(null);
 
-        List<Trabajador> veterinarios = trabajadorService.findByCargo("VETERINARIO");
+        List<Trabajador> veterinarios = trabajadorService.findByCargo(CargoTrabajador.VETERINARIO);
 
         List<Trabajador> activos = veterinarios.stream().filter(Trabajador::isActivo).toList();
 

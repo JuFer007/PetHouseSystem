@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PetHouse - Registro</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="icon" type="image/png" href="/recursos/logo.png">
+    <link rel="stylesheet" href="/css/styleLogin.css">
+</head>
+<body class="flex items-center justify-center p-4">
+<div class="login-container bg-white rounded-3xl shadow-2xl max-w-4xl w-full overflow-hidden relative">
+    <i class="fas fa-paw paw-decoration paw-1"></i>
+    <i class="fas fa-paw paw-decoration paw-2"></i>
+
+    <div class="grid md:grid-cols-2">
+        <!-- Lado Izquierdo - Formulario -->
+        <div class="p-12">
+            <div class="mb-8">
+                <h3 class="text-3xl font-bold text-gray-800 mb-2">Crear Cuenta</h3>
+                <p class="text-gray-600">Regístrate en PetHouse</p>
+            </div>
+
+            <form id="registerForm" class="space-y-4">
+                <!-- DNI con botón de búsqueda -->
+                <div class="input-group">
+                    <label class="block text-gray-700 font-medium mb-2">
+                        <i class="fas fa-id-card text-cyan-500 mr-2"></i>DNI
+                    </label>
+                    <div class="flex gap-2">
+                        <input
+                                type="text"
+                                id="dni"
+                                maxlength="8"
+                                required
+                                placeholder="12345678"
+                                class="flex-1 px-4 py-3 rounded-lg border-2 border-gray-200 focus:border-cyan-500 focus:outline-none transition"
+                        >
+                        <button type="button" onclick="buscarPorDNI()" class="px-4 bg-cyan-500 text-white rounded-lg hover:bg-cyan-600 transition">
+                            <i class="fas fa-search"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Nombre y Apellido -->
+                <div class="grid grid-cols-2 gap-4">
+                    <div class="input-group">
+                        <label class="block text-gray-700 font-medium mb-2">Nombre</label>
+                        <input
+                                type="text"
+                                id="nombre"
+                                required
+                                placeholder="Juan"
+                                class="w-full px-4 py-3 rounded-lg border-2 border-gray-200 focus:border-cyan-500 focus:outline-none transition"
+                        >
+                    </div>
+                    <div class="input-group">
+                        <label class="block text-gray-700 font-medium mb-2">Apellido</label>
+                        <input
+                                type="text"
+                                id="apellido"
+                                required
+                                placeholder="Pérez"
+                                class="w-full px-4 py-3 rounded-lg border-2 border-gray-200 focus:border-cyan-500 focus:outline-none transition"
+                        >
+                    </div>
+                </div>
+
+                <!-- Teléfono -->
+                <div class="input-group">
+                    <label class="block text-gray-700 font-medium mb-2">
+                        <i class="fas fa-phone text-cyan-500 mr-2"></i>Teléfono
+                    </label>
+                    <input
+                            type="tel"
+                            id="telefono"
+                            maxlength="9"
+                            required
+                            placeholder="999999999"
+                            class="w-full px-4 py-3 rounded-lg border-2 border-gray-200 focus:border-cyan-500 focus:outline-none transition"
+                    >
+                </div>
+
+                <!-- Correo -->
+                <div class="input-group">
+                    <label class="block text-gray-700 font-medium mb-2">
+                        <i class="fas fa-envelope text-cyan-500 mr-2"></i>Correo Electrónico
+                    </label>
+                    <input
+                            type="email"
+                            id="correo"
+                            required
+                            placeholder="ejemplo@correo.com"
+                            class="w-full px-4 py-3 rounded-lg border-2 border-gray-200 focus:border-cyan-500 focus:outline-none transition"
+                    >
+                </div>
+
+                <button type="submit" class="btn-primary w-full py-3 rounded-lg text-white font-semibold text-lg">
+                    <i class="fas fa-user-plus mr-2"></i>Registrarse
+                </button>
+            </form>
+
+            <div class="mt-6 text-center">
+                <p class="text-gray-600">
+                    ¿Ya tienes cuenta?
+                    <a href="/login" class="text-cyan-500 hover:text-cyan-600 font-semibold">
+                        Inicia sesión aquí
+                    </a>
+                </p>
+            </div>
+        </div>
+
+        <!-- Lado Derecho - Información -->
+        <div class="bg-gradient-to-br from-cyan-400 to-cyan-600 p-12 text-white flex flex-col justify-center relative overflow-hidden">
+            <div class="relative z-10">
+                <div class="mb-8 floating">
+                    <img src="/recursos/logo.png" alt="logo" class="w-36 h-30 mb-4">
+                </div>
+                <h2 class="text-4xl font-bold mb-4">¡Únete a PetHouse!</h2>
+                <p class="text-cyan-50 text-lg mb-8">
+                    Crea tu cuenta y disfruta de todos nuestros servicios veterinarios.
+                </p>
+                <div class="space-y-4">
+                    <div class="flex items-center space-x-3">
+                        <div class="w-10 h-10 bg-white/20 rounded-full flex items-center justify-center">
+                            <i class="fas fa-calendar-check"></i>
+                        </div>
+                        <span>Agenda citas fácilmente</span>
+                    </div>
+                    <div class="flex items-center space-x-3">
+                        <div class="w-10 h-10 bg-white/20 rounded-full flex items-center justify-center">
+                            <i class="fas fa-history"></i>
+                        </div>
+                        <span>Historial de mascotas</span>
+                    </div>
+                    <div class="flex items-center space-x-3">
+                        <div class="w-10 h-10 bg-white/20 rounded-full flex items-center justify-center">
+                            <i class="fas fa-shopping-cart"></i>
+                        </div>
+                        <span>Compra productos online</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="absolute -bottom-20 -left-20 w-64 h-64 bg-white/10 rounded-full"></div>
+            <div class="absolute -top-20 -right-20 w-64 h-64 bg-white/10 rounded-full"></div>
+        </div>
+    </div>
+</div>
+
+<script src="/js/scriptToast.js"></script>
+<script src="/js/register/scriptRegistro.js"></script>
+</body>
+</html>

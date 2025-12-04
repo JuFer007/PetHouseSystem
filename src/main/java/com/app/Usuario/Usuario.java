@@ -1,4 +1,5 @@
 package com.app.Usuario;
+import com.app.Cliente.Cliente;
 import com.app.Enums.RolUsuario;
 import com.app.Trabajador.Trabajador;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
@@ -29,4 +30,8 @@ public class Usuario {
     @JoinColumn(name = "trabajador_id", referencedColumnName = "id")
     @JsonIgnoreProperties("usuario")
     private Trabajador trabajador;
+
+    @OneToOne
+    @JoinColumn(name = "cliente_id", referencedColumnName = "id")
+    private Cliente cliente;
 }
