@@ -1,4 +1,5 @@
 package com.app.Producto;
+import com.app.DTO.ProductoEstadisticasDTO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -72,5 +73,10 @@ public class ProductoController {
     public ResponseEntity<Void> deleteById(@PathVariable Long id) {
         productoService.deleteById(id);
         return ResponseEntity.noContent().build();
+    }
+
+    @GetMapping("/estadisticas")
+    public ResponseEntity<List<ProductoEstadisticasDTO>> findAllConEstadisticas() {
+        return ResponseEntity.ok(productoService.findAllConEstadisticas());
     }
 }

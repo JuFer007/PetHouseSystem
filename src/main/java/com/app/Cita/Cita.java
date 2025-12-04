@@ -34,4 +34,7 @@ public class Cita {
     @ManyToOne
     @JoinColumn(name = "servicio_id")
     private Servicio servicio;
+
+    @Column(name = "veterinario_id")
+    private Long veterinarioId;
 }

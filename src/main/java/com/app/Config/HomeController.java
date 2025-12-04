@@ -19,4 +19,9 @@ public class HomeController {
     public String returnDashboard() {
         return "dashboard";
     }
+
+    @RequestMapping("registro")
+    public String returnRegistro() {
+        return "register";
+    }
 }

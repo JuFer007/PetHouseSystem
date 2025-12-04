@@ -16,7 +16,7 @@ import java.util.Map;
 
 @Configuration
 @EnableJpaRepositories(
-        basePackages = {"com.app.Cita", "com.app.Producto", "com.app.Servicio", "com.app.Venta", "com.app.DetalleVenta"},
+        basePackages = {"com.app.Cita", "com.app.Producto", "com.app.Servicio", "com.app.Venta", "com.app.DetalleVenta", "com.app.Horario"},
         entityManagerFactoryRef = "mysqlEntityManagerFactory",
         transactionManagerRef = "mysqlTransactionManager"
 )
@@ -44,7 +44,8 @@ public class MySQLConfig {
                         "com.app.Producto",
                         "com.app.Servicio",
                         "com.app.Venta",
-                        "com.app.DetalleVenta"
+                        "com.app.DetalleVenta",
+                        "com.app.Horario"
                 )
                 .persistenceUnit("mysql")
                 .properties(properties)

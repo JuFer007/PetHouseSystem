@@ -1,6 +1,5 @@
-// ================================
-// CARGAR SERVICIOS EN EL MODAL
-// ================================
+let veterinariosDisponibles = [];
+
 function cargarServiciosEnModal() {
     const selectServicio = document.getElementById("servicio");
     selectServicio.innerHTML = '<option value="">Seleccione un servicio</option>';
@@ -12,23 +11,58 @@ function cargarServiciosEnModal() {
             </option>
         `;
     });
-
-    console.log("Servicios cargados en modal:", serviciosDisponibles);
 }
 
-// ================================
-// ABRIR MODAL CON SERVICIO PRESELECCIONADO
-// ================================
-function abrirModalConServicio(servicioId) {
-    console.log("servicioId recibido:", servicioId, "tipo:", typeof servicioId);
+async function cargarVeterinariosDisponibles() {
+    const fecha = document.getElementById("fecha").value;
+    const hora = document.getElementById("hora").value;
 
+    if (!fecha || !hora) {
+        document.getElementById("veterinario-container").style.display = "none";
+        return;
+    }
+
+    try {
+        const response = await fetch(
+            `http://localhost:8080/api/veterinarios-disponibles?fecha=${fecha}&hora=${hora}`
+        );
+
+        veterinariosDisponibles = await response.json();
+
+        const select = document.getElementById("veterinario");
+        select.innerHTML = '<option value="">Seleccione un veterinario</option>';
+
+        if (veterinariosDisponibles.length === 0) {
+            showToast("warning", "Sin disponibilidad",
+                "No hay veterinarios disponibles para esta fecha y hora.");
+            document.getElementById("veterinario-container").style.display = "none";
+            return;
+        }
+
+        veterinariosDisponibles.forEach(vet => {
+            select.innerHTML += `
+                <option value="${vet.id}">
+                    ${vet.nombre} ${vet.apellido}
+                    (${vet.horaInicio} - ${vet.horaFin})
+                </option>
+            `;
+        });
+
+        document.getElementById("veterinario-container").style.display = "block";
+
+    } catch (error) {
+        console.error("Error cargando veterinarios:", error);
+        showToast("error", "Error", "No se pudieron cargar los veterinarios disponibles.");
+    }
+}
+
+function abrirModalConServicio(servicioId) {
     servicioSeleccionadoId = servicioId;
     cargarServiciosEnModal();
 
     setTimeout(() => {
         const select = document.getElementById("servicio");
         select.value = servicioId;
-        console.log("Valor asignado al select:", select.value);
     }, 100);
 
     document.getElementById("appointmentModal").classList.add("active");
@@ -36,17 +70,11 @@ function abrirModalConServicio(servicioId) {
     document.getElementById("fecha").min = hoy;
 }
 
-// ================================
-// CERRAR MODAL
-// ================================
 function closeAppointmentModal() {
     document.getElementById("appointmentModal").classList.remove("active");
     servicioSeleccionadoId = null;
 }
 
-// ================================
-// BUSCAR CLIENTE POR DNI
-// ================================
 async function buscarPorDNI() {
     const dni = document.getElementById("dni").value;
 
@@ -67,10 +95,10 @@ async function buscarPorDNI() {
         }
 
         document.getElementById("nombre").value =
-            (cliente?.nombre || reniecData.first_name || "");
+            (cliente?.nombre || reniecData.first_name || "").toUpperCase();
 
         document.getElementById("apellido").value =
-            (cliente?.apellido || `${reniecData.first_last_name || ""} ${reniecData.second_last_name || ""}`.trim());
+            (cliente?.apellido || `${reniecData.first_last_name || ""} ${reniecData.second_last_name || ""}`.trim()).toUpperCase();
 
         document.getElementById("telefono").value = cliente?.telefono || "";
 
@@ -85,24 +113,27 @@ async function buscarPorDNI() {
     }
 }
 
-// ================================
-// ENVIAR FORMULARIO DE CITA
-// ================================
 document.getElementById("formCita").addEventListener("submit", async (e) => {
     e.preventDefault();
 
     const servicioId = document.getElementById("servicio").value;
     const fechaInput = document.getElementById("fecha").value;
     const horaInput = document.getElementById("hora").value;
+    const veterinarioId = document.getElementById("veterinario").value;
 
-    // ✅ VALIDACIÓN FECHA Y HORARIO
+    if (!veterinarioId) {
+        showToast("warning", "Veterinario requerido",
+            "Debe seleccionar un veterinario para la cita.");
+        return;
+    }
+
     if (!validarFechaHora(fechaInput, horaInput)) return;
 
     const datos = {
         cliente: {
             dni: document.getElementById("dni").value,
-            nombre: document.getElementById("nombre").value,
-            apellido: document.getElementById("apellido").value,
+            nombre: document.getElementById("nombre").value.toUpperCase(),
+            apellido: document.getElementById("apellido").value.toUpperCase(),
             telefono: document.getElementById("telefono").value,
         },
         mascota: {
@@ -114,9 +145,10 @@ document.getElementById("formCita").addEventListener("submit", async (e) => {
         cita: {
             fecha: fechaInput,
             hora: horaInput,
-            motivo: document.getElementById("motivo").value,
+            motivo: document.getElementById("motivo").value.toUpperCase(),
             estado: "PENDIENTE",
-            servicioId: parseInt(servicioId) || null
+            servicioId: parseInt(servicioId) || null,
+            veterinarioId: parseInt(veterinarioId)
         }
     };
 
@@ -128,24 +160,24 @@ document.getElementById("formCita").addEventListener("submit", async (e) => {
         });
 
         if (response.ok) {
-            showToast("success", "Cita registrada", "La cita fue agendada exitosamente.");
+            showToast("success", "Cita registrada",
+                "La cita fue agendada exitosamente.");
             closeAppointmentModal();
             limpiarCamposModal();
         } else {
             const error = await response.json();
             console.error("Error del servidor:", error);
-            showToast("error", "Error al registrar", "No se pudo registrar la cita.");
+            showToast("error", "Error al registrar",
+                "No se pudo registrar la cita.");
         }
 
     } catch (error) {
         console.error("Error:", error);
-        showToast("error", "Error de conexión", "No se pudo conectar con el servidor.");
+        showToast("error", "Error de conexión",
+            "No se pudo conectar con el servidor.");
     }
 });
 
-// ================================
-// CARGAR MASCOTAS DE UN CLIENTE
-// ================================
 async function cargarMascotasDeCliente(clienteId) {
     try {
         const resp = await fetch(`http://localhost:8080/api/mascotas/cliente/${clienteId}`);
@@ -158,7 +190,6 @@ async function cargarMascotasDeCliente(clienteId) {
         combo.innerHTML = `<option value="">Seleccione una mascota</option>`;
 
         if (mascotas.length === 0) {
-            showToast("warning", "Sin mascotas", "Este cliente no tiene mascotas registradas.");
             comboContainer.classList.add("hidden");
             inputContainer.classList.remove("hidden");
             return;
@@ -188,18 +219,20 @@ async function cargarMascotasDeCliente(clienteId) {
 
     } catch (error) {
         console.error("Error cargando mascotas:", error);
-        console.log("error", "Error", "No se pudieron cargar las mascotas.");
     }
 }
 
-// ================================
-// CARGAR DATOS DE UNA MASCOTA SELECCIONADA
-// ================================
 function cargarInfoMascota(m) {
-    document.getElementById("nombreMascota").value = m.nombre;
-    document.getElementById("especie").value = m.especie;
-    document.getElementById("raza").value = m.raza;
+    document.getElementById("nombreMascota").value = m.nombre.toUpperCase();
+    document.getElementById("especie").value = m.especie.toUpperCase();
+    document.getElementById("raza").value = m.raza.toUpperCase();
     document.getElementById("edad").value = m.edad;
+}
+
+function limpiarComboMascotas() {
+    document.getElementById("comboMascotas").innerHTML =
+        `<option value="">Seleccione una mascota</option>`;
+    document.getElementById("comboMascotaContainer").classList.add("hidden");
 }
 
 function limpiarCamposModal() {
@@ -207,27 +240,23 @@ function limpiarCamposModal() {
     document.getElementById("nombre").value = "";
     document.getElementById("apellido").value = "";
     document.getElementById("telefono").value = "";
-
     document.getElementById("nombreMascota").value = "";
     document.getElementById("especie").value = "";
     document.getElementById("raza").value = "";
     document.getElementById("edad").value = "";
-
-    document.getElementById("comboMascotas").innerHTML = `<option value="">Seleccione una mascota</option>`;
-    document.getElementById("comboMascotaContainer").classList.add("hidden");
-    document.getElementById("inputNombreMascotaContainer").classList.remove("hidden");
-
     document.getElementById("servicio").value = "";
     document.getElementById("fecha").value = "";
     document.getElementById("hora").value = "";
     document.getElementById("motivo").value = "";
+    document.getElementById("veterinario").value = "";
+    document.getElementById("veterinario-container").style.display = "none";
+    limpiarComboMascotas();
 }
 
-//valdiar fecha y hora
 function validarFechaHora(fecha, hora) {
-
     if (!fecha || !hora) {
-        showToast("warning", "Datos incompletos", "Debe seleccionar fecha y hora.");
+        showToast("warning", "Datos incompletos",
+            "Debe seleccionar fecha y hora.");
         return false;
     }
 
@@ -235,16 +264,14 @@ function validarFechaHora(fecha, hora) {
     const fechaHoraSeleccionada = new Date(`${fecha}T${hora}`);
 
     if (fechaHoraSeleccionada < ahora) {
-        showToast(
-            "error",
-            "Fecha inválida",
-            "No puedes reservar una cita en una fecha u hora pasada."
-        );
+        showToast("error", "Fecha inválida",
+            "No puedes reservar una cita en una fecha u hora pasada.");
         return false;
     }
 
     const dia = fechaHoraSeleccionada.getDay();
-    const horaDecimal = fechaHoraSeleccionada.getHours() + (fechaHoraSeleccionada.getMinutes() / 60);
+    const horaDecimal = fechaHoraSeleccionada.getHours() +
+                        (fechaHoraSeleccionada.getMinutes() / 60);
 
     let horaInicio, horaFin;
 
@@ -257,17 +284,15 @@ function validarFechaHora(fecha, hora) {
     }
 
     if (horaDecimal < horaInicio || horaDecimal >= horaFin) {
-        const horarioTexto =
-            dia === 0
+        const horarioTexto = dia === 0
             ? "Domingos: 10:00 AM - 2:00 PM"
             : "Lunes a Sábado: 9:00 AM - 8:00 PM";
-        showToast(
-            "warning",
-            "Horario no disponible",
-            `La cita debe estar dentro del horario de atención:\n${horarioTexto}`
-        );
-
+        showToast("warning", "Horario no disponible",
+            `La cita debe estar dentro del horario de atención:\n${horarioTexto}`);
         return false;
     }
-   return true;
+    return true;
 }
+
+document.getElementById("fecha").addEventListener("change", cargarVeterinariosDisponibles);
+document.getElementById("hora").addEventListener("change", cargarVeterinariosDisponibles);

@@ -88,35 +88,39 @@ public class CitaService {
         if (existingCliente.isPresent()) {
             cliente = existingCliente.get();
         } else {
+            cliente.setNombre(cliente.getNombre().toUpperCase());
+            cliente.setApellido(cliente.getApellido().toUpperCase());
             cliente = clienteRepository.save(cliente);
         }
 
         Mascota mascota = citaDTO.getMascota();
         Optional<Mascota> existingMascota = mascotaRepository.findByNombreAndClienteId(
-                mascota.getNombre(), cliente.getId()
+                mascota.getNombre().toUpperCase(), cliente.getId()
         );
 
         if (existingMascota.isPresent()) {
             mascota = existingMascota.get();
         } else {
             mascota.setCliente(cliente);
+            mascota.setNombre(mascota.getNombre().toUpperCase());
+            mascota.setEspecie(mascota.getEspecie().toUpperCase());
+            mascota.setRaza(mascota.getRaza().toUpperCase());
             mascota = mascotaRepository.save(mascota);
         }
 
         Cita cita = new Cita();
         cita.setFecha(citaDTO.getCita().getFecha());
-        cita.setMotivo(citaDTO.getCita().getMotivo());
+        cita.setMotivo(citaDTO.getCita().getMotivo() != null ? citaDTO.getCita().getMotivo().toUpperCase() : null);
         cita.setEstado(CitaEstado.valueOf(String.valueOf(citaDTO.getCita().getEstado())));
         cita.setMascotaId(mascota.getId());
         cita.setHora(citaDTO.getCita().getHora());
+        cita.setVeterinarioId(citaDTO.getCita().getVeterinarioId());
 
         Long servicioId = citaDTO.getCita().getServicioId();
         if (servicioId != null) {
-            Servicio servicio = servicioRepository.findById(servicioId)
-                    .orElseThrow(() -> new RuntimeException("Servicio no encontrado con ID: " + servicioId));
+            Servicio servicio = servicioRepository.findById(servicioId).orElseThrow(() -> new RuntimeException("Servicio no encontrado"));
             cita.setServicio(servicio);
         }
-
         return citaRepository.save(cita);
     }
 

@@ -1,5 +1,6 @@
 package com.app.Producto;
 import com.app.Config.ImagenService;
+import com.app.DTO.ProductoEstadisticasDTO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -96,5 +97,9 @@ public class ProductoService {
         Producto producto = findById(id);
         producto.setStock(producto.getStock() + cantidad);
         return productoRepository.save(producto);
+    }
+
+    public List<ProductoEstadisticasDTO> findAllConEstadisticas() {
+        return productoRepository.findAllConEstadisticas();
     }
 }

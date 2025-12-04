@@ -1,9 +1,15 @@
 package com.app.Usuario;
 import com.app.DTO.UsuarioDTO;
+import com.app.Enums.RolUsuario;
+import com.app.Horario.Horario;
+import com.app.Horario.HorarioRepository;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import java.time.DayOfWeek;
+import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -14,18 +20,44 @@ import java.util.Map;
 
 public class UsuarioController {
     private final UsuarioService usuarioService;
+    private final HorarioRepository horarioRepository;
 
     @PostMapping("/inicioSesion")
     public ResponseEntity<?> login(@RequestBody UsuarioDTO loginRequest, HttpSession session) {
         try {
-            Usuario usuario = usuarioService.findByCorreoElectronico(loginRequest.getCorreoElectronico());
+            Usuario usuario = usuarioService.findByCorreoElectronico(
+                    loginRequest.getCorreoElectronico()
+            );
 
-            if (!usuarioService.verificarPassword(loginRequest.getPassword(), usuario.getPassword())) {
-                return ResponseEntity.status(401).body(Map.of("message", "Contraseña incorrecta"));
+            if (!usuarioService.verificarPassword(
+                    loginRequest.getPassword(),
+                    usuario.getPassword())) {
+                return ResponseEntity.status(401)
+                        .body(Map.of("message", "Contraseña incorrecta"));
             }
 
             if (!usuario.isActivo()) {
-                return ResponseEntity.status(403).body(Map.of("message", "Usuario desactivado"));
+                return ResponseEntity.status(403)
+                        .body(Map.of("message", "Usuario desactivado"));
+            }
+
+            if (usuario.getRol() == RolUsuario.VETERINARIO) {
+                LocalTime horaActual = LocalTime.now();
+                DayOfWeek diaActual = LocalDate.now().getDayOfWeek();
+
+                List<Horario> horarios = horarioRepository
+                        .findByTrabajadorYHorario(
+                                usuario.getTrabajador().getId(),
+                                diaActual,
+                                horaActual
+                        );
+
+                if (horarios.isEmpty()) {
+                    return ResponseEntity.status(403).body(
+                            Map.of("message",
+                                    "No puede iniciar sesión fuera de su horario de trabajo")
+                    );
+                }
             }
 
             session.setAttribute("usuario", usuario);
@@ -50,7 +82,8 @@ public class UsuarioController {
 
             return ResponseEntity.ok(response);
         } catch (Exception e) {
-            return ResponseEntity.status(404).body(Map.of("message", "Usuario no encontrado"));
+            return ResponseEntity.status(404)
+                    .body(Map.of("message", "Usuario no encontrado"));
         }
     }
 
