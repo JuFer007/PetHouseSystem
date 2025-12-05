@@ -39,15 +39,14 @@ public class TicketService {
                 .findFirst()
                 .orElse(null);
 
-        List<Trabajador> veterinarios = trabajadorService.findByCargo(CargoTrabajador.VETERINARIO);
-
-        List<Trabajador> activos = veterinarios.stream().filter(Trabajador::isActivo).toList();
-
         Trabajador veterinario = null;
 
-        if (!activos.isEmpty()) {
-            Random rand = new Random();
-            veterinario = activos.get(rand.nextInt(activos.size()));
+        if (cita.getVeterinarioId() != null) {
+            try {
+                veterinario = trabajadorService.findById(cita.getVeterinarioId());
+            } catch (RuntimeException e) {
+                veterinario = null;
+            }
         }
 
         Double monto = pago != null ? pago.getMonto() : (servicio != null ? servicio.getPrecio() : 0.0);

@@ -56,7 +56,7 @@ public class CitaService {
         if (cita.getServicio() != null) {
             dto.setServicio(cita.getServicio());
         }
-
+        dto.setVeterinarioId(cita.getVeterinarioId());
         return dto;
     }
 
@@ -181,5 +181,12 @@ public class CitaService {
 
     public void deleteById(Long id) {
         citaRepository.deleteById(id);
+    }
+
+    public List<CitaResponseDTO> findByVeterinarioId(Long veterinarioId) {
+        return citaRepository.findByVeterinarioId(veterinarioId)
+                .stream()
+                .map(this::enrichCita)
+                .collect(Collectors.toList());
     }
 }

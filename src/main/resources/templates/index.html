@@ -443,7 +443,7 @@
             <!-- Métodos de pago -->
             <div class="space-y-3">
                 <!-- Yape -->
-                <button type="button" onclick="selectPaymentMethod('Yape')"
+                <button type="button" onclick="selectPaymentMethod('Yape', event)"
                         class="payment-method w-full flex items-center gap-4 p-4 border-2 border-gray-200 rounded-xl transition hover:shadow-lg">
                     <div class="w-12 h-12 bg-purple-500 rounded-xl flex items-center justify-center">
                         <i class="fas fa-mobile-alt text-xl text-white"></i>
@@ -456,7 +456,7 @@
                 </button>
 
                 <!-- Plin -->
-                <button type="button" onclick="selectPaymentMethod('Plin')"
+                <button type="button" onclick="selectPaymentMethod('Plin', event)"
                         class="payment-method w-full flex items-center gap-4 p-4 border-2 border-gray-200 rounded-xl transition hover:shadow-lg">
                     <div class="w-12 h-12 bg-cyan-500 rounded-xl flex items-center justify-center">
                         <i class="fas fa-wallet text-xl text-white"></i>
@@ -469,7 +469,7 @@
                 </button>
 
                 <!-- Efectivo -->
-                <button type="button" onclick="selectPaymentMethod('Efectivo')"
+                <button type="button" onclick="selectPaymentMethod('Efectivo', event)"
                         class="payment-method w-full flex items-center gap-4 p-4 border-2 border-gray-200 rounded-xl transition hover:shadow-lg">
                     <div class="w-12 h-12 bg-green-500 rounded-xl flex items-center justify-center">
                         <i class="fas fa-money-bill-wave text-xl text-white"></i>

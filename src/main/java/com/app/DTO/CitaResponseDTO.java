@@ -22,4 +22,5 @@ public class CitaResponseDTO {
     private Cliente cliente;
     private Mascota mascota;
     private Servicio servicio;
+    private Long veterinarioId;
 }

@@ -15,6 +15,5 @@ public interface HorarioRepository extends JpaRepository<Horario, Long> {
     @Query("SELECT h FROM Horario h WHERE h.trabajadorId = :trabajadorId " +
     "AND h.diaSemana = :dia AND h.activo = true " +
     "AND h.horaInicio <= :hora AND h.horaFin >= :hora")
-    List<Horario> findByTrabajadorYHorario(@Param("trabajadorId") Long trabajadorId, @Param("dia") DayOfWeek dia, @Param("hora") LocalTime hora
-    );
+    List<Horario> findByTrabajadorYHorario(@Param("trabajadorId") Long trabajadorId, @Param("dia") DayOfWeek dia, @Param("hora") LocalTime hora);
 }

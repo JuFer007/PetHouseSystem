@@ -14,15 +14,15 @@ public interface ProductoRepository extends JpaRepository<Producto, Long> {
     List<Producto> findByStockLessThan(Integer stock);
 
     @Query("SELECT new com.app.DTO.ProductoEstadisticasDTO(" +
-    "p.id, p.nombre, p.categoria, p.precio, p.stock, p.urlImagen, p.activo, " +
-    "COALESCE(SUM(dv.cantidad), 0), " +
-    "COALESCE(COUNT(DISTINCT dv.venta.id), 0), " +
-    "COALESCE(SUM(dv.subtotal), 0.0), " +
-    "CASE WHEN COUNT(DISTINCT dv.venta.id) > 0 " +
-    "THEN COALESCE(SUM(dv.subtotal), 0.0) / COUNT(DISTINCT dv.venta.id) " +
-    "ELSE 0.0 END) " +
-    "FROM Producto p " +
-    "LEFT JOIN DetalleVenta dv ON dv.producto.id = p.id " +
-    "GROUP BY p.id, p.nombre, p.categoria, p.precio, p.stock, p.urlImagen, p.activo")
+            "p.id, p.nombre, p.categoria, p.precio, p.stock, p.urlImagen, p.activo, " +
+            "COALESCE(SUM(dv.cantidad), 0L), " +
+            "COALESCE(COUNT(DISTINCT dv.venta.id), 0L), " +
+            "COALESCE(SUM(dv.subtotal), 0.0), " +
+            "CASE WHEN COUNT(DISTINCT dv.venta.id) > 0 " +
+            "THEN COALESCE(SUM(dv.subtotal), 0.0) / COUNT(DISTINCT dv.venta.id) " +
+            "ELSE 0.0 END) " +
+            "FROM Producto p " +
+            "LEFT JOIN DetalleVenta dv ON dv.producto.id = p.id " +
+            "GROUP BY p.id, p.nombre, p.categoria, p.precio, p.stock, p.urlImagen, p.activo")
     List<ProductoEstadisticasDTO> findAllConEstadisticas();
 }

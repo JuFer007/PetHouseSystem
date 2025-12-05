@@ -7,4 +7,5 @@ public class CitaDTO {
     private Cliente cliente;
     private Mascota mascota;
     private CitaDetalleDTO cita;
+
 }

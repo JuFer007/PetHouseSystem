@@ -81,11 +81,11 @@ public class UsuarioService {
         Usuario usuario = usuarioRepository.findByCorreoElectronico(loginRequest.getCorreoElectronico()).orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
 
         if (!verificarPassword(loginRequest.getPassword(), usuario.getPassword())) {
-            throw new RuntimeException("PASSWORD_INVALID");
+            throw new RuntimeException("Contraseña incorrecta. Intente de nuevo");
         }
 
         if (!usuario.isActivo()) {
-            throw new RuntimeException("USUARIO_INACTIVO");
+            throw new RuntimeException("Usuario inactivo, no puede ingresar");
         }
 
         if (usuario.getRol() == RolUsuario.VETERINARIO) {
@@ -96,7 +96,7 @@ public class UsuarioService {
             List<Horario> horarios = horarioRepository.findByTrabajadorYHorario(usuario.getTrabajador().getId(), diaActual, horaActual);
 
             if (horarios.isEmpty()) {
-                throw new RuntimeException("FUERA_DE_HORARIO");
+                throw new RuntimeException("Inicio de sesión fuera de horario");
             }
         }
 

@@ -36,7 +36,7 @@ document.getElementById('loginForm').addEventListener('submit', async (e) => {
         console.log("LOGIN RESPONSE:", data);
 
         if (!response.ok) {
-            showToast('error', data.message || 'Error al iniciar sesión');
+            showToast('error', data.message || 'Error al iniciar sesión', 'Intente nuevamente');
             return;
         }
 

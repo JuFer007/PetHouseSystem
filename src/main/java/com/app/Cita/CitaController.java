@@ -59,4 +59,11 @@ public class CitaController {
         citaService.deleteById(id);
         return ResponseEntity.noContent().build();
     }
+
+    @GetMapping("/veterinario/{id}")
+    public ResponseEntity<List<CitaResponseDTO>> findByVeterinario(@PathVariable Long id) {
+        return ResponseEntity.ok(
+                citaService.findByVeterinarioId(id)
+        );
+    }
 }

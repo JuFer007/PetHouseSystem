@@ -77,4 +77,12 @@ public class UsuarioController {
             return ResponseEntity.status(401).body(Map.of("message", e.getMessage()));
         }
     }
+
+    @PatchMapping("/{id}/estado")
+    public ResponseEntity<Usuario> cambiarEstado(@PathVariable Long id, @RequestBody Map<String, Boolean> estado) {
+        boolean activo = estado.get("activo");
+        Usuario usuario = activo ? usuarioService.activar(id) : usuarioService.desactivar(id);
+        return ResponseEntity.ok(usuario);
+    }
+
 }

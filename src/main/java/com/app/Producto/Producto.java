@@ -1,4 +1,5 @@
 package com.app.Producto;
+import com.app.Enums.ProductoCategoria;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -15,7 +16,9 @@ public class Producto {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String nombre;
-    private String categoria;
+
+    @Enumerated(EnumType.STRING)
+    private ProductoCategoria categoria;
     private Double precio;
     private Integer stock;
     private boolean activo = true;
