@@ -1,4 +1,4 @@
-// scriptHorarios.js - Versión Mejorada con Diseño Moderno
+// scriptHorarios.js - Versión Optimizada y Funcional
 
 let horarioActual = null;
 let todosTrabajadores = [];
@@ -13,11 +13,9 @@ const DIAS_SEMANA = {
     'SUNDAY': { corto: 'Dom', largo: 'Domingo' }
 };
 
-const formatHora = (hora) => {
-    if (!hora) return "-";
-    return hora.slice(0,5);
-};
+const formatHora = hora => hora ? hora.slice(0,5) : "-";
 
+// ==================== Cargar Trabajadores ====================
 async function cargarTrabajadoresHorario() {
     const response = await fetch('/api/trabajadores');
     todosTrabajadores = await response.json();
@@ -31,148 +29,20 @@ async function cargarTrabajadoresHorario() {
         });
 
     const select = document.getElementById('veterinarioHorarioSelect');
-    select.innerHTML = '<option value="">Seleccionar trabajador</option>';
+    select.innerHTML = '<option value="">Todos los trabajadores</option>';
 
     todosTrabajadores.forEach(t => {
-        select.innerHTML += `
-            <option value="${t.id}">
-                ${t.nombre} ${t.apellido} - ${t.cargo}
-            </option>`;
+        select.innerHTML += `<option value="${t.id}">${t.nombre} ${t.apellido} - ${t.cargo}</option>`;
     });
 }
 
-function crearVistaCalendario(trabajador, horarios) {
-    const container = document.createElement('div');
-    container.className = 'bg-white rounded-2xl shadow-lg p-6';
-
-    // Header con información del trabajador
-    const header = document.createElement('div');
-    header.className = 'bg-gradient-to-r from-cyan-500 to-blue-500 rounded-xl p-6 mb-6 text-white';
-    header.innerHTML = `
-        <div class="flex items-center justify-between">
-            <div class="flex items-center gap-4">
-                <div class="w-16 h-16 bg-white bg-opacity-20 rounded-full flex items-center justify-center">
-                    <i class="fas fa-user-md text-3xl"></i>
-                </div>
-                <div>
-                    <h3 class="text-2xl font-bold">${trabajador.nombre} ${trabajador.apellido}</h3>
-                    <p class="text-cyan-100 text-sm">${trabajador.cargo}</p>
-                    <p class="text-cyan-100 text-xs mt-1">
-                        <i class="fas fa-envelope mr-1"></i> ${trabajador.correoElectronico}
-                    </p>
-                </div>
-            </div>
-            <button onclick="abrirModalHorario(${trabajador.id})" 
-                    class="bg-white text-cyan-600 px-6 py-3 rounded-lg font-semibold hover:bg-cyan-50 transition shadow-lg">
-                <i class="fas fa-plus mr-2"></i>Nuevo Turno
-            </button>
-        </div>
-    `;
-    container.appendChild(header);
-
-    // Calendario semanal mejorado
-    const calendario = document.createElement('div');
-    calendario.className = 'grid grid-cols-7 gap-3';
-
-    Object.keys(DIAS_SEMANA).forEach(dia => {
-        const turnosDia = horarios.filter(h => h.diaSemana === dia && h.activo);
-        const diaInfo = DIAS_SEMANA[dia];
-        
-        const diaCard = document.createElement('div');
-        diaCard.className = `bg-gray-50 rounded-xl p-4 border-2 ${
-            turnosDia.length > 0 ? 'border-cyan-300 bg-cyan-50' : 'border-gray-200'
-        } hover:shadow-md transition`;
-
-        let turnosHTML = '';
-        if (turnosDia.length > 0) {
-            turnosDia.forEach(h => {
-                turnosHTML += `
-                    <div class="bg-white rounded-lg p-3 mb-2 shadow-sm border border-cyan-200 hover:shadow-md transition">
-                        <div class="flex items-center justify-between mb-2">
-                            <div class="flex items-center gap-2 text-cyan-600">
-                                <i class="fas fa-clock text-sm"></i>
-                                <span class="font-bold text-sm">${formatHora(h.horaInicio)}</span>
-                            </div>
-                            <div class="flex items-center gap-2 text-cyan-600">
-                                <span class="font-bold text-sm">${formatHora(h.horaFin)}</span>
-                                <i class="fas fa-arrow-right text-xs"></i>
-                            </div>
-                        </div>
-                        <div class="flex justify-center gap-2 pt-2 border-t border-gray-200">
-                            <button onclick="editarHorario(${h.id})" 
-                                    class="text-blue-600 hover:text-blue-800 text-xs px-2 py-1 rounded hover:bg-blue-50 transition"
-                                    title="Editar">
-                                <i class="fas fa-edit"></i>
-                            </button>
-                            <button onclick="eliminarHorario(${h.id})" 
-                                    class="text-red-600 hover:text-red-800 text-xs px-2 py-1 rounded hover:bg-red-50 transition"
-                                    title="Eliminar">
-                                <i class="fas fa-trash"></i>
-                            </button>
-                        </div>
-                    </div>
-                `;
-            });
-        } else {
-            turnosHTML = `
-                <div class="text-center py-4">
-                    <i class="fas fa-moon text-gray-300 text-2xl mb-2"></i>
-                    <p class="text-xs text-gray-400">Sin turnos</p>
-                </div>
-            `;
-        }
-
-        diaCard.innerHTML = `
-            <div class="text-center mb-3">
-                <div class="font-bold text-gray-700 text-sm">${diaInfo.corto}</div>
-                <div class="text-xs text-gray-500">${diaInfo.largo}</div>
-            </div>
-            ${turnosHTML}
-        `;
-
-        calendario.appendChild(diaCard);
-    });
-
-    container.appendChild(calendario);
-    return container;
-}
-
-async function cargarTodosLosHorarios() {
-    const contenedor = document.getElementById('contenedorHorarios');
-    contenedor.innerHTML = '';
-
-    if (todosTrabajadores.length === 0) {
-        contenedor.innerHTML = `
-            <div class="col-span-full text-center py-12">
-                <i class="fas fa-user-clock text-gray-300 text-6xl mb-4"></i>
-                <p class="text-gray-500 text-lg">No hay trabajadores registrados</p>
-            </div>
-        `;
-        return;
-    }
-
-    try {
-        for (const t of todosTrabajadores) {
-            const horarios = await fetch(`/api/horarios/trabajador/${t.id}`).then(r => r.json());
-            contenedor.appendChild(crearTarjetaCompacta(t, horarios));
-        }
-    } catch (err) {
-        contenedor.innerHTML = `
-            <div class="col-span-full text-center py-12 text-red-500">
-                <i class="fas fa-exclamation-triangle text-4xl mb-2"></i>
-                <p>Error cargando horarios</p>
-            </div>
-        `;
-        console.error(err);
-    }
-}
-
+// ==================== Crear Tarjeta de Trabajador ====================
 function crearTarjetaCompacta(trabajador, horarios) {
     const card = document.createElement('div');
     card.className = 'bg-white shadow-lg rounded-xl p-5 hover:shadow-xl transition';
 
     const totalHoras = calcularHorasSemana(horarios);
-    
+
     card.innerHTML = `
         <div class="flex items-center justify-between mb-4 pb-4 border-b">
             <div class="flex items-center gap-3">
@@ -187,6 +57,10 @@ function crearTarjetaCompacta(trabajador, horarios) {
             <div class="text-right">
                 <p class="text-xs text-gray-500">Horas/semana</p>
                 <p class="text-xl font-bold text-cyan-600">${totalHoras}h</p>
+                <button onclick="abrirModalHorario(${trabajador.id})"
+                        class="mt-2 bg-cyan-600 text-white text-xs px-3 py-1 rounded hover:bg-cyan-700 transition">
+                    <i class="fas fa-plus mr-1"></i>Nuevo Turno
+                </button>
             </div>
         </div>
 
@@ -194,46 +68,74 @@ function crearTarjetaCompacta(trabajador, horarios) {
             ${Object.keys(DIAS_SEMANA).map(dia => {
                 const turnosDia = horarios.filter(h => h.diaSemana === dia && h.activo);
                 const diaInfo = DIAS_SEMANA[dia];
+
                 return `
                     <div class="text-center">
                         <div class="text-xs font-semibold text-gray-600 mb-1">${diaInfo.corto}</div>
-                        <div class="h-16 ${turnosDia.length > 0 ? 'bg-cyan-100 border-2 border-cyan-400' : 'bg-gray-100'} rounded-lg flex flex-col items-center justify-center">
-                            ${turnosDia.length > 0 ? `
-                                <span class="text-xs font-bold text-cyan-700">${formatHora(turnosDia[0].horaInicio)}</span>
-                                <i class="fas fa-arrow-down text-xs text-cyan-500 my-0.5"></i>
-                                <span class="text-xs font-bold text-cyan-700">${formatHora(turnosDia[0].horaFin)}</span>
-                            ` : '<i class="fas fa-times text-gray-400 text-xs"></i>'}
+                        <div class="h-25 ${turnosDia.length > 0 ? 'bg-cyan-100 border-2 border-cyan-400' : 'bg-gray-100'} rounded-lg flex flex-col items-center justify-center p-1">
+                            ${turnosDia.length > 0 ? turnosDia.map(h => `
+                                <div class="flex flex-col items-center justify-center">
+                                    <span class="text-xs font-bold text-cyan-700">${formatHora(h.horaInicio)}</span>
+                                    <i class="fas fa-arrow-down text-xs text-cyan-500 my-0.5"></i>
+                                    <span class="text-xs font-bold text-cyan-700">${formatHora(h.horaFin)}</span>
+                                    <div class="flex gap-1 mt-1">
+                                        <button onclick="editarHorario(${h.id})"
+                                                class="text-blue-600 text-xs px-1 rounded hover:bg-blue-50"><i class="fas fa-edit"></i></button>
+                                        <button onclick="eliminarHorario(${h.id})"
+                                                class="text-red-600 text-xs px-1 rounded hover:bg-red-50"><i class="fas fa-trash"></i></button>
+                                    </div>
+                                </div>
+                            `).join('') : '<i class="fas fa-times text-gray-400 text-xs"></i>'}
                         </div>
                     </div>
                 `;
             }).join('')}
         </div>
     `;
-
     return card;
 }
 
+// ==================== Calcular Horas ====================
 function calcularHorasSemana(horarios) {
     return horarios.reduce((total, h) => {
         if (!h.activo) return total;
-        const inicio = h.horaInicio.split(':').map(Number);
-        const fin = h.horaFin.split(':').map(Number);
-        const horas = (fin[0] * 60 + fin[1] - (inicio[0] * 60 + inicio[1])) / 60;
-        return total + horas;
-    }, 0).toFixed(1);
+        const [hi, mi] = h.horaInicio.split(':').map(Number);
+        const [hf, mf] = h.horaFin.split(':').map(Number);
+        return total + (hf*60 + mf - (hi*60 + mi))/60;
+    },0).toFixed(1);
 }
 
-// Funciones del modal (sin cambios en la lógica)
-function abrirModalHorario(id = null) {
-    if (!id) {
-        const select = document.getElementById('veterinarioHorarioSelect').value;
-        if (!select) {
-            showToast('warning', 'Seleccione un trabajador');
-            return;
-        }
-        id = select;
+// ==================== Cargar Todos los Horarios ====================
+// ==================== Cargar Todos los Horarios ====================
+async function cargarTodosLosHorarios(trabajadorId = null) {
+    const contenedor = document.getElementById('contenedorHorarios');
+    contenedor.innerHTML = '';
+
+    const trabajadores = trabajadorId ? todosTrabajadores.filter(t => t.id == trabajadorId) : todosTrabajadores;
+
+    if(trabajadores.length === 0){
+        contenedor.innerHTML = '<div class="col-span-full text-center py-12 text-gray-500">No hay trabajadores</div>';
+        return;
     }
 
+    try {
+        for(const t of trabajadores){
+            const horarios = await fetch(`/api/horarios/trabajador/${t.id}`).then(r => r.json());
+            contenedor.appendChild(crearTarjetaCompacta(t, horarios));
+        }
+    } catch(err) {
+        contenedor.innerHTML = '<div class="col-span-full text-center py-12 text-red-500">Error cargando horarios</div>';
+        console.error(err);
+    }
+}
+
+// ==================== Modal ====================
+function abrirModalHorario(id = null){
+    if(!id){
+        const select = document.getElementById('veterinarioHorarioSelect').value;
+        if(!select){ showToast('warning','Seleccione un trabajador'); return; }
+        id = select;
+    }
     horarioActual = null;
     document.getElementById("horarioId").value = "";
     document.getElementById("horarioVetId").value = id;
@@ -242,11 +144,12 @@ function abrirModalHorario(id = null) {
     document.getElementById("modalHorario").classList.remove("hidden");
 }
 
-function cerrarModalHorario() {
+function cerrarModalHorario(){
     document.getElementById("modalHorario").classList.add("hidden");
 }
 
-async function editarHorario(id) {
+// ==================== Editar y Eliminar ====================
+async function editarHorario(id){
     const h = await fetch(`/api/horarios/${id}`).then(r => r.json());
     document.getElementById("horarioId").value = h.id;
     document.getElementById("horarioVetId").value = h.trabajadorId;
@@ -257,36 +160,35 @@ async function editarHorario(id) {
     document.getElementById("modalHorario").classList.remove("hidden");
 }
 
-async function eliminarHorario(id) {
-    if (!confirm("¿Eliminar este turno?")) return;
+async function eliminarHorario(id){
+    if(!confirm("¿Eliminar este turno?")) return;
     await fetch(`/api/horarios/${id}`, { method: "DELETE" });
     showToast("success","Horario eliminado");
+    await cargarTodosLosHorarios();
 }
 
-function validarCruceHorarios(nuevo, existentes, editarId = null) {
-    const toMin = h => {
-        const [hh, mm] = h.split(":").map(Number);
-        return hh * 60 + mm;
-    };
-
+// ==================== Validar Cruce ====================
+function validarCruceHorarios(nuevo, existentes, editarId = null){
+    const toMin = h => { const [hh, mm] = h.split(':').map(Number); return hh*60 + mm; };
     const nIni = toMin(nuevo.horaInicio);
     const nFin = toMin(nuevo.horaFin);
 
-    return existentes.some(h => {
-        if (!h.activo) return false;
-        if (editarId && h.id == editarId) return false;
+    return existentes.some(h=>{
+        if(!h.activo) return false;
+        if(editarId && h.id == editarId) return false;
         const i = toMin(formatHora(h.horaInicio));
         const f = toMin(formatHora(h.horaFin));
-        return (nIni < f && nFin > i);
+        return nIni < f && nFin > i;
     });
 }
 
-document.getElementById("formHorario").addEventListener("submit", async e => {
+// ==================== Formulario ====================
+document.getElementById("formHorario").addEventListener("submit", async e=>{
     e.preventDefault();
 
-    const horarioId  = document.getElementById("horarioId").value;
+    const horarioId = document.getElementById("horarioId").value;
     const trabajador = document.getElementById("horarioVetId").value;
-    const diaSemana  = document.getElementById("diaSemana").value;
+    const diaSemana = document.getElementById("diaSemana").value;
 
     const data = {
         trabajadorId: Number(trabajador),
@@ -297,10 +199,10 @@ document.getElementById("formHorario").addEventListener("submit", async e => {
     };
 
     const horariosExistentes = await fetch(`/api/horarios/trabajador/${trabajador}`)
-        .then(r => r.json())
-        .then(h => h.filter(x => x.diaSemana === diaSemana));
+        .then(r=>r.json())
+        .then(h=>h.filter(x=>x.diaSemana === diaSemana));
 
-    if (validarCruceHorarios(data, horariosExistentes, horarioId || null)) {
+    if(validarCruceHorarios(data, horariosExistentes, horarioId || null)){
         showToast("error","Cruce de horario","Este turno se cruza con otro existente");
         return;
     }
@@ -308,7 +210,7 @@ document.getElementById("formHorario").addEventListener("submit", async e => {
     const url = horarioId ? `/api/horarios/${horarioId}` : `/api/horarios`;
     const method = horarioId ? 'PUT' : 'POST';
 
-    await fetch(url, {
+    await fetch(url,{
         method,
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(data)
@@ -316,59 +218,69 @@ document.getElementById("formHorario").addEventListener("submit", async e => {
 
     cerrarModalHorario();
     showToast("success","Guardado");
+    await cargarTodosLosHorarios();
 });
 
-async function cargarHorarioEmpleado(trabajadorId = null) {
-    if (!trabajadorId) {
-        const usuario = JSON.parse(localStorage.getItem("usuario"));
-        if (!usuario || !usuario.trabajador || usuario.rol === "ADMIN") return;
-        trabajadorId = usuario.trabajador.id;
-    }
+// ==================== Select de trabajador ====================
+async function cargarHorariosVeterinario(){
+    const select = document.getElementById('veterinarioHorarioSelect').value;
+    if(select) await cargarTodosLosHorarios(select);
+    else await cargarTodosLosHorarios();
+}
 
-    const contenedor = document.getElementById("contenedorSemanaEmpleado");
-    if (!contenedor) return;
-    
+// ==================== Inicialización ====================
+document.addEventListener("DOMContentLoaded", async ()=>{
+    await cargarTrabajadoresHorario();
+    await cargarTodosLosHorarios();
+});
+
+function obtenerTrabajadorLogueado() {
+    const usuarioJSON = localStorage.getItem('usuario'); // Ajusta la clave según tu almacenamiento
+    if (!usuarioJSON) return null;
+    return JSON.parse(usuarioJSON).trabajador; // Esto te da {id, nombre, apellido, cargo, ...}
+}
+
+async function cargarHorarioEmpleadoLogueado() {
+    const trabajador = obtenerTrabajadorLogueado();
+    if (!trabajador) return console.warn("No hay trabajador logueado");
+
+    const contenedor = document.getElementById('contenedorSemanaEmpleado');
+    const totalHorasEl = document.getElementById('horasSemanales');
     contenedor.innerHTML = '';
+    totalHorasEl.textContent = '0h';
 
     try {
-        const horarios = await fetch(`/api/horarios/trabajador/${trabajadorId}`).then(res => res.json());
+        const response = await fetch(`/api/horarios/trabajador/${trabajador.id}`);
+        if (!response.ok) throw new Error('No se pudo obtener horario');
+        const horarios = await response.json();
+
+        const totalHoras = calcularHorasSemana(horarios);
+        totalHorasEl.textContent = totalHoras + 'h';
 
         Object.keys(DIAS_SEMANA).forEach(dia => {
             const turnosDia = horarios.filter(h => h.diaSemana === dia && h.activo);
             const diaInfo = DIAS_SEMANA[dia];
-            
-            const diaCol = document.createElement('div');
-            diaCol.className = `rounded-xl p-3 ${turnosDia.length > 0 ? 'bg-cyan-50 border-2 border-cyan-300' : 'bg-gray-100'}`;
 
-            if (turnosDia.length > 0) {
-                diaCol.innerHTML = turnosDia.map(h => `
-                    <div class="bg-white rounded-lg p-2 shadow-sm mb-2">
-                        <div class="text-center">
-                            <div class="font-bold text-cyan-600 text-sm">${formatHora(h.horaInicio)}</div>
-                            <i class="fas fa-arrow-down text-cyan-400 text-xs my-1"></i>
-                            <div class="font-bold text-cyan-600 text-sm">${formatHora(h.horaFin)}</div>
-                        </div>
+            const diaDiv = document.createElement('div');
+            diaDiv.className = 'text-center bg-gray-100 rounded-lg p-2 min-h-[5rem] flex flex-col items-center justify-center';
+            diaDiv.innerHTML = `
+                <div class="font-semibold text-gray-600">${diaInfo.corto}</div>
+                <div class="text-xs text-gray-500 mb-1">${diaInfo.largo}</div>
+                ${turnosDia.length > 0 ? turnosDia.map(h => `
+                    <div class="text-cyan-700 font-bold text-sm">
+                        ${formatHora(h.horaInicio)} - ${formatHora(h.horaFin)}
                     </div>
-                `).join('');
-            } else {
-                diaCol.innerHTML = `
-                    <div class="text-center py-4">
-                        <i class="fas fa-moon text-gray-400 text-xl"></i>
-                        <p class="text-xs text-gray-500 mt-1">Libre</p>
-                    </div>
-                `;
-            }
-
-            contenedor.appendChild(diaCol);
+                `).join('') : '<div class="text-gray-400 text-xs">Libre</div>'}
+            `;
+            contenedor.appendChild(diaDiv);
         });
 
-    } catch (error) {
-        console.error("Error cargando horario del empleado:", error);
-        contenedor.innerHTML = '<div class="col-span-7 text-center text-red-500">Error cargando horario</div>';
+    } catch(err) {
+        contenedor.innerHTML = '<div class="col-span-full text-center py-12 text-red-500">Error cargando horario</div>';
+        console.error(err);
     }
 }
 
-document.addEventListener("DOMContentLoaded", () => {
-    cargarTrabajadoresHorario();
-    cargarHorarioEmpleado();
+document.addEventListener('DOMContentLoaded', () => {
+    cargarHorarioEmpleadoLogueado();
 });

@@ -1,6 +1,10 @@
 document.addEventListener('DOMContentLoaded', () => {
     cargarReporteProductos();
+    crearGraficos();
 });
+
+let chartVentas = null;
+let chartUnidades = null;
 
 async function cargarReporteProductos() {
     try {
@@ -30,10 +34,123 @@ async function cargarReporteProductos() {
         });
 
         window.productosReporte = productos;
+        actualizarGraficos(productos);
 
     } catch (error) {
         console.error("Error cargando reportes:", error);
     }
+}
+
+function crearGraficos() {
+    // Gráfico de Ventas
+    const ctxVentas = document.getElementById('graficoVentas');
+    if (ctxVentas) {
+        chartVentas = new Chart(ctxVentas.getContext('2d'), {
+            type: 'bar',
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: { display: true, position: 'top' },
+                    title: { display: true, text: 'Top 10 Productos por Ingresos', font: { size: 16, weight: 'bold' } }
+                }
+            }
+        });
+    }
+
+    // Gráfico de Unidades
+    const ctxUnidades = document.getElementById('graficoUnidades');
+    if (ctxUnidades) {
+        chartUnidades = new Chart(ctxUnidades.getContext('2d'), {
+            type: 'doughnut',
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: { display: true, position: 'right' },
+                    title: { display: true, text: 'Distribución de Unidades Vendidas', font: { size: 16, weight: 'bold' } }
+                }
+            }
+        });
+    }
+}
+
+function actualizarGraficos(productos) {
+    const top10 = productos
+        .sort((a, b) => parseFloat(b.ingresoTotal) - parseFloat(a.ingresoTotal))
+        .slice(0, 10);
+
+    if (chartVentas) {
+        chartVentas.data = {
+            labels: top10.map(p => p.nombreProducto),
+            datasets: [{
+                label: 'Ingresos (S/.)',
+                data: top10.map(p => parseFloat(p.ingresoTotal)),
+                backgroundColor: 'rgba(6, 182, 212, 0.7)',
+                borderColor: 'rgba(6, 182, 212, 1)',
+                borderWidth: 2
+            }]
+        };
+        chartVentas.update();
+    }
+
+   if (chartUnidades) {
+       chartUnidades.data = {
+           labels: top10.map(p => p.nombreProducto),
+           datasets: [{
+               data: top10.map(p => p.totalVendido),
+               backgroundColor: [
+                   'rgba(0, 255, 255, 0.8)',
+                   'rgba(0, 206, 209, 0.8)',
+                   'rgba(64, 224, 208, 0.8)',
+                   'rgba(175, 238, 238, 0.8)',
+                   'rgba(0, 191, 255, 0.8)',
+                   'rgba(135, 206, 250, 0.8)',
+                   'rgba(176, 224, 230, 0.8)',
+                   'rgba(173, 216, 230, 0.8)',
+                   'rgba(224, 255, 255, 0.8)',
+                   'rgba(95, 158, 160, 0.8)'
+               ]
+           }]
+       };
+       chartUnidades.update();
+   }
+}
+
+function filtrarProductos() {
+    const categoria = document.getElementById('filtroCategoria').value;
+    const busqueda = document.getElementById('busquedaProducto').value.toLowerCase();
+
+    let productosFiltrados = [...window.productosReporte];
+
+    if (categoria !== 'todos') {
+        productosFiltrados = productosFiltrados.filter(p => p.categoria === categoria);
+    }
+
+    if (busqueda) {
+        productosFiltrados = productosFiltrados.filter(p =>
+            p.nombreProducto.toLowerCase().includes(busqueda)
+        );
+    }
+
+    const tbody = document.querySelector('#tablaEstadisticasProductos tbody');
+    tbody.innerHTML = '';
+
+    productosFiltrados.forEach(p => {
+        const tr = document.createElement('tr');
+        tr.classList.add("border-b", "border-gray-200", "hover:bg-gray-50");
+        tr.innerHTML = `
+            <td class="py-2 px-3 font-semibold text-sm">${p.nombreProducto}</td>
+            <td class="py-2 px-3 text-sm">${p.categoria}</td>
+            <td class="py-2 px-3 text-right text-sm">S/. ${Number(p.precio).toFixed(2)}</td>
+            <td class="py-2 px-3 text-center text-sm ${p.stockActual <= 5 ? 'text-red-500 font-bold' : ''}">${p.stockActual}</td>
+            <td class="py-2 px-3 text-center text-green-600 font-semibold text-sm">${p.totalVendido}</td>
+            <td class="py-2 px-3 text-center text-sm">${p.vecesVendido}</td>
+            <td class="py-2 px-3 text-right font-bold text-cyan-600 text-sm">S/. ${Number(p.ingresoTotal).toFixed(2)}</td>
+            <td class="py-2 px-3 text-right text-sm">S/. ${Number(p.ingresoPromedioPorVenta).toFixed(2)}</td>
+        `;
+        tbody.appendChild(tr);
+    });
 }
 
 async function exportarPDF() {
@@ -43,10 +160,15 @@ async function exportarPDF() {
     }
 
     try {
+        showToast('info', 'Generando PDF', 'Por favor espera...');
+
         const response = await fetch('http://localhost:3007/generar-reporte-productos', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ productos: window.productosReporte })
+            body: JSON.stringify({
+                productos: window.productosReporte,
+                incluirGraficos: true
+            })
         });
 
         if (!response.ok) throw new Error('Error generando PDF');

@@ -195,21 +195,16 @@ async function cargarMascotasDeCliente(clienteId) {
             return;
         }
 
-        if (mascotas.length === 1) {
-            comboContainer.classList.add("hidden");
-            inputContainer.classList.remove("hidden");
-            cargarInfoMascota(mascotas[0]);
-            return;
-        }
-
         comboContainer.classList.remove("hidden");
         inputContainer.classList.remove("hidden");
 
-        mascotas.forEach(m => {
-            combo.innerHTML += `
-                <option value="${m.id}">${m.nombre} (${m.especie})</option>
-            `;
+        mascotas.forEach((m, index) => {
+            combo.innerHTML += `<option value="${m.id}">${m.nombre} (${m.especie})</option>`;
         });
+
+        const primeraMascota = mascotas[0];
+        combo.value = primeraMascota.id;
+        cargarInfoMascota(primeraMascota);
 
         combo.onchange = () => {
             const id = parseInt(combo.value);

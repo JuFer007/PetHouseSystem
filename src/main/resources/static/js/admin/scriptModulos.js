@@ -11,7 +11,7 @@ function showModule(moduleName, event = null) {
     // Actualizar header
     const headerTitles = {
         'dashboard': 'Dashboard',
-        'citas': 'Gestión de Citas',
+        'citas': 'Citas',
         'servicios': 'Servicios',
         'productos': 'Productos',
         'ventas': 'Ventas',
@@ -21,7 +21,10 @@ function showModule(moduleName, event = null) {
         'mascotas': 'Mascotas',
         'catalogo-enfermedades': 'Enfermedades',
         'catalogo-vacunas': 'Vacunas',
-        'historia-clinica': 'Historias Clínicas'
+        'historia-clinica': 'Historias Clínicas',
+        'horarios': 'Horarios',
+        'horarioTrabajador': 'Horario Semanal',
+        'reportes': 'Reportes'
     };
     document.getElementById('header-title').textContent = headerTitles[moduleName] || 'Módulo';
 

@@ -24,131 +24,130 @@
         </div>
     </div>
 
-    <nav class="p-4 h-full text-base">
+    <nav class="p-2 h-full text-sm overflow-auto">
         <!-- PRINCIPAL -->
-        <div class="mb-6">
-            <p class="text-xs text-gray-400 uppercase mb-2 px-4">Principal</p>
+        <div class="mb-4">
+            <p class="text-xs text-gray-400 uppercase mb-1 px-3">Principal</p>
             <a href="#" onclick="showModule('dashboard')"
-               class="sidebar-item active flex items-center px-4 py-3 rounded-lg"
+               class="sidebar-item active flex items-center px-3 py-2 rounded-lg"
                data-roles="ADMIN,VETERINARIO,RECEPCIONISTA">
-                <i class="fas fa-home w-6 text-lg"></i>
-                <span class="ml-3">Dashboard</span>
+                <i class="fas fa-home w-5 text-lg"></i>
+                <span class="ml-2">Dashboard</span>
             </a>
 
             <a href="#" onclick="showModule('reportes')"
-               class="sidebar-item flex items-center px-4 py-3 rounded-lg"
+               class="sidebar-item flex items-center px-3 py-2 rounded-lg"
                data-roles="ADMIN">
-                <i class="fas fa-chart-line w-6 text-lg"></i>
-                <span class="ml-3">Reportes</span>
+                <i class="fas fa-chart-line w-5 text-lg"></i>
+                <span class="ml-2">Reportes</span>
             </a>
         </div>
+
         <!-- GESTIÓN -->
-        <div class="mb-6">
-            <p class="text-xs text-gray-400 uppercase mb-2 px-4">Gestión</p>
+        <div class="mb-4">
+            <p class="text-xs text-gray-400 uppercase mb-1 px-3">Gestión</p>
 
             <a href="#" onclick="showModule('citas')"
-               class="sidebar-item flex items-center px-4 py-3 rounded-lg"
+               class="sidebar-item flex items-center px-3 py-2 rounded-lg"
                data-roles="ADMIN,VETERINARIO">
-                <i class="fas fa-calendar-alt w-6 text-lg"></i>
-                <span class="ml-3">Citas</span>
+                <i class="fas fa-calendar-alt w-5 text-lg"></i>
+                <span class="ml-2">Citas</span>
             </a>
 
             <a href="#" onclick="showModule('servicios')"
-               class="sidebar-item flex items-center px-4 py-3 rounded-lg"
+               class="sidebar-item flex items-center px-3 py-2 rounded-lg"
                data-roles="ADMIN">
-                <i class="fas fa-briefcase-medical w-6 text-lg"></i>
-                <span class="ml-3">Servicios</span>
+                <i class="fas fa-briefcase-medical w-5 text-lg"></i>
+                <span class="ml-2">Servicios</span>
             </a>
 
             <a href="#" onclick="showModule('productos')"
-               class="sidebar-item flex items-center px-4 py-3 rounded-lg"
+               class="sidebar-item flex items-center px-3 py-2 rounded-lg"
                data-roles="ADMIN">
-                <i class="fas fa-box w-6 text-lg"></i>
-                <span class="ml-3">Productos</span>
+                <i class="fas fa-box w-5 text-lg"></i>
+                <span class="ml-2">Productos</span>
             </a>
 
             <a href="#" onclick="showModule('pagos')"
-               class="sidebar-item flex items-center px-4 py-3 rounded-lg"
+               class="sidebar-item flex items-center px-3 py-2 rounded-lg"
                data-roles="ADMIN,RECEPCIONISTA">
-                <i class="fas fa-credit-card w-6 text-lg"></i>
-                <span class="ml-3">Pagos</span>
+                <i class="fas fa-credit-card w-5 text-lg"></i>
+                <span class="ml-2">Pagos</span>
             </a>
 
             <a href="#" onclick="showModule('ventas')"
-               class="sidebar-item flex items-center px-4 py-3 rounded-lg"
+               class="sidebar-item flex items-center px-3 py-2 rounded-lg"
                data-roles="ADMIN">
-                <i class="fas fa-shopping-cart w-6 text-lg"></i>
-                <span class="ml-3">Ventas</span>
+                <i class="fas fa-shopping-cart w-5 text-lg"></i>
+                <span class="ml-2">Ventas</span>
             </a>
 
             <a href="#" onclick="showModule('horarios')"
-               class="sidebar-item flex items-center px-4 py-3 rounded-lg"
+               class="sidebar-item flex items-center px-3 py-2 rounded-lg"
                data-roles="ADMIN">
-                <i class="fas fa-clock w-6 text-lg"></i>
-                <span class="ml-3">Horarios</span>
+                <i class="fas fa-clock w-5 text-lg"></i>
+                <span class="ml-2">Horarios</span>
             </a>
 
             <a href="#" onclick="showModule('horarioTrabajador')"
-               class="sidebar-item flex items-center px-4 py-3 rounded-lg"
+               class="sidebar-item flex items-center px-3 py-2 rounded-lg"
                data-roles="RECEPCIONISTA,VETERINARIO">
-                <i class="fas fa-clock w-6 text-lg"></i>
-                <span class="ml-3">Horario</span>
+                <i class="fas fa-clock w-5 text-lg"></i>
+                <span class="ml-2">Horario</span>
             </a>
 
             <a href="#" onclick="showModule('usuarios')"
-               class="sidebar-item flex items-center px-4 py-3 rounded-lg"
+               class="sidebar-item flex items-center px-3 py-2 rounded-lg"
                data-roles="ADMIN">
-                <i class="fas fa-users-cog w-6 text-lg"></i>
-                <span class="ml-3">Usuarios</span>
+                <i class="fas fa-users-cog w-5 text-lg"></i>
+                <span class="ml-2">Usuarios</span>
             </a>
         </div>
 
         <!-- MASCOTAS Y PERSONAS -->
-        <div class="mb-6">
-            <p class="text-xs text-gray-400 uppercase mb-2 px-4">
-                Mascotas y Personas
-            </p>
+        <div class="mb-4">
+            <p class="text-xs text-gray-400 uppercase mb-1 px-3">Mascotas y Personas</p>
 
             <a href="#" onclick="showModule('trabajadores')"
-               class="sidebar-item flex items-center px-4 py-3 rounded-lg"
+               class="sidebar-item flex items-center px-3 py-2 rounded-lg"
                data-roles="ADMIN">
-                <i class="fas fa-user-tie w-6 text-lg"></i>
-                <span class="ml-3">Trabajadores</span>
+                <i class="fas fa-user-tie w-5 text-lg"></i>
+                <span class="ml-2">Trabajadores</span>
             </a>
 
             <a href="#" onclick="showModule('clientes')"
-               class="sidebar-item flex items-center px-4 py-3 rounded-lg"
+               class="sidebar-item flex items-center px-3 py-2 rounded-lg"
                data-roles="ADMIN,RECEPCIONISTA">
-                <i class="fas fa-users w-6 text-lg"></i>
-                <span class="ml-3">Clientes</span>
+                <i class="fas fa-users w-5 text-lg"></i>
+                <span class="ml-2">Clientes</span>
             </a>
 
             <a href="#" onclick="showModule('mascotas')"
-               class="sidebar-item flex items-center px-4 py-3 rounded-lg"
+               class="sidebar-item flex items-center px-3 py-2 rounded-lg"
                data-roles="ADMIN,VETERINARIO">
-                <i class="fas fa-dog w-6 text-lg"></i>
-                <span class="ml-3">Mascotas</span>
+                <i class="fas fa-dog w-5 text-lg"></i>
+                <span class="ml-2">Mascotas</span>
             </a>
 
             <a href="#" onclick="showModule('catalogo-enfermedades')"
-               class="sidebar-item flex items-center px-4 py-3 rounded-lg"
+               class="sidebar-item flex items-center px-3 py-2 rounded-lg"
                data-roles="ADMIN,VETERINARIO">
-                <i class="fas fa-virus w-6 text-lg"></i>
-                <span class="ml-3">Enfermedades</span>
+                <i class="fas fa-virus w-5 text-lg"></i>
+                <span class="ml-2">Enfermedades</span>
             </a>
 
             <a href="#" onclick="showModule('catalogo-vacunas')"
-               class="sidebar-item flex items-center px-4 py-3 rounded-lg"
+               class="sidebar-item flex items-center px-3 py-2 rounded-lg"
                data-roles="ADMIN,VETERINARIO">
-                <i class="fas fa-syringe w-6 text-lg"></i>
-                <span class="ml-3">Vacunas</span>
+                <i class="fas fa-syringe w-5 text-lg"></i>
+                <span class="ml-2">Vacunas</span>
             </a>
 
             <a href="#" onclick="showModule('historia-clinica')"
-               class="sidebar-item flex items-center px-4 py-3 rounded-lg"
+               class="sidebar-item flex items-center px-3 py-2 rounded-lg"
                data-roles="ADMIN,VETERINARIO">
-                <i class="fas fa-notes-medical w-6 text-lg"></i>
-                <span class="ml-3">Historia Clínica</span>
+                <i class="fas fa-notes-medical w-5 text-lg"></i>
+                <span class="ml-2">Historia Clínica</span>
             </a>
         </div>
     </nav>
@@ -289,49 +288,7 @@
                 <div class="chart-container">
                     <h3 class="text-xl font-bold text-gray-800 mb-4">Actividad Reciente</h3>
                     <div id="actividad-reciente" class="space-y-4">
-                        <div class="flex items-center space-x-4 p-3 hover:bg-gray-50 rounded-lg transition">
-                            <div class="w-10 h-10 bg-cyan-100 rounded-full flex items-center justify-center">
-                                <i class="fas fa-calendar-check text-cyan-500"></i>
-                            </div>
-                            <div class="flex-1">
-                                <p class="font-semibold text-gray-800">Nueva cita agendada</p>
-                                <p class="text-sm text-gray-500">Cliente: María González - Mascota: Max</p>
-                            </div>
-                            <span class="text-xs text-gray-400">Hace 5 min</span>
-                        </div>
-
-                        <div class="flex items-center space-x-4 p-3 hover:bg-gray-50 rounded-lg transition">
-                            <div class="w-10 h-10 bg-green-100 rounded-full flex items-center justify-center">
-                                <i class="fas fa-shopping-cart text-green-500"></i>
-                            </div>
-                            <div class="flex-1">
-                                <p class="font-semibold text-gray-800">Venta realizada</p>
-                                <p class="text-sm text-gray-500">Producto: Alimento Premium - S/. 125.00</p>
-                            </div>
-                            <span class="text-xs text-gray-400">Hace 12 min</span>
-                        </div>
-
-                        <div class="flex items-center space-x-4 p-3 hover:bg-gray-50 rounded-lg transition">
-                            <div class="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center">
-                                <i class="fas fa-user-plus text-blue-500"></i>
-                            </div>
-                            <div class="flex-1">
-                                <p class="font-semibold text-gray-800">Nuevo cliente registrado</p>
-                                <p class="text-sm text-gray-500">Carlos Pérez con mascota Luna</p>
-                            </div>
-                            <span class="text-xs text-gray-400">Hace 1 hora</span>
-                        </div>
-
-                        <div class="flex items-center space-x-4 p-3 hover:bg-gray-50 rounded-lg transition">
-                            <div class="w-10 h-10 bg-purple-100 rounded-full flex items-center justify-center">
-                                <i class="fas fa-syringe text-purple-500"></i>
-                            </div>
-                            <div class="flex-1">
-                                <p class="font-semibold text-gray-800">Vacunación completada</p>
-                                <p class="text-sm text-gray-500">Mascota: Rocky - Vacuna antirrábica</p>
-                            </div>
-                            <span class="text-xs text-gray-400">Hace 2 horas</span>
-                        </div>
+                        <!-- carga dinamica -->
                     </div>
                 </div>
 
@@ -399,6 +356,16 @@
         </div>
 
         <div id="reportes" class="module-content hidden">
+            <!-- Gráficos -->
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+                <div class="chart-container">
+                    <canvas id="graficoVentas" height="300"></canvas>
+                </div>
+                <div class="chart-container">
+                    <canvas id="graficoUnidades" height="300"></canvas>
+                </div>
+            </div>
+
             <!-- Filtros y Búsqueda -->
             <div class="chart-container mb-6">
                 <div class="flex flex-col md:flex-row gap-4 items-center justify-between mb-6">
@@ -420,47 +387,35 @@
                         </button>
                     </div>
 
-                    <div class="w-full md:w-96">
-                        <div class="relative">
-                            <input type="text"
-                                   id="busquedaProducto"
-                                   placeholder="Buscar producto..."
-                                   oninput="filtrarProductos()"
-                                   class="w-full border rounded-lg pl-10 pr-4 py-2 focus:outline-none focus:ring-2 focus:ring-cyan-500">
-                            <i class="fas fa-search absolute left-3 top-3 text-gray-400"></i>
-                        </div>
-                    </div>
-
                     <button class="btn-primary flex items-center gap-2" onclick="exportarPDF()">
                         <i class="fas fa-file-pdf"></i>
                         Exportar PDF
                     </button>
                 </div>
-            </div>
-
-            <!-- Tabla de Estadísticas -->
-            <div class="chart-container">
-                <h3 class="text-xl font-bold text-gray-800 mb-6 flex items-center">
-                    Estadísticas Detalladas por Producto
-                </h3>
-                <div class="overflow-x-auto">
-                    <table class="w-full" id="tablaEstadisticasProductos">
-                        <thead>
-                        <tr class="border-b-2 border-gray-200 bg-gray-50">
-                            <th class="text-left py-4 px-4 text-gray-700 font-semibold">Producto</th>
-                            <th class="text-left py-4 px-4 text-gray-700 font-semibold">Categoría</th>
-                            <th class="text-right py-4 px-4 text-gray-700 font-semibold">Precio</th>
-                            <th class="text-center py-4 px-4 text-gray-700 font-semibold">Stock Actual</th>
-                            <th class="text-center py-4 px-4 text-gray-700 font-semibold">Total Vendido</th>
-                            <th class="text-center py-4 px-4 text-gray-700 font-semibold">N° Ventas</th>
-                            <th class="text-right py-4 px-4 text-gray-700 font-semibold">Ingreso Total</th>
-                            <th class="text-right py-4 px-4 text-gray-700 font-semibold">Promedio/Venta</th>
-                        </tr>
-                        </thead>
-                        <tbody>
-                        <!-- CARGA DINÁMICA -->
-                        </tbody>
-                    </table>
+                <!-- Tabla de Estadísticas -->
+                <div class="chart-container">
+                    <h3 class="text-xl font-bold text-gray-800 mb-6 flex items-center">
+                        Estadísticas Detalladas por Producto
+                    </h3>
+                    <div class="overflow-x-auto">
+                        <table class="w-full" id="tablaEstadisticasProductos">
+                            <thead>
+                            <tr class="border-b-2 border-gray-200 bg-gray-50">
+                                <th class="text-left py-4 px-4 text-gray-700 font-semibold">Producto</th>
+                                <th class="text-left py-4 px-4 text-gray-700 font-semibold">Categoría</th>
+                                <th class="text-right py-4 px-4 text-gray-700 font-semibold">Precio</th>
+                                <th class="text-center py-4 px-4 text-gray-700 font-semibold">Stock Actual</th>
+                                <th class="text-center py-4 px-4 text-gray-700 font-semibold">Total Vendido</th>
+                                <th class="text-center py-4 px-4 text-gray-700 font-semibold">N° Ventas</th>
+                                <th class="text-right py-4 px-4 text-gray-700 font-semibold">Ingreso Total</th>
+                                <th class="text-right py-4 px-4 text-gray-700 font-semibold">Promedio/Venta</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <!-- CARGA DINÁMICA -->
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
             </div>
         </div>
@@ -1522,21 +1477,29 @@
         </div>
 
         <!-- Horario Semanal de un trabajador -->
-        <div id="horarioTrabajador" class="module-content mt-6">
-            <h3 class="text-xl font-bold mb-4">Mi Horario Semanal</h3>
+        <div id="horarioTrabajador" class="module-content">
+            <div class="chart-container mb-6">
+                <div class="bg-cyan-700 from-cyan-500 to-blue-500 rounded-xl p-6 mb-6 text-white">
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-center gap-4">
+                            <div class="w-16 h-16 bg-white bg-opacity-20 rounded-full flex items-center justify-center">
+                                <i class="fas fa-calendar-week text-3xl"></i>
+                            </div>
+                            <div>
+                                <h2 class="text-2xl font-bold">Mi Horario Semanal</h2>
+                                <p class="text-cyan-100 text-sm">Revisa tu agenda de trabajo</p>
+                            </div>
+                        </div>
+                        <div class="text-right">
+                            <p class="text-cyan-100 text-sm">Total horas semanales</p>
+                            <p id="horasSemanales" class="text-3xl font-bold">0h</p>
+                        </div>
+                    </div>
+                </div>
 
-            <div class="grid grid-cols-7 gap-2 text-center font-semibold text-gray-600">
-                <div>Lun</div>
-                <div>Mar</div>
-                <div>Mié</div>
-                <div>Jue</div>
-                <div>Vie</div>
-                <div>Sáb</div>
-                <div>Dom</div>
-            </div>
-
-            <div id="contenedorSemanaEmpleado" class="grid grid-cols-7 gap-2 mt-2">
-                <!-- Los horarios se cargarán aquí -->
+                <div id="contenedorSemanaEmpleado" class="grid grid-cols-7 gap-3 mt-3">
+                    <!-- Los horarios se cargarán aquí -->
+                </div>
             </div>
         </div>
 
@@ -1671,6 +1634,7 @@
         </div>
     </div>
 </main>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script src="/js/admin/scriptModulos.js"></script>
 <script src="/js/admin/scriptClima.js"></script>
 <script src="/js/admin/scriptNotificaciones.js"></script>

@@ -18,7 +18,7 @@ async function cargarCitas() {
         let url = apiUrl;
 
         if (usuario.rol === "VETERINARIO" && usuario.trabajador?.id) {
-            url += `/trabajador/${usuario.trabajador.id}`;
+            url += `/veterinario/${usuario.trabajador.id}`;
         }
 
         const res = await fetch(url);
