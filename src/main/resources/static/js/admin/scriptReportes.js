@@ -119,7 +119,7 @@ function actualizarGraficos(productos) {
 
 function filtrarProductos() {
     const categoria = document.getElementById('filtroCategoria').value;
-    const busqueda = document.getElementById('busquedaProducto').value.toLowerCase();
+    const busqueda = document.getElementById('busquedaProducto')?.value.toLowerCase() || '';
 
     let productosFiltrados = [...window.productosReporte];
 
@@ -153,8 +153,134 @@ function filtrarProductos() {
     });
 }
 
+// ============================================
+// FUNCIÓN MEJORADA PARA EXPORTAR PDF
+// ============================================
+
 async function exportarPDF() {
-    if (!window.productosReporte) {
+    if (!window.productosReporte || window.productosReporte.length === 0) {
+        showToast('error', 'Sin datos', 'No hay datos para exportar');
+        return;
+    }
+
+    // Crear overlay de loading
+    const loadingOverlay = document.createElement('div');
+    loadingOverlay.id = 'loadingOverlay';
+    loadingOverlay.innerHTML = `
+        <div style="position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+                    background: rgba(0,0,0,0.7); z-index: 9999;
+                    display: flex; align-items: center; justify-content: center;">
+            <div style="background: white; padding: 30px; border-radius: 15px; text-align: center;">
+                <i class="fas fa-spinner fa-spin text-5xl text-cyan-500 mb-4"></i>
+                <p class="text-xl font-semibold text-gray-800">Generando reporte PDF...</p>
+                <p class="text-gray-600 mt-2">Por favor espere un momento</p>
+            </div>
+        </div>
+    `;
+    document.body.appendChild(loadingOverlay);
+
+    try {
+        // 1. Obtener canvas de los gráficos
+        const canvasVentas = document.getElementById('graficoVentas');
+        const canvasUnidades = document.getElementById('graficoUnidades');
+
+        if (!canvasVentas || !canvasUnidades) {
+            throw new Error('No se encontraron los gráficos');
+        }
+
+        // 2. Convertir canvas a Base64 (imágenes PNG)
+        const graficoVentasBase64 = canvasVentas.toDataURL('image/png', 1.0);
+        const graficoIngresosBase64 = canvasUnidades.toDataURL('image/png', 1.0);
+
+        // 3. Preparar datos de productos con el formato correcto
+        const productosParaPDF = window.productosReporte.map(p => ({
+            nombre: p.nombreProducto,
+            categoria: p.categoria,
+            precio: parseFloat(p.precio),
+            stockActual: parseInt(p.stockActual),
+            totalVendido: parseInt(p.totalVendido),
+            numVentas: parseInt(p.vecesVendido),
+            ingresoTotal: parseFloat(p.ingresoTotal)
+        }));
+
+        // 4. Calcular totales
+        const totales = {
+            totalVendido: productosParaPDF.reduce((sum, p) => sum + p.totalVendido, 0),
+            totalVentas: productosParaPDF.reduce((sum, p) => sum + p.numVentas, 0),
+            ingresoTotal: productosParaPDF.reduce((sum, p) => sum + p.ingresoTotal, 0)
+        };
+
+        // 5. Obtener fechas actuales
+        const hoy = new Date();
+        const primerDiaMes = new Date(hoy.getFullYear(), hoy.getMonth(), 1);
+
+        const fechaInicio = primerDiaMes.toLocaleDateString('es-PE', {
+            day: '2-digit',
+            month: '2-digit',
+            year: 'numeric'
+        });
+
+        const fechaFin = hoy.toLocaleDateString('es-PE', {
+            day: '2-digit',
+            month: '2-digit',
+            year: 'numeric'
+        });
+
+        // 6. Preparar payload completo
+        const payload = {
+            titulo: "Reporte de Ventas de Productos",
+            fechaInicio: fechaInicio,
+            fechaFin: fechaFin,
+            productos: productosParaPDF,
+            graficoVentas: graficoVentasBase64,
+            graficoIngresos: graficoIngresosBase64,
+            totales: totales
+        };
+
+        // 7. Enviar al servidor
+        const response = await fetch('http://localhost:3007/generar-reporte-productos', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(payload)
+        });
+
+        if (!response.ok) {
+            const errorData = await response.json().catch(() => ({}));
+            throw new Error(errorData.error || 'Error al generar el PDF');
+        }
+
+        // 8. Descargar el PDF
+        const blob = await response.blob();
+        const url = window.URL.createObjectURL(blob);
+
+        // Abrir en nueva pestaña
+        window.open(url, '_blank');
+
+        // Limpiar URL después de un momento
+        setTimeout(() => window.URL.revokeObjectURL(url), 100);
+
+        showToast('success', 'PDF Generado', 'El reporte se generó correctamente');
+
+    } catch (error) {
+        console.error('Error al exportar PDF:', error);
+        showToast('error', 'Error', 'No se pudo generar el PDF: ' + error.message);
+    } finally {
+        // Remover loading overlay
+        const overlay = document.getElementById('loadingOverlay');
+        if (overlay) {
+            document.body.removeChild(overlay);
+        }
+    }
+}
+
+// ============================================
+// FUNCIÓN ALTERNATIVA: DESCARGAR EN VEZ DE ABRIR
+// ============================================
+
+async function exportarPDFDescarga() {
+    if (!window.productosReporte || window.productosReporte.length === 0) {
         showToast('error', 'Sin datos', 'No hay datos para exportar');
         return;
     }
@@ -162,13 +288,40 @@ async function exportarPDF() {
     try {
         showToast('info', 'Generando PDF', 'Por favor espera...');
 
+        const canvasVentas = document.getElementById('graficoVentas');
+        const canvasUnidades = document.getElementById('graficoUnidades');
+
+        const productosParaPDF = window.productosReporte.map(p => ({
+            nombre: p.nombreProducto,
+            categoria: p.categoria,
+            precio: parseFloat(p.precio),
+            stockActual: parseInt(p.stockActual),
+            totalVendido: parseInt(p.totalVendido),
+            numVentas: parseInt(p.vecesVendido),
+            ingresoTotal: parseFloat(p.ingresoTotal)
+        }));
+
+        const totales = {
+            totalVendido: productosParaPDF.reduce((sum, p) => sum + p.totalVendido, 0),
+            totalVentas: productosParaPDF.reduce((sum, p) => sum + p.numVentas, 0),
+            ingresoTotal: productosParaPDF.reduce((sum, p) => sum + p.ingresoTotal, 0)
+        };
+
+        const hoy = new Date();
+        const payload = {
+            titulo: "Reporte de Ventas de Productos",
+            fechaInicio: new Date(hoy.getFullYear(), hoy.getMonth(), 1).toLocaleDateString('es-PE'),
+            fechaFin: hoy.toLocaleDateString('es-PE'),
+            productos: productosParaPDF,
+            graficoVentas: canvasVentas.toDataURL('image/png', 1.0),
+            graficoIngresos: canvasUnidades.toDataURL('image/png', 1.0),
+            totales: totales
+        };
+
         const response = await fetch('http://localhost:3007/generar-reporte-productos', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-                productos: window.productosReporte,
-                incluirGraficos: true
-            })
+            body: JSON.stringify(payload)
         });
 
         if (!response.ok) throw new Error('Error generando PDF');
@@ -178,7 +331,10 @@ async function exportarPDF() {
         const a = document.createElement('a');
         a.href = url;
         a.download = `reporte-productos-${new Date().getTime()}.pdf`;
+        document.body.appendChild(a);
         a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
 
         showToast('success', 'PDF Generado', 'El reporte se descargó correctamente');
     } catch (error) {

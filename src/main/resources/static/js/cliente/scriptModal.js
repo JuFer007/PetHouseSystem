@@ -56,7 +56,8 @@ async function cargarVeterinariosDisponibles() {
     }
 }
 
-function abrirModalConServicio(servicioId) {
+// ==================== Abrir modal con datos precargados ====================
+async function abrirModalConServicio(servicioId) {
     servicioSeleccionadoId = servicioId;
     cargarServiciosEnModal();
 
@@ -65,9 +66,41 @@ function abrirModalConServicio(servicioId) {
         select.value = servicioId;
     }, 100);
 
+    // Cargar datos del cliente si está logueado
+    await cargarDatosClienteLogueado();
+
     document.getElementById("appointmentModal").classList.add("active");
     const hoy = new Date().toISOString().split('T')[0];
     document.getElementById("fecha").min = hoy;
+}
+
+// ==================== Cargar datos del cliente logueado ====================
+async function cargarDatosClienteLogueado() {
+    try {
+        const response = await fetch('/api/usuarios/session', {
+            method: 'GET',
+            credentials: 'include'
+        });
+
+        if (response.ok) {
+            const usuario = await response.json();
+
+            if (usuario.rol === 'CLIENTE' && usuario.cliente) {
+                const cliente = usuario.cliente;
+
+                // Precargar datos del cliente
+                document.getElementById("dni").value = cliente.dni;
+                document.getElementById("nombre").value = cliente.nombre;
+                document.getElementById("apellido").value = cliente.apellido;
+                document.getElementById("telefono").value = cliente.telefono || '';
+
+                // Cargar mascotas del cliente
+                await cargarMascotasDeCliente(cliente.id);
+            }
+        }
+    } catch (error) {
+        console.error('Error cargando datos del cliente:', error);
+    }
 }
 
 function closeAppointmentModal() {
@@ -164,6 +197,11 @@ document.getElementById("formCita").addEventListener("submit", async (e) => {
                 "La cita fue agendada exitosamente.");
             closeAppointmentModal();
             limpiarCamposModal();
+
+            // Si está en el perfil, recargar citas
+            if (window.location.hash === '#perfil') {
+                await cargarCitasPerfil();
+            }
         } else {
             const error = await response.json();
             console.error("Error del servidor:", error);

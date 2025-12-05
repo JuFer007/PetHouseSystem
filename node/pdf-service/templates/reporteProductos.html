@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reporte de Productos</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #fff;
+            color: #333;
+            padding: 20px;
+        }
+
+        .reporte {
+            max-width: 100%;
+        }
+
+        /* CABECERA */
+        .cabecera {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-bottom: 20px;
+            border-bottom: 3px solid #00CED1;
+            margin-bottom: 20px;
+        }
+
+        .logo-section {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .logo {
+            width: 80px;
+            height: 80px;
+            object-fit: contain;
+        }
+
+        .info-negocio {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .nombre-negocio {
+            font-size: 24px;
+            font-weight: bold;
+            color: #00CED1;
+            margin-bottom: 5px;
+        }
+
+        .subtitulo-negocio {
+            font-size: 12px;
+            color: #666;
+        }
+
+        .info-reporte {
+            text-align: right;
+        }
+
+        .titulo-reporte {
+            font-size: 20px;
+            font-weight: bold;
+            color: #2C3E50;
+            margin-bottom: 8px;
+        }
+
+        .fecha-reporte {
+            font-size: 11px;
+            color: #666;
+            margin: 3px 0;
+        }
+
+        /* SECCIÓN DE PERÍODO */
+        .periodo {
+            background: linear-gradient(135deg, #E0F7FA 0%, #B2EBF2 100%);
+            padding: 12px 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            border-left: 4px solid #00CED1;
+        }
+
+        .periodo-label {
+            font-size: 12px;
+            color: #00838F;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .periodo-fechas {
+            font-size: 14px;
+            color: #006064;
+            font-weight: bold;
+            margin-top: 4px;
+        }
+
+        /* TABLA */
+        .tabla-container {
+            margin: 20px 0;
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 11px;
+        }
+
+        thead {
+            background: linear-gradient(135deg, #00CED1 0%, #00ACC1 100%);
+            color: white;
+        }
+
+        th {
+            padding: 12px 8px;
+            text-align: left;
+            font-weight: 600;
+            text-transform: uppercase;
+            font-size: 10px;
+            letter-spacing: 0.5px;
+        }
+
+        td {
+            padding: 10px 8px;
+            border-bottom: 1px solid #E0E0E0;
+        }
+
+        .text-right {
+            text-align: right;
+        }
+
+        .text-center {
+            text-align: center;
+        }
+
+        .fila-par {
+            background: #FFFFFF;
+        }
+
+        .fila-impar {
+            background: #F0FDFF;
+        }
+
+        .fila-total {
+            background: linear-gradient(135deg, #E0F7FA 0%, #B2EBF2 100%);
+            font-weight: bold;
+            border-top: 2px solid #00CED1;
+        }
+
+        .fila-total td {
+            padding: 12px 8px;
+            color: #006064;
+            border-bottom: none;
+        }
+
+        /* GRÁFICOS */
+        .graficos-container {
+            margin-top: 30px;
+            page-break-inside: avoid;
+        }
+
+        .grafico {
+            margin-bottom: 30px;
+            page-break-inside: avoid;
+        }
+
+        .grafico h3 {
+            color: #006064;
+            font-size: 16px;
+            margin-bottom: 15px;
+            padding-bottom: 8px;
+            border-bottom: 2px solid #00CED1;
+        }
+
+        .grafico img {
+            width: 100%;
+            max-width: 100%;
+            height: auto;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0, 206, 209, 0.2);
+            border: 1px solid #B2EBF2;
+        }
+
+        /* PIE DE PÁGINA */
+        .pie {
+            margin-top: 40px;
+            padding-top: 20px;
+            border-top: 2px solid #B2EBF2;
+            text-align: center;
+            font-size: 10px;
+            color: #666;
+        }
+
+        .pie-info {
+            margin: 5px 0;
+        }
+
+        .pie-info:first-child {
+            color: #00838F;
+            font-weight: 600;
+        }
+
+        /* RESPONSIVE para impresión */
+        @media print {
+            body {
+                padding: 0;
+            }
+
+            .grafico {
+                page-break-before: auto;
+                page-break-after: auto;
+                page-break-inside: avoid;
+            }
+        }
+    </style>
+</head>
+<body>
+<div class="reporte">
+    <!-- CABECERA -->
+    <div class="cabecera">
+        <div class="logo-section">
+            <img class="logo" src="http://localhost:3007/recursos/logo.png" alt="Logo" onerror="this.style.display='none'">
+            <div class="info-negocio">
+                <div class="nombre-negocio">VETERINARIA PETHOUSE</div>
+                <div class="subtitulo-negocio">Sistema de Gestión Veterinaria</div>
+                <div class="subtitulo-negocio">Av. José Balta 456 - Chiclayo</div>
+            </div>
+        </div>
+        <div class="info-reporte">
+            <div class="titulo-reporte">{{titulo}}</div>
+            <div class="fecha-reporte">Generado el: {{fechaGeneracion}} - {{horaGeneracion}}</div>
+        </div>
+    </div>
+
+    <!-- PERÍODO -->
+    <div class="periodo">
+        <div class="periodo-label">Período del Reporte</div>
+        <div class="periodo-fechas">{{fechaInicio}} - {{fechaFin}}</div>
+    </div>
+
+    <!-- TABLA DE PRODUCTOS -->
+    <div class="tabla-container">
+        <table>
+            <thead>
+            <tr>
+                <th>Producto</th>
+                <th>Categoría</th>
+                <th class="text-right">Precio</th>
+                <th class="text-center">Stock Actual</th>
+                <th class="text-center">Total Vendido</th>
+                <th class="text-center">N° Ventas</th>
+                <th class="text-right">Ingreso Total</th>
+                <th class="text-right">Promedio/Venta</th>
+            </tr>
+            </thead>
+            <tbody>
+            {{productos}}
+            {{totales}}
+            </tbody>
+        </table>
+    </div>
+
+    <!-- GRÁFICOS -->
+    <div class="graficos-container">
+        {{graficoVentas}}
+        {{graficoIngresos}}
+    </div>
+
+    <!-- PIE DE PÁGINA -->
+    <div class="pie">
+        <div class="pie-info">VETERINARIA PETHOUSE - Sistema de Gestión</div>
+        <div class="pie-info">Celular: 944707103 | Email: contacto@pethouse.com</div>
+        <div class="pie-info">Este documento es generado automáticamente por el sistema</div>
+    </div>
+</div>
+</body>
+</html>

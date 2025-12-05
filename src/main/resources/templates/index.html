@@ -34,9 +34,29 @@
                 Contacto
                 <span class="absolute left-0 bottom-0 w-0 h-[2px] bg-cyan-500 transition-all duration-300 group-hover:w-full"></span>
             </a>
-            <button class="relative hover:scale-110 transition-transform" onclick="window.location.href='/login'">
+
+            <!-- Botón Usuario -->
+            <button id="btnUsuarioNav" class="relative hover:scale-110 transition-transform">
                 <i class="fas fa-user text-2xl text-cyan-500"></i>
             </button>
+
+            <!-- Link Perfil (OCULTO hasta login) -->
+            <a id="navPerfil"
+               href="#perfil"
+               style="display:none"
+               class="text-gray-700 hover:text-cyan-500 transition relative group font-semibold">
+                Mi Perfil
+                <span class="absolute left-0 bottom-0 w-0 h-[2px] bg-cyan-500 transition-all duration-300 group-hover:w-full"></span>
+            </a>
+
+            <!-- Cerrar sesión (OCULTO hasta login) -->
+            <button id="btnCerrarSesion"
+                    onclick="cerrarSesionCliente()"
+                    style="display:none"
+                    class="text-red-500 hover:text-red-600 font-semibold hover:underline transition">
+                Cerrar sesión
+            </button>
+
             <button onclick="openCartModal()" class="relative hover:scale-110 transition-transform">
                 <i class="fas fa-shopping-cart text-2xl text-cyan-500"></i>
                 <span id="cart-count" class="cart-badge">0</span>
@@ -55,6 +75,28 @@
             <a href="#servicios" class="text-gray-700 hover:text-cyan-500">Servicios</a>
             <a href="#productos" class="text-gray-700 hover:text-cyan-500">Productos</a>
             <a href="#contacto" class="text-gray-700 hover:text-cyan-500">Contacto</a>
+
+            <!-- Usuario -->
+            <button id="btnUsuarioNavMobile"
+                    class="text-left text-cyan-500 font-semibold">
+                <i class="fas fa-user mr-2"></i> Iniciar sesión
+            </button>
+
+            <!-- Perfil -->
+            <a id="navPerfilMobile"
+               href="#perfil"
+               style="display:none"
+               class="text-gray-700 hover:text-cyan-500 font-semibold">
+                Mi Perfil
+            </a>
+
+            <!-- Cerrar sesión -->
+            <button id="btnCerrarSesionMobile"
+                    onclick="cerrarSesionCliente()"
+                    style="display:none"
+                    class="text-red-500 hover:text-red-600 font-semibold text-left">
+                Cerrar sesión
+            </button>
         </div>
     </div>
 </nav>
@@ -107,6 +149,61 @@
 
         <div id="productos-container" class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
             <!-- Carga dinamica -->
+        </div>
+    </div>
+</section>
+
+<!-- Perfil -->
+<section id="perfil" class="py-20 px-4 bg-white" style="display: none;">
+    <div class="container mx-auto max-w-6xl">
+        <!-- Header del perfil -->
+        <div class="bg-gradient-to-br from-cyan-400 to-cyan-600 rounded-2xl shadow-lg p-8 mb-8 text-white">
+            <div class="flex items-center space-x-6">
+                <div class="w-24 h-24 bg-white/20 rounded-full flex items-center justify-center">
+                    <i class="fas fa-user text-4xl"></i>
+                </div>
+                <div>
+                    <h1 id="nombreClientePerfil" class="text-3xl font-bold">Cargando...</h1>
+                    <p id="dniClientePerfil" class="text-cyan-100">DNI: ...</p>
+                    <p id="telefonoClientePerfil" class="text-cyan-100">Teléfono: ...</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tabs -->
+        <div class="bg-white rounded-2xl shadow-lg mb-8">
+            <div class="flex border-b">
+                <button onclick="cambiarTabPerfil('citas')" id="tabPerfilCitas" class="flex-1 py-4 text-center font-semibold transition border-b-2 border-cyan-500 text-cyan-500">
+                    <i class="fas fa-calendar-alt mr-2"></i>Mis Citas
+                </button>
+                <button onclick="cambiarTabPerfil('mascotas')" id="tabPerfilMascotas" class="flex-1 py-4 text-center font-semibold transition text-gray-600 hover:text-cyan-500">
+                    <i class="fas fa-paw mr-2"></i>Mis Mascotas
+                </button>
+                <button onclick="cambiarTabPerfil('compras')" id="tabPerfilCompras" class="flex-1 py-4 text-center font-semibold transition text-gray-600 hover:text-cyan-500">
+                    <i class="fas fa-shopping-bag mr-2"></i>Mis Compras
+                </button>
+            </div>
+
+            <!-- Contenido de Citas -->
+            <div id="contenidoPerfilCitas" class="p-8">
+                <div class="grid md:grid-cols-2 gap-6" id="listaPerfilCitas">
+                    <p class="text-gray-500 col-span-2 text-center py-8">Cargando citas...</p>
+                </div>
+            </div>
+
+            <!-- Contenido de Mascotas -->
+            <div id="contenidoPerfilMascotas" class="p-8 hidden">
+                <div class="grid md:grid-cols-3 gap-6" id="listaPerfilMascotas">
+                    <p class="text-gray-500 col-span-3 text-center py-8">Cargando mascotas...</p>
+                </div>
+            </div>
+
+            <!-- Contenido de Compras -->
+            <div id="contenidoPerfilCompras" class="p-8 hidden">
+                <div class="space-y-4" id="listaPerfilCompras">
+                    <p class="text-gray-500 text-center py-8">Cargando compras...</p>
+                </div>
+            </div>
         </div>
     </div>
 </section>
@@ -507,6 +604,7 @@
 <script src="/js/cliente/scriptProductos.js"></script>
 <script src="/js/cliente/scriptEmail.js"></script>
 <script src="/js/cliente/scriptModal.js"></script>
+<script src="/js/cliente/scriptPerfil.js"></script>
 <script src="/js/cliente/scriptCarrito.js"></script>
 <script src="/js/cliente/scriptNavbar.js"></script>
 <script src="/js/cliente/scriptValidarCompra.js"></script>
