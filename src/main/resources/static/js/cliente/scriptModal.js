@@ -1,4 +1,5 @@
 let veterinariosDisponibles = [];
+let clienteActualSesion = null;
 
 function cargarServiciosEnModal() {
     const selectServicio = document.getElementById("servicio");
@@ -52,11 +53,9 @@ async function cargarVeterinariosDisponibles() {
 
     } catch (error) {
         console.error("Error cargando veterinarios:", error);
-        showToast("error", "Error", "No se pudieron cargar los veterinarios disponibles.");
     }
 }
 
-// ==================== Abrir modal con datos precargados ====================
 async function abrirModalConServicio(servicioId) {
     servicioSeleccionadoId = servicioId;
     cargarServiciosEnModal();
@@ -66,37 +65,36 @@ async function abrirModalConServicio(servicioId) {
         select.value = servicioId;
     }, 100);
 
-    // Cargar datos del cliente si está logueado
-    await cargarDatosClienteLogueado();
+    const usuario = await window.SistemaAutenticacion.verificarSesion();
+
+    if (usuario && usuario.cliente) {
+        clienteActualSesion = usuario.cliente;
+        await cargarDatosClienteLogueado(usuario.cliente);
+        document.getElementById("btnBuscarDNI").style.display = "none";
+    } else {
+        clienteActualSesion = null;
+        document.getElementById("btnBuscarDNI").style.display = "inline-block";
+    }
 
     document.getElementById("appointmentModal").classList.add("active");
     const hoy = new Date().toISOString().split('T')[0];
     document.getElementById("fecha").min = hoy;
 }
 
-async function cargarDatosClienteLogueado() {
+async function cargarDatosClienteLogueado(cliente) {
     try {
-        const response = await fetch('/api/usuarios/session', {
-            method: 'GET',
-            credentials: 'include'
-        });
+        document.getElementById("dni").value = cliente.dni;
+        document.getElementById("nombre").value = cliente.nombre;
+        document.getElementById("apellido").value = cliente.apellido;
+        document.getElementById("telefono").value = cliente.telefono || '';
 
-        if (response.ok) {
-            const usuario = await response.json();
+        document.getElementById("dni").readOnly = true;
+        document.getElementById("nombre").readOnly = true;
+        document.getElementById("apellido").readOnly = true;
+        document.getElementById("telefono").readOnly = true;
 
-            if (usuario.rol === 'CLIENTE' && usuario.cliente) {
-                const cliente = usuario.cliente;
+        await cargarMascotasDeCliente(cliente.id);
 
-                // Precargar datos del cliente
-                document.getElementById("dni").value = cliente.dni;
-                document.getElementById("nombre").value = cliente.nombre;
-                document.getElementById("apellido").value = cliente.apellido;
-                document.getElementById("telefono").value = cliente.telefono || '';
-
-                // Cargar mascotas del cliente
-                await cargarMascotasDeCliente(cliente.id);
-            }
-        }
     } catch (error) {
         console.error('Error cargando datos del cliente:', error);
     }
@@ -105,43 +103,57 @@ async function cargarDatosClienteLogueado() {
 function closeAppointmentModal() {
     document.getElementById("appointmentModal").classList.remove("active");
     servicioSeleccionadoId = null;
+    clienteActualSesion = null;
+
+    document.getElementById("dni").readOnly = false;
+    document.getElementById("nombre").readOnly = false;
+    document.getElementById("apellido").readOnly = false;
+    document.getElementById("telefono").readOnly = false;
+
+    limpiarCamposModal();
 }
 
 async function buscarPorDNI() {
-    const dni = document.getElementById("dni").value;
+    const dni = document.getElementById("dni").value.trim();
 
     if (dni.length !== 8) {
-        showToast("warning", "DNI inválido", "El DNI debe tener 8 dígitos.");
+        showToast("warning", "DNI inválido", "El DNI debe tener 8 dígitos");
         return;
     }
 
     try {
-        const reniecResp = await fetch(`http://localhost:3002/dni/${dni}`);
-        const reniecData = await reniecResp.json();
-
         const clienteResp = await fetch(`http://localhost:8080/api/clientes/dni/${dni}`);
-        let cliente = null;
 
         if (clienteResp.ok) {
-            cliente = await clienteResp.json();
-        }
+            const cliente = await clienteResp.json();
 
-        document.getElementById("nombre").value =
-            (cliente?.nombre || reniecData.first_name || "").toUpperCase();
+            document.getElementById("nombre").value = cliente.nombre.toUpperCase();
+            document.getElementById("apellido").value = cliente.apellido.toUpperCase();
+            document.getElementById("telefono").value = cliente.telefono || "";
 
-        document.getElementById("apellido").value =
-            (cliente?.apellido || `${reniecData.first_last_name || ""} ${reniecData.second_last_name || ""}`.trim()).toUpperCase();
-
-        document.getElementById("telefono").value = cliente?.telefono || "";
-
-        if (cliente && cliente.id) {
             await cargarMascotasDeCliente(cliente.id);
+
         } else {
+            const reniecResp = await fetch(`http://localhost:3002/dni/${dni}`);
+
+            if (!reniecResp.ok) {
+                showToast("error", "DNI no encontrado", "Verifica el número ingresado");
+                return;
+            }
+
+            const reniecData = await reniecResp.json();
+
+            document.getElementById("nombre").value = (reniecData.first_name || "").toUpperCase();
+            document.getElementById("apellido").value =
+                `${reniecData.first_last_name || ""} ${reniecData.second_last_name || ""}`.trim().toUpperCase();
+            document.getElementById("telefono").value = "";
+
             limpiarComboMascotas();
         }
 
     } catch (error) {
-        console.error("Error DNI:", error);
+        console.error("Error buscando DNI:", error);
+        showToast("error", "Error", "No se pudo consultar el DNI");
     }
 }
 
@@ -197,7 +209,6 @@ document.getElementById("formCita").addEventListener("submit", async (e) => {
             closeAppointmentModal();
             limpiarCamposModal();
 
-            // Si está en el perfil, recargar todo el perfil
             if (window.location.hash === '#perfil') {
                 await cargarPerfilCompleto();
             }
@@ -229,24 +240,35 @@ async function cargarMascotasDeCliente(clienteId) {
         if (mascotas.length === 0) {
             comboContainer.classList.add("hidden");
             inputContainer.classList.remove("hidden");
+            limpiarCamposMascota();
             return;
         }
 
         comboContainer.classList.remove("hidden");
         inputContainer.classList.remove("hidden");
 
-        mascotas.forEach((m, index) => {
+        mascotas.forEach(m => {
             combo.innerHTML += `<option value="${m.id}">${m.nombre} (${m.especie})</option>`;
         });
 
-        const primeraMascota = mascotas[0];
-        combo.value = primeraMascota.id;
-        cargarInfoMascota(primeraMascota);
+        if (mascotas.length > 0) {
+            const primeraMascota = mascotas[0];
+            combo.value = primeraMascota.id;
+            cargarInfoMascota(primeraMascota);
+        }
 
         combo.onchange = () => {
             const id = parseInt(combo.value);
+
+            if (!id) {
+                limpiarCamposMascota();
+                return;
+            }
+
             const seleccionada = mascotas.find(m => m.id === id);
-            if (seleccionada) cargarInfoMascota(seleccionada);
+            if (seleccionada) {
+                cargarInfoMascota(seleccionada);
+            }
         };
 
     } catch (error) {
@@ -254,17 +276,25 @@ async function cargarMascotasDeCliente(clienteId) {
     }
 }
 
-function cargarInfoMascota(m) {
-    document.getElementById("nombreMascota").value = m.nombre.toUpperCase();
-    document.getElementById("especie").value = m.especie.toUpperCase();
-    document.getElementById("raza").value = m.raza.toUpperCase();
-    document.getElementById("edad").value = m.edad;
+function cargarInfoMascota(mascota) {
+    document.getElementById("nombreMascota").value = mascota.nombre.toUpperCase();
+    document.getElementById("especie").value = mascota.especie.toUpperCase();
+    document.getElementById("raza").value = mascota.raza.toUpperCase();
+    document.getElementById("edad").value = mascota.edad;
+}
+
+function limpiarCamposMascota() {
+    document.getElementById("nombreMascota").value = "";
+    document.getElementById("especie").value = "";
+    document.getElementById("raza").value = "";
+    document.getElementById("edad").value = "";
 }
 
 function limpiarComboMascotas() {
-    document.getElementById("comboMascotas").innerHTML =
-        `<option value="">Seleccione una mascota</option>`;
+    const combo = document.getElementById("comboMascotas");
+    combo.innerHTML = `<option value="">Seleccione una mascota</option>`;
     document.getElementById("comboMascotaContainer").classList.add("hidden");
+    limpiarCamposMascota();
 }
 
 function limpiarCamposModal() {
@@ -302,8 +332,7 @@ function validarFechaHora(fecha, hora) {
     }
 
     const dia = fechaHoraSeleccionada.getDay();
-    const horaDecimal = fechaHoraSeleccionada.getHours() +
-                        (fechaHoraSeleccionada.getMinutes() / 60);
+    const horaDecimal = fechaHoraSeleccionada.getHours() + (fechaHoraSeleccionada.getMinutes() / 60);
 
     let horaInicio, horaFin;
 
