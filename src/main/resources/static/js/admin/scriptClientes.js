@@ -38,7 +38,6 @@ async function cargarClientes() {
     }
 }
 
-//Función para abrir el modal
 function abrirModalEditar(id) {
     console.log('Abriendo modal para cliente ID:', id);
     fetch(`/api/clientes/${id}`)
@@ -57,7 +56,6 @@ function abrirModalEditar(id) {
         .catch(err => console.error('Error al cargar cliente:', err));
 }
 
-//Función para cerrar el modal
 function cerrarModalEditar() {
     console.log('Cerrando modal');
     const modal = document.getElementById('modalEditarCliente');
@@ -72,7 +70,6 @@ function cerrarModalEditar() {
     if (inputTelefono) inputTelefono.classList.remove('border-red-500');
 }
 
-//Función para eliminar cliente
 function eliminarCliente(id) {
     if (confirm('¿Estás seguro de eliminar este cliente?')) {
         fetch(`/api/clientes/${id}`, { method: 'DELETE' })

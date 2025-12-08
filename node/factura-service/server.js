@@ -35,7 +35,6 @@ app.post("/generar-ticket-vet", async (req, res) => {
       proximaCita
     } = req.body;
 
-    // Validaciones
     if (!servicios || servicios.length === 0) {
       return res.status(400).json({
         error: "Debe incluir al menos un servicio"
@@ -50,7 +49,6 @@ app.post("/generar-ticket-vet", async (req, res) => {
 
     let template = fs.readFileSync(templatePath, "utf8");
 
-    // Generar HTML de los servicios
     const serviciosHTML = servicios.map(servicio => {
       const monto = servicio.monto || servicio.precio || 0;
       const fechaServicio = servicio.fecha || '';
@@ -131,7 +129,6 @@ app.post("/generar-ticket-vet", async (req, res) => {
   }
 });
 
-// Endpoint para generar ticket de restaurante (mantener el original)
 app.post("/generar-ticket", async (req, res) => {
   try {
     const {
@@ -162,7 +159,6 @@ app.post("/generar-ticket", async (req, res) => {
 
     let template = fs.readFileSync(templatePath, "utf8");
 
-    // Generar HTML de los platos
     const platosHTML = platos.map(plato => {
       const cantidad = plato.cantidad || 1;
       const precio = plato.precio || plato.precioPlato || 0;
@@ -176,7 +172,6 @@ app.post("/generar-ticket", async (req, res) => {
         </div>`;
     }).join("");
 
-    // Reemplazar placeholders
     template = template
       .replace("{{cliente}}", cliente || "Cliente General")
       .replace("{{fecha}}", fecha || new Date().toLocaleDateString('es-PE'))
@@ -190,7 +185,6 @@ app.post("/generar-ticket", async (req, res) => {
       .replace("{{descuento}}", (descuento || 0).toFixed(2))
       .replace("{{total}}", (total || 0).toFixed(2));
 
-    // Generar PDF con Puppeteer
     console.log(`Generando ticket #${ticketNumero}...`);
 
     const browser = await puppeteer.launch({

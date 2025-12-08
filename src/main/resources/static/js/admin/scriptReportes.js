@@ -42,7 +42,6 @@ async function cargarReporteProductos() {
 }
 
 function crearGraficos() {
-    // Gráfico de Ventas
     const ctxVentas = document.getElementById('graficoVentas');
     if (ctxVentas) {
         chartVentas = new Chart(ctxVentas.getContext('2d'), {
@@ -58,7 +57,6 @@ function crearGraficos() {
         });
     }
 
-    // Gráfico de Unidades
     const ctxUnidades = document.getElementById('graficoUnidades');
     if (ctxUnidades) {
         chartUnidades = new Chart(ctxUnidades.getContext('2d'), {
@@ -153,17 +151,12 @@ function filtrarProductos() {
     });
 }
 
-// ============================================
-// FUNCIÓN MEJORADA PARA EXPORTAR PDF
-// ============================================
-
 async function exportarPDF() {
     if (!window.productosReporte || window.productosReporte.length === 0) {
         showToast('error', 'Sin datos', 'No hay datos para exportar');
         return;
     }
 
-    // Crear overlay de loading
     const loadingOverlay = document.createElement('div');
     loadingOverlay.id = 'loadingOverlay';
     loadingOverlay.innerHTML = `
@@ -180,7 +173,6 @@ async function exportarPDF() {
     document.body.appendChild(loadingOverlay);
 
     try {
-        // 1. Obtener canvas de los gráficos
         const canvasVentas = document.getElementById('graficoVentas');
         const canvasUnidades = document.getElementById('graficoUnidades');
 
@@ -188,11 +180,9 @@ async function exportarPDF() {
             throw new Error('No se encontraron los gráficos');
         }
 
-        // 2. Convertir canvas a Base64 (imágenes PNG)
         const graficoVentasBase64 = canvasVentas.toDataURL('image/png', 1.0);
         const graficoIngresosBase64 = canvasUnidades.toDataURL('image/png', 1.0);
 
-        // 3. Preparar datos de productos con el formato correcto
         const productosParaPDF = window.productosReporte.map(p => ({
             nombre: p.nombreProducto,
             categoria: p.categoria,
@@ -203,14 +193,12 @@ async function exportarPDF() {
             ingresoTotal: parseFloat(p.ingresoTotal)
         }));
 
-        // 4. Calcular totales
         const totales = {
             totalVendido: productosParaPDF.reduce((sum, p) => sum + p.totalVendido, 0),
             totalVentas: productosParaPDF.reduce((sum, p) => sum + p.numVentas, 0),
             ingresoTotal: productosParaPDF.reduce((sum, p) => sum + p.ingresoTotal, 0)
         };
 
-        // 5. Obtener fechas actuales
         const hoy = new Date();
         const primerDiaMes = new Date(hoy.getFullYear(), hoy.getMonth(), 1);
 
@@ -226,7 +214,6 @@ async function exportarPDF() {
             year: 'numeric'
         });
 
-        // 6. Preparar payload completo
         const payload = {
             titulo: "Reporte de Ventas de Productos",
             fechaInicio: fechaInicio,
@@ -237,7 +224,6 @@ async function exportarPDF() {
             totales: totales
         };
 
-        // 7. Enviar al servidor
         const response = await fetch('http://localhost:3007/generar-reporte-productos', {
             method: 'POST',
             headers: {
@@ -251,33 +237,23 @@ async function exportarPDF() {
             throw new Error(errorData.error || 'Error al generar el PDF');
         }
 
-        // 8. Descargar el PDF
         const blob = await response.blob();
         const url = window.URL.createObjectURL(blob);
-
-        // Abrir en nueva pestaña
+        
         window.open(url, '_blank');
-
-        // Limpiar URL después de un momento
-        setTimeout(() => window.URL.revokeObjectURL(url), 100);
-
-        showToast('success', 'PDF Generado', 'El reporte se generó correctamente');
+        
+        showToast('success', 'PDF Generado', 'El reporte se abrió en una nueva pestaña');
 
     } catch (error) {
         console.error('Error al exportar PDF:', error);
         showToast('error', 'Error', 'No se pudo generar el PDF: ' + error.message);
     } finally {
-        // Remover loading overlay
         const overlay = document.getElementById('loadingOverlay');
         if (overlay) {
             document.body.removeChild(overlay);
         }
     }
 }
-
-// ============================================
-// FUNCIÓN ALTERNATIVA: DESCARGAR EN VEZ DE ABRIR
-// ============================================
 
 async function exportarPDFDescarga() {
     if (!window.productosReporte || window.productosReporte.length === 0) {

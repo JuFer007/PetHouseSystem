@@ -1,4 +1,3 @@
-// Verificar sesión del cliente antes de agregar al carrito
 async function verificarSesionCliente() {
     try {
         const response = await fetch('/api/usuarios/session', {
@@ -6,20 +5,20 @@ async function verificarSesionCliente() {
             credentials: 'include'
         });
 
+        // Retornar true solo si la respuesta es exitosa
         return response.ok;
     } catch (error) {
+        // Si hay error, retornar false
         return false;
     }
 }
 
-// Sobrescribir función addToCart para validar sesión
 const addToCartOriginal = window.addToCart;
 
 window.addToCart = async function(productoId, nombre, precio, stock, urlImagen) {
     const tieneSesion = await verificarSesionCliente();
 
     if (!tieneSesion) {
-        showToast('warning', 'Inicia sesión', 'Debes iniciar sesión para comprar productos');
         setTimeout(() => {
             window.location.href = '/login';
         }, 2000);
@@ -37,7 +36,6 @@ window.checkout = async function() {
     const tieneSesion = await verificarSesionCliente();
 
     if (!tieneSesion) {
-        showToast('warning', 'Inicia sesión', 'Debes iniciar sesión para completar la compra');
         setTimeout(() => {
             window.location.href = '/login';
         }, 2000);
@@ -47,8 +45,11 @@ window.checkout = async function() {
     checkoutOriginal();
 };
 
-// Actualizar navbar si hay sesión
+let navbarActualizado = false;
+
 async function actualizarNavbar() {
+    if (navbarActualizado) return; // Evitar múltiples ejecuciones
+
     const tieneSesion = await verificarSesionCliente();
 
     if (tieneSesion) {
@@ -67,13 +68,18 @@ async function actualizarNavbar() {
                     }
                 }
             }
+            navbarActualizado = true; // Marcar como actualizado
         } catch (error) {
-            console.error('Error:', error);
+            // Ignorar errores
         }
     }
 }
 
-// Ejecutar al cargar página
-document.addEventListener('DOMContentLoaded', () => {
+// Ejecutar al cargar página solo una vez
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', () => {
+        actualizarNavbar();
+    });
+} else {
     actualizarNavbar();
-});
+}

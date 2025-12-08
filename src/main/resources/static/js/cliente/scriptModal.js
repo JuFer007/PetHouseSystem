@@ -197,9 +197,9 @@ document.getElementById("formCita").addEventListener("submit", async (e) => {
             closeAppointmentModal();
             limpiarCamposModal();
 
-            // Si está en el perfil, recargar citas
+            // Si está en el perfil, recargar todo el perfil
             if (window.location.hash === '#perfil') {
-                await cargarCitasPerfil();
+                await cargarPerfilCompleto();
             }
         } else {
             const error = await response.json();

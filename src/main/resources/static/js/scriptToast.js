@@ -17,7 +17,6 @@ const ToastSystem = {
             `;
             document.body.appendChild(this.container);
 
-            // Responsive
             if (window.innerWidth <= 640) {
                 this.container.style.right = '10px';
                 this.container.style.left = '10px';
@@ -71,7 +70,6 @@ const ToastSystem = {
             position: relative;
         `;
 
-        // Responsive width
         if (window.innerWidth <= 640) {
             toast.style.minWidth = 'auto';
             toast.style.maxWidth = '100%';
@@ -144,7 +142,6 @@ const ToastSystem = {
             setTimeout(() => {
                 toast.remove();
 
-                // Limpiar contenedor si está vacío
                 if (this.container && this.container.children.length === 0) {
                     this.container.remove();
                     this.container = null;
@@ -154,12 +151,10 @@ const ToastSystem = {
     }
 };
 
-//Función global simplificada
 function showToast(type, title, message, duration = 4000) {
     ToastSystem.show(type, title, message, duration);
 }
 
-//Ajustar posición en resize
 window.addEventListener('resize', () => {
     if (ToastSystem.container) {
         if (window.innerWidth <= 640) {

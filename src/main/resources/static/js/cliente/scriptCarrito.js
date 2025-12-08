@@ -185,12 +185,27 @@ function addToCart(productoId, nombre, precio, stock, urlImagen) {
     });
 }
 
-function checkout() {
-    if (carrito.items.length === 0) {
-        showToast('error', 'Carrito vacío', 'El carrito está vacío');
-        return;
+async function validarSesionCheckout() {
+    const tieneSesion = await window.SistemaAutenticacion.verificarSesion();
+
+    if (!tieneSesion) {
+        setTimeout(() => {
+            window.location.href = '/login';
+        }, 2000);
+        return false;
     }
-    openPaymentModal();
+
+    return true;
+}
+
+function checkout() {
+    validarSesionCheckout().then(valido => {
+        if (valido && carrito.items.length > 0) {
+            openPaymentModal();
+        } else if (carrito.items.length === 0) {
+            showToast('error', 'Carrito vacío', 'El carrito está vacío');
+        }
+    });
 }
 
 function openPaymentModal() {
@@ -257,6 +272,10 @@ async function procesarPago(event) {
             );
 
             showToast('success', 'Compra exitosa', '¡Tu pedido fue registrado!');
+
+            if (window.location.hash === '#perfil') {
+                await cargarPerfilCompleto();
+            }
         } else {
             showToast('error', 'Error', 'Error al procesar la compra');
         }
@@ -281,3 +300,15 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 });
+
+function mostrarModalCompraExitosa(ordenId, total, metodo) {
+    document.getElementById('numeroOrdenExito').textContent = `#${ordenId}`;
+    document.getElementById('totalPagadoExito').textContent = `S/. ${total.toFixed(2)}`;
+    document.getElementById('metodoPagoExito').textContent = metodo;
+
+    document.getElementById('modalCompraExitosa').classList.add('active');
+}
+
+function cerrarModalCompraExitosa() {
+    document.getElementById('modalCompraExitosa').classList.remove('active');
+}

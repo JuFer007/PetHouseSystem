@@ -123,12 +123,9 @@ app.post("/generar-reporte-productos", async (req, res) => {
 
     const filename = `reporte_productos_${Date.now()}.pdf`;
 
-    res.writeHead(200, {
-      "Content-Type": "application/pdf",
-      "Content-Disposition": `inline; filename=${filename}`,
-      "Content-Length": pdfBuffer.length
-    });
-    res.end(pdfBuffer);
+    res.setHeader("Content-Type", "application/pdf");
+    res.setHeader("Content-Disposition", `attachment; filename="${filename}"`);
+    res.send(pdfBuffer);
 
   } catch (err) {
     console.error("Error generando reporte:", err);

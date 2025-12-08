@@ -33,8 +33,6 @@ document.getElementById('loginForm').addEventListener('submit', async (e) => {
 
         const data = await response.json();
 
-        console.log("LOGIN RESPONSE:", data);
-
         if (!response.ok) {
             showToast('error', data.message || 'Error al iniciar sesión', 'Intente nuevamente');
             return;
@@ -45,22 +43,18 @@ document.getElementById('loginForm').addEventListener('submit', async (e) => {
         showToast('success', 'Inicio de sesión exitoso', 'Bienvenido(a)');
 
         setTimeout(() => {
-
             if (data.rol === 'CLIENTE') {
                 window.location.href = '/';
-
             } else {
                 window.location.href = '/dashboard';
             }
-
         }, 800);
 
     } catch (error) {
         console.error('Error:', error);
-        showToast('error', 'Error de conexión. Intente nuevamente.');
+        showToast('error', 'Error de conexión', 'Intente nuevamente');
     }
 });
-
 
 function loginWithGmail() {
     showToast('info', 'Función de Gmail en desarrollo');

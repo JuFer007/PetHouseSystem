@@ -1,3 +1,29 @@
+async function precargarDatosContacto() {
+    const usuario = await window.SistemaAutenticacion.verificarSesion();
+    
+    if (usuario && usuario.cliente) {
+        const nombreCompleto = `${usuario.cliente.nombre} ${usuario.cliente.apellido}`;
+        
+        const inputNombre = document.querySelector('#contactForm input[name="nombre"]');
+        const inputEmail = document.querySelector('#contactForm input[name="email"]');
+        
+        if (inputNombre && inputEmail) {
+            inputNombre.value = nombreCompleto;
+            inputEmail.value = usuario.correoElectronico;
+            
+            inputNombre.readOnly = true;
+            inputEmail.readOnly = true;
+            
+            inputNombre.classList.add('bg-gray-50');
+            inputEmail.classList.add('bg-gray-50');
+        }
+    }
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+    setTimeout(precargarDatosContacto, 500);
+});
+
 document.getElementById('contactForm').addEventListener('submit', async (e) => {
     e.preventDefault();
     const form = e.target;
@@ -19,7 +45,7 @@ document.getElementById('contactForm').addEventListener('submit', async (e) => {
 
         showToast("success", "Mensaje enviado", result.message || "Tu mensaje fue enviado correctamente.");
 
-        form.reset();
+        form.mensaje.value = '';
 
     } catch (err) {
         console.error(err);
