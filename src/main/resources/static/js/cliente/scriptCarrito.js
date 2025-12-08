@@ -243,10 +243,20 @@ async function procesarPago(event) {
         });
 
         if (response.ok) {
+            const venta = await response.json();
+
             carrito.vaciarCarrito();
+
             closePaymentModal();
             closeCartModal();
-            showToast('success', 'Compra exitosa', '¡Compra realizada con éxito!');
+
+            mostrarModalCompraExitosa(
+                venta.id,
+                venta.total,
+                metodoPago
+            );
+
+            showToast('success', 'Compra exitosa', '¡Tu pedido fue registrado!');
         } else {
             showToast('error', 'Error', 'Error al procesar la compra');
         }

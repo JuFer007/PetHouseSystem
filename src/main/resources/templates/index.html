@@ -10,7 +10,7 @@
     <link rel="stylesheet" href="/css/styleIndex.css">
 </head>
 <body class="bg-gray-50">
-<!-- Navbar -->
+<!-- Navbar actualizado -->
 <nav class="fixed w-full top-0 z-50 shadow-md">
     <div class="container mx-auto px-4 py-4 flex items-center justify-between">
         <div class="flex items-center space-x-5">
@@ -164,6 +164,7 @@
                 </div>
                 <div>
                     <h1 id="nombreClientePerfil" class="text-3xl font-bold">Cargando...</h1>
+                    <p id="correoClientePerfil" class="text-cyan-100">correo@ejemplo.com</p>
                     <p id="dniClientePerfil" class="text-cyan-100">DNI: ...</p>
                     <p id="telefonoClientePerfil" class="text-cyan-100">Teléfono: ...</p>
                 </div>
@@ -173,13 +174,16 @@
         <!-- Tabs -->
         <div class="bg-white rounded-2xl shadow-lg mb-8">
             <div class="flex border-b">
-                <button onclick="cambiarTabPerfil('citas')" id="tabPerfilCitas" class="flex-1 py-4 text-center font-semibold transition border-b-2 border-cyan-500 text-cyan-500">
+                <button onclick="cambiarTabPerfil('citas')" id="tabPerfilCitas"
+                        class="flex-1 py-4 text-center font-semibold transition border-b-2 border-cyan-500 text-cyan-500">
                     <i class="fas fa-calendar-alt mr-2"></i>Mis Citas
                 </button>
-                <button onclick="cambiarTabPerfil('mascotas')" id="tabPerfilMascotas" class="flex-1 py-4 text-center font-semibold transition text-gray-600 hover:text-cyan-500">
+                <button onclick="cambiarTabPerfil('mascotas')" id="tabPerfilMascotas"
+                        class="flex-1 py-4 text-center font-semibold transition text-gray-600 hover:text-cyan-500">
                     <i class="fas fa-paw mr-2"></i>Mis Mascotas
                 </button>
-                <button onclick="cambiarTabPerfil('compras')" id="tabPerfilCompras" class="flex-1 py-4 text-center font-semibold transition text-gray-600 hover:text-cyan-500">
+                <button onclick="cambiarTabPerfil('compras')" id="tabPerfilCompras"
+                        class="flex-1 py-4 text-center font-semibold transition text-gray-600 hover:text-cyan-500">
                     <i class="fas fa-shopping-bag mr-2"></i>Mis Compras
                 </button>
             </div>
@@ -594,6 +598,67 @@
                 </button>
             </div>
         </form>
+    </div>
+</div>
+
+<!-- Modal de Compra Exitosa -->
+<div id="modalCompraExitosa" class="modal">
+    <div class="modal-content max-w-md">
+        <div class="text-center py-6">
+            <!-- Ícono de éxito animado -->
+            <div class="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-6 animate-bounce">
+                <i class="fas fa-check text-4xl text-green-500"></i>
+            </div>
+
+            <h2 class="text-3xl font-bold text-gray-800 mb-3">¡Compra Exitosa!</h2>
+
+            <p class="text-gray-600 mb-6">
+                Tu pedido ha sido registrado correctamente
+            </p>
+
+            <!-- Información de la compra -->
+            <div class="bg-cyan-50 rounded-xl p-6 mb-6 text-left">
+                <div class="flex items-center justify-between mb-3">
+                    <span class="text-gray-600">Número de orden:</span>
+                    <span id="numeroOrdenExito" class="font-bold text-cyan-600">#0000</span>
+                </div>
+                <div class="flex items-center justify-between mb-3">
+                    <span class="text-gray-600">Total pagado:</span>
+                    <span id="totalPagadoExito" class="font-bold text-gray-800">S/. 0.00</span>
+                </div>
+                <div class="flex items-center justify-between">
+                    <span class="text-gray-600">Método de pago:</span>
+                    <span id="metodoPagoExito" class="font-bold text-gray-800">-</span>
+                </div>
+            </div>
+
+            <!-- Instrucciones -->
+            <div class="bg-yellow-50 border-l-4 border-yellow-400 p-4 mb-6 text-left">
+                <div class="flex items-start">
+                    <i class="fas fa-info-circle text-yellow-600 mt-1 mr-3"></i>
+                    <div class="text-sm text-gray-700">
+                        <p class="font-semibold mb-2">Instrucciones para recoger tu pedido:</p>
+                        <ul class="list-disc list-inside space-y-1">
+                            <li>Visita nuestro local en Av. José Balta 456 - Chiclayo</li>
+                            <li>Presenta tu número de orden</li>
+                            <li>Horario: Lun-Sáb 9:00 AM - 8:00 PM, Dom 10:00 AM - 2:00 PM</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Botones -->
+            <div class="flex gap-3">
+                <button onclick="cerrarModalCompraExitosa()"
+                        class="flex-1 bg-gray-100 hover:bg-gray-200 text-gray-700 px-6 py-3 rounded-xl font-semibold transition">
+                    Cerrar
+                </button>
+                <button onclick="window.location.hash='#perfil'; cerrarModalCompraExitosa();"
+                        class="flex-1 btn-primary px-6 py-3 rounded-xl font-semibold text-white">
+                    Ver mis compras
+                </button>
+            </div>
+        </div>
     </div>
 </div>
 

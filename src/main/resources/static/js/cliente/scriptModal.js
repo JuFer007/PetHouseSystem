@@ -74,7 +74,6 @@ async function abrirModalConServicio(servicioId) {
     document.getElementById("fecha").min = hoy;
 }
 
-// ==================== Cargar datos del cliente logueado ====================
 async function cargarDatosClienteLogueado() {
     try {
         const response = await fetch('/api/usuarios/session', {
