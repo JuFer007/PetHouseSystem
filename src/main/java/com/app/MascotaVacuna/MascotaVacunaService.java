@@ -63,67 +63,72 @@ public class MascotaVacunaService {
     @Transactional(readOnly = true)
     public List<MascotaVacunaDTO> findVacunasVencidas() {
         LocalDate hoy = LocalDate.now();
-        return repository.findVencidas(hoy).stream()
-                .map(this::convertToDTO)
-                .collect(Collectors.toList());
+        return repository.findVencidas(hoy).stream().map(this::convertToDTO).collect(Collectors.toList());
     }
+
     @Transactional
     public List<MascotaVacunaDTO> save(MascotaVacunaDTO dto) {
-        Mascota mascota = mascotaRepository.findById(dto.getMascotaId())
-                .orElseThrow(() -> new RuntimeException("Mascota no encontrada"));
+        Mascota mascota = mascotaRepository.findById(dto.getMascotaId()).orElseThrow(() -> new RuntimeException("Mascota no encontrada"));
 
-        Vacuna vacuna = vacunaRepository.findById(dto.getVacunaId())
-                .orElseThrow(() -> new RuntimeException("Vacuna no encontrada"));
+        Vacuna vacuna = vacunaRepository.findById(dto.getVacunaId()).orElseThrow(() -> new RuntimeException("Vacuna no encontrada"));
 
-        List<MascotaVacunaDTO> guardadas = new ArrayList<>();
+        if(!repository.findByMascotaVacuna(mascota.getId(), vacuna.getId()).isEmpty()) {
+            throw new RuntimeException("Esta vacuna ya fue registrada para la mascota");
+        }
 
-        MascotaVacuna entity = MascotaVacuna.builder()
-                .mascota(mascota)
-                .vacuna(vacuna)
-                .fechaAplicacion(dto.getFechaAplicacion())
-                .proximaDosis(dto.getProximaDosis())
-                .numeroDosiS(dto.getNumeroDosis())
-                .estado(dto.getEstado())
-                .observaciones(dto.getObservaciones())
-                .build();
+        int totalDosis = vacuna.getDosisRequeridas();
+        LocalDate fechaBase = dto.getFechaAplicacion();
 
-        MascotaVacuna saved = repository.save(entity);
-        guardadas.add(convertToDTO(saved));
+        List<MascotaVacunaDTO> result = new ArrayList<>();
 
-        return guardadas;
+        int intervalo = vacuna.getIntervaloDias();
+
+        for(int i = 1; i <= totalDosis; i++) {
+
+            LocalDate proxima = null;
+
+            if(i < totalDosis) {
+                proxima = fechaBase.plusDays(15 * i);
+            }
+
+            MascotaVacuna mv = MascotaVacuna.builder()
+                    .mascota(mascota)
+                    .vacuna(vacuna)
+                    .numeroDosis(i)
+                    .fechaAplicacion(i == 1 ? fechaBase : null)
+                    .proximaDosis(proxima)
+                    .estado(i == 1 ? EstadoVacuna.VIGENTE : EstadoVacuna.PENDIENTE)
+                    .observaciones(null)
+                    .build();
+
+            repository.save(mv);
+            result.add(convertToDTO(mv));
+        }
+
+        return result;
     }
 
     @Transactional
     public MascotaVacunaDTO update(Long id, MascotaVacunaDTO dto) {
-        MascotaVacuna entity = repository.findById(id).orElseThrow(() -> new RuntimeException("Registro no encontrado"));
+        MascotaVacuna dosis = repository.findById(id).orElseThrow(() -> new RuntimeException("Registro de vacuna no encontrado"));
 
-        if (entity.getEstado() == EstadoVacuna.VENCIDA) {
-            throw new RuntimeException("No se puede editar una vacuna vencida");
+        if(dosis.getEstado() != EstadoVacuna.PENDIENTE){
+            throw new RuntimeException("Esta dosis ya fue aplicada");
         }
 
-        if (dto.getVacunaId() != null && !dto.getVacunaId().equals(entity.getVacuna().getId())) {
-            Vacuna vacuna = vacunaRepository.findById(dto.getVacunaId())
-                    .orElseThrow(() -> new RuntimeException("Vacuna no encontrada"));
-            entity.setVacuna(vacuna);
+        LocalDate hoy = LocalDate.now();
+
+        if(dosis.getProximaDosis() != null && hoy.isBefore(dosis.getProximaDosis())){
+
+            throw new RuntimeException(
+                    "Esta dosis solo puede aplicarse desde: " + dosis.getProximaDosis()
+            );
         }
 
-        if (dto.getFechaAplicacion() != null) {
-            entity.setFechaAplicacion(dto.getFechaAplicacion());
-        }
-
-        entity.setProximaDosis(dto.getProximaDosis());
-
-        if (dto.getNumeroDosis() != null) {
-            entity.setNumeroDosiS(dto.getNumeroDosis());
-        }
-
-        EstadoVacuna estado = calcularEstado(dto.getProximaDosis());
-        entity.setEstado(estado);
-
-        entity.setObservaciones(dto.getObservaciones());
-
-        MascotaVacuna updated = repository.save(entity);
-        return convertToDTO(updated);
+        dosis.setFechaAplicacion(hoy);
+        dosis.setEstado(EstadoVacuna.VIGENTE);
+        repository.save(dosis);
+        return convertToDTO(dosis);
     }
 
     @Transactional
@@ -167,7 +172,7 @@ public class MascotaVacunaService {
                 .vacunaDescripcion(entity.getVacuna().getDescripcion())
                 .fechaAplicacion(entity.getFechaAplicacion())
                 .proximaDosis(entity.getProximaDosis())
-                .numeroDosis(entity.getNumeroDosiS())
+                .numeroDosis(entity.getNumeroDosis())
                 .estado(entity.getEstado())
                 .observaciones(entity.getObservaciones())
                 .diasRestantes(diasRestantes)

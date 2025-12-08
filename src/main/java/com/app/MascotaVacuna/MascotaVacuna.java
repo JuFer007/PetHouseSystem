@@ -33,7 +33,7 @@ public class MascotaVacuna {
     @Column(name = "proxima_dosis")
     private LocalDate proximaDosis;
 
-    private Integer numeroDosiS;
+    private Integer numeroDosis;
 
     @Enumerated(EnumType.STRING)
     private EstadoVacuna estado;

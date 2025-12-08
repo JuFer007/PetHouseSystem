@@ -15,17 +15,14 @@ public interface MascotaVacunaRepository extends JpaRepository<MascotaVacuna, Lo
     List<MascotaVacuna> findByClienteId(@Param("clienteId") Long clienteId);
 
     @Query("SELECT mv FROM MascotaVacuna mv WHERE mv.proximaDosis BETWEEN :hoy AND :fechaLimite")
-    List<MascotaVacuna> findProximasAVencer(
-            @Param("hoy") LocalDate hoy,
-            @Param("fechaLimite") LocalDate fechaLimite
-    );
+    List<MascotaVacuna> findProximasAVencer(@Param("hoy") LocalDate hoy, @Param("fechaLimite") LocalDate fechaLimite);
 
     @Query("SELECT mv FROM MascotaVacuna mv WHERE mv.proximaDosis < :hoy")
     List<MascotaVacuna> findVencidas(@Param("hoy") LocalDate hoy);
 
     @Query("SELECT mv FROM MascotaVacuna mv WHERE mv.mascota.id = :mascotaId AND mv.vacuna.id = :vacunaId ORDER BY mv.fechaAplicacion DESC")
-    List<MascotaVacuna> findUltimaVacunaPorTipo(
-            @Param("mascotaId") Long mascotaId,
-            @Param("vacunaId") Long vacunaId
-    );
+    List<MascotaVacuna> findUltimaVacunaPorTipo(@Param("mascotaId") Long mascotaId, @Param("vacunaId") Long vacunaId);
+
+    @Query("SELECT mv FROM MascotaVacuna mv WHERE mv.mascota.id = :mascotaId AND mv.vacuna.id = :vacunaId ORDER BY mv.numeroDosis ASC")
+    List<MascotaVacuna> findByMascotaVacuna(@Param("mascotaId") Long mascotaId, @Param("vacunaId") Long vacunaId);
 }

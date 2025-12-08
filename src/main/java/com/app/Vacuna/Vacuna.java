@@ -17,4 +17,5 @@ public class Vacuna {
     private String nombre;
     private String descripcion;
     private Integer dosisRequeridas;
+    private Integer intervaloDias;
 }

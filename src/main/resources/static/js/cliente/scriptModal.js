@@ -58,6 +58,10 @@ async function cargarVeterinariosDisponibles() {
 
 async function abrirModalConServicio(servicioId) {
     servicioSeleccionadoId = servicioId;
+
+    // Limpiar formulario antes de cargar servicios
+    limpiarCamposModal();
+
     cargarServiciosEnModal();
 
     setTimeout(() => {
@@ -83,9 +87,9 @@ async function abrirModalConServicio(servicioId) {
 
 async function cargarDatosClienteLogueado(cliente) {
     try {
-        document.getElementById("dni").value = cliente.dni;
-        document.getElementById("nombre").value = cliente.nombre;
-        document.getElementById("apellido").value = cliente.apellido;
+        document.getElementById("dni").value = cliente.dni || '';
+        document.getElementById("nombre").value = cliente.nombre || '';
+        document.getElementById("apellido").value = cliente.apellido || '';
         document.getElementById("telefono").value = cliente.telefono || '';
 
         document.getElementById("dni").readOnly = true;
@@ -127,8 +131,8 @@ async function buscarPorDNI() {
         if (clienteResp.ok) {
             const cliente = await clienteResp.json();
 
-            document.getElementById("nombre").value = cliente.nombre.toUpperCase();
-            document.getElementById("apellido").value = cliente.apellido.toUpperCase();
+            document.getElementById("nombre").value = (cliente.nombre || '').toUpperCase();
+            document.getElementById("apellido").value = (cliente.apellido || '').toUpperCase();
             document.getElementById("telefono").value = cliente.telefono || "";
 
             await cargarMascotasDeCliente(cliente.id);
@@ -277,10 +281,19 @@ async function cargarMascotasDeCliente(clienteId) {
 }
 
 function cargarInfoMascota(mascota) {
-    document.getElementById("nombreMascota").value = mascota.nombre.toUpperCase();
-    document.getElementById("especie").value = mascota.especie.toUpperCase();
-    document.getElementById("raza").value = mascota.raza.toUpperCase();
-    document.getElementById("edad").value = mascota.edad;
+    // Asegurarse de que los valores existan antes de convertir
+    const nombreMascota = mascota.nombre || '';
+    const especie = mascota.especie || '';
+    const raza = mascota.raza || '';
+    const edad = mascota.edad || 0;
+
+    // Llenar los inputs con los valores
+    document.getElementById("nombreMascota").value = nombreMascota.toUpperCase();
+    document.getElementById("especie").value = especie.toUpperCase();
+    document.getElementById("raza").value = raza.toUpperCase();
+    document.getElementById("edad").value = edad;
+
+    console.log('Datos cargados:', {nombreMascota, especie, raza, edad}); // Para debug
 }
 
 function limpiarCamposMascota() {
@@ -298,21 +311,34 @@ function limpiarComboMascotas() {
 }
 
 function limpiarCamposModal() {
+    // Limpiar datos del cliente
     document.getElementById("dni").value = "";
     document.getElementById("nombre").value = "";
     document.getElementById("apellido").value = "";
     document.getElementById("telefono").value = "";
+
+    // Limpiar datos de mascota
     document.getElementById("nombreMascota").value = "";
     document.getElementById("especie").value = "";
     document.getElementById("raza").value = "";
     document.getElementById("edad").value = "";
+
+    // Limpiar datos de la cita
     document.getElementById("servicio").value = "";
     document.getElementById("fecha").value = "";
     document.getElementById("hora").value = "";
     document.getElementById("motivo").value = "";
     document.getElementById("veterinario").value = "";
     document.getElementById("veterinario-container").style.display = "none";
+
+    // Limpiar combo de mascotas
     limpiarComboMascotas();
+
+    // Habilitar campos de nuevo
+    document.getElementById("dni").readOnly = false;
+    document.getElementById("nombre").readOnly = false;
+    document.getElementById("apellido").readOnly = false;
+    document.getElementById("telefono").readOnly = false;
 }
 
 function validarFechaHora(fecha, hora) {

@@ -1030,7 +1030,7 @@
                         <input type="hidden" id="enfermedadId">
 
                         <div class="mb-4">
-                            <label class="block font-semibold mb-1">Nombre *</label>
+                            <label class="block font-semibold mb-1">Nombre</label>
                             <input type="text" id="enfermedadNombre" class="border w-full p-2 rounded" required>
                         </div>
 
@@ -1075,6 +1075,7 @@
                             <th class="text-left py-3 px-4 text-gray-700 font-semibold">Nombre</th>
                             <th class="text-left py-3 px-4 text-gray-700 font-semibold">Descripción</th>
                             <th class="text-center py-3 px-4 text-gray-700 font-semibold">Dosis Requeridas</th>
+                            <th class="text-center py-3 px-4 text-gray-700 font-semibold">Intervalo (días)</th>
                             <th class="text-center py-3 px-4 text-gray-700 font-semibold">Acciones</th>
                         </tr>
                         </thead>
@@ -1096,7 +1097,7 @@
                         <input type="hidden" id="vacunaCatalogoId">
 
                         <div class="mb-4">
-                            <label class="block font-semibold mb-1">Nombre *</label>
+                            <label class="block font-semibold mb-1">Nombre</label>
                             <input type="text" id="vacunaCatalogoNombre" class="border w-full p-2 rounded" required>
                         </div>
 
@@ -1106,8 +1107,16 @@
                         </div>
 
                         <div class="mb-4">
-                            <label class="block font-semibold mb-1">Dosis Requeridas *</label>
+                            <label class="block font-semibold mb-1">Dosis Requeridas</label>
                             <input type="number" id="vacunaCatalogoDosis" class="border w-full p-2 rounded" min="1" value="1" required>
+                        </div>
+
+                        <div class="mb-4">
+                            <label class="block font-semibold mb-1">Intervalo entre dosis (días)</label>
+                            <input type="number"
+                                   id="vacunaCatalogoIntervalo"
+                                   class="border w-full p-2 rounded"
+                                   min="1" value="15" required>
                         </div>
 
                         <div class="flex justify-end gap-3 mt-6">
@@ -1340,17 +1349,17 @@
                 <form id="formAgregarEnfermedad">
                     <input type="hidden" id="hc-enfermedad-id" value="">
                     <div class="mb-4">
-                        <label class="block font-semibold mb-2 text-gray-700">Seleccionar Enfermedad *</label>
+                        <label class="block font-semibold mb-2 text-gray-700">Seleccionar Enfermedad</label>
                         <select id="hc-enfermedad-select" class="border w-full p-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" required>
                             <option value="">-- Seleccione --</option>
                         </select>
                     </div>
                     <div class="mb-4">
-                        <label class="block font-semibold mb-2 text-gray-700">Fecha Diagnóstico *</label>
+                        <label class="block font-semibold mb-2 text-gray-700">Fecha Diagnóstico</label>
                         <input type="date" id="hc-enfermedad-fecha" class="border w-full p-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" required>
                     </div>
                     <div class="mb-4">
-                        <label class="block font-semibold mb-2 text-gray-700">Estado *</label>
+                        <label class="block font-semibold mb-2 text-gray-700">Estado</label>
                         <select id="hc-enfermedad-estado" class="border w-full p-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" required>
                             <option value="EN_TRATAMIENTO">En Tratamiento</option>
                             <option value="RECUPERADO">Recuperado</option>
@@ -1383,23 +1392,22 @@
                 <form id="formAgregarVacuna">
                     <input type="hidden" id="hc-vacuna-id" value="">
                     <div class="mb-4">
-                        <label class="block font-semibold mb-2 text-gray-700">Seleccionar Vacuna *</label>
+                        <label class="block font-semibold mb-2 text-gray-700">Seleccionar Vacuna</label>
                         <select id="hc-vacuna-select" class="border w-full p-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" required>
                             <option value="">Seleccione</option>
                         </select>
                     </div>
-                    <div class="grid grid-cols-2 gap-4 mb-4">
+                    <div class="grid grid-cols-1 mb-4">
                         <div>
-                            <label class="block font-semibold mb-2 text-gray-700">Fecha Aplicación *</label>
-                            <input type="date" id="hc-vacuna-fecha" class="border w-full p-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" required>
-                        </div>
-                        <div>
-                            <label class="block font-semibold mb-2 text-gray-700">Próxima Dosis</label>
-                            <input type="date" id="hc-vacuna-proxima" class="border w-full p-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                            <label class="block font-semibold mb-2 text-gray-700">Fecha Aplicación</label>
+                            <input type="date"
+                                   id="hc-vacuna-fecha"
+                                   class="border w-full p-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                   required>
                         </div>
                     </div>
                     <div class="mb-4">
-                        <label class="block font-semibold mb-2 text-gray-700">Estado *</label>
+                        <label class="block font-semibold mb-2 text-gray-700">Estado</label>
                         <select id="hc-vacuna-estado" class="border w-full p-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" required>
                             <option value="VIGENTE">Vigente</option>
                             <option value="PENDIENTE">Pendiente</option>
@@ -1407,7 +1415,7 @@
                         </select>
                     </div>
                     <div class="mb-4">
-                        <label class="block font-semibold mb-2 text-gray-700">Número de Dosis *</label>
+                        <label class="block font-semibold mb-2 text-gray-700">Número de Dosis</label>
                         <input type="number" id="hc-vacuna-dosis" class="border w-full p-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" min="1" value="1" required>
                     </div>
                     <div class="mb-6">
@@ -1418,6 +1426,7 @@
                         <button type="button" onclick="cerrarModalAgregarVacuna()" class="bg-gray-300 hover:bg-gray-400 text-gray-800 px-6 py-2 rounded-lg font-semibold transition">Cancelar</button>
                         <button type="submit" class="btn-primary px-6 py-2" id="btn-guardar-vacuna">Guardar Vacuna</button>
                     </div>
+                </form>
                 </form>
             </div>
         </div>

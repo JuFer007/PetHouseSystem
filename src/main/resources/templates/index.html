@@ -83,20 +83,22 @@
                 <i class="fas fa-user mr-2"></i> Iniciar sesión
             </button>
 
-            <!-- Perfil -->
-            <a id="navPerfilMobile"
-               href="#perfil"
-               style="display:none"
-               class="text-gray-700 hover:text-cyan-500 font-semibold">
-                Mi Perfil
-            </a>
+            <!-- BOTON DE PERFIL -->
+            <button id="navPerfilMobile"
+                    onclick="irAPerfil()"
+                    style="display:none"
+                    class="relative hover:scale-110 transition-transform">
 
-            <!-- Cerrar sesión -->
+                <i class="fas fa-id-badge text-2xl text-cyan-500"></i>
+            </button>
+
+            <!-- BOTÓN CERRAR SESIÓN -->
             <button id="btnCerrarSesionMobile"
                     onclick="cerrarSesionCliente()"
                     style="display:none"
-                    class="text-red-500 hover:text-red-600 font-semibold text-left">
-                Cerrar sesión
+                    class="relative hover:scale-110 transition-transform">
+
+                <i class="fas fa-sign-out-alt text-2xl text-cyan-500"></i>
             </button>
         </div>
     </div>
@@ -117,7 +119,7 @@
                 </p>
 
                 <div class="flex flex-col sm:flex-row gap-4">
-                    <button onclick="openAppointmentModal()" class="btn-primary px-10 py-4 rounded-full font-semibold text-white text-lg">
+                    <button onclick="abrirModalConServicio(null)" class="btn-primary px-10 py-4 rounded-full font-semibold text-white text-lg">
                         <i class="fas fa-calendar-alt mr-2"></i>Agendar Cita
                     </button>
 
@@ -398,11 +400,11 @@
                         <label class="block text-gray-700 mb-1.5 font-medium">Especie</label>
                         <select id="especie" class="w-full px-3 py-2 text-sm rounded-lg border border-gray-300 focus:outline-none focus:border-cyan-500 focus:ring-1 focus:ring-cyan-200 transition" required>
                             <option value="">Seleccionar</option>
-                            <option>Perro</option>
-                            <option>Gato</option>
-                            <option>Ave</option>
-                            <option>Conejo</option>
-                            <option>Otro</option>
+                            <option>PERRO</option>
+                            <option>GATO</option>
+                            <option>AVE</option>
+                            <option>CONEJO</option>
+                            <option>OTRO</option>
                         </select>
                     </div>
 

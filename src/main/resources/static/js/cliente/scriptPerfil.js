@@ -246,5 +246,9 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
 });
 
+window.irAPerfil = () => {
+    window.location.hash = '#perfil';
+};
+
 window.cambiarTabPerfil = cambiarTabPerfil;
 window.cerrarSesionCliente = () => window.SistemaAutenticacion.cerrarSesion();
