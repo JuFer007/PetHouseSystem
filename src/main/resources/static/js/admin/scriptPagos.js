@@ -77,12 +77,21 @@ async function cargarPagos() {
             });
 
             btnEliminar.addEventListener("click", async () => {
+                 const confirmar = confirm(
+                    `¿Seguro que deseas eliminar este pago?\n\n` +
+                    `Servicio: ${p.servicioNombre || "Servicio desconocido"}\n` +
+                    `Monto: S/. ${p.monto.toFixed(2)}\n\n` +
+                    `Esta acción no se puede deshacer.`
+                );
+
+                if (!confirmar) return;
+
                 try {
                     await fetch(`http://localhost:8080/api/pagos/${p.id}`, { method: "DELETE" });
                     showToast("success", "Pago eliminado", "Se eliminó correctamente.");
                     tr.remove();
+                    cargarPagos();
                 } catch (error) {
-                    showToast("error", "Error", "No se pudo eliminar el pago.");
                     console.error(error);
                 }
             });
@@ -150,7 +159,6 @@ async function cargarPagos() {
                     showToast("error", "Error", "Hubo un problema generando el ticket.");
                 }
             });
-
             tbody.appendChild(tr);
         });
 

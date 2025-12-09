@@ -98,6 +98,13 @@ async function editarProducto(id) {
 }
 
 async function guardarProducto() {
+
+    const nombre = document.getElementById("productoNombre").value.trim();
+    const categoria = document.getElementById("productoCategoria").value.trim();
+    const precio = parseFloat(document.getElementById("productoPrecio").value);
+    const stock = parseInt(document.getElementById("productoStock").value);
+    const file = document.getElementById("productoImagen").files[0]; // ✅ una sola vez
+
     if (!nombre) {
         showToast("error", "Campo requerido", "El nombre del producto es obligatorio");
         return;
@@ -148,18 +155,31 @@ async function guardarProducto() {
         return;
     }
 
+    const existe = await productoExiste(nombre, editId);
+
+    if (existe) {
+        showToast(
+            "warning",
+            "Producto existente",
+            "Ya existe un producto registrado con ese nombre."
+        );
+        return;
+    }
+
     const producto = {
-        nombre: document.getElementById("productoNombre").value.toUpperCase(),
-        categoria: document.getElementById("productoCategoria").value.toUpperCase(),
-        precio: document.getElementById("productoPrecio").value,
-        stock: document.getElementById("productoStock").value,
+        nombre: nombre.toUpperCase(),
+        categoria: categoria.toUpperCase(),
+        precio: precio,
+        stock: stock,
         activo: true
     };
 
     const formData = new FormData();
-    formData.append("producto", new Blob([JSON.stringify(producto)], { type: "application/json" }));
+    formData.append(
+        "producto",
+        new Blob([JSON.stringify(producto)], { type: "application/json" })
+    );
 
-    const file = document.getElementById("productoImagen").files[0];
     if (file) formData.append("imagen", file);
 
     let url = "/api/productos/con-imagen";
@@ -198,4 +218,28 @@ function cerrarModalProducto() {
 
 function exportarExcel() {
     window.open("http://localhost:3003/exportar/excel", "_blank");
+}
+
+async function productoExiste(nombre, idActual = null) {
+    try {
+        const res = await fetch(`/api/productos/buscar?nombre=${encodeURIComponent(nombre)}`);
+
+        if (!res.ok) return false;
+
+        const productos = await res.json();
+
+        if (idActual) {
+            return productos.some(p =>
+                p.nombre.toUpperCase() === nombre.toUpperCase() &&
+                p.id !== idActual
+            );
+        }
+
+        return productos.some(p =>
+            p.nombre.toUpperCase() === nombre.toUpperCase()
+        );
+    } catch (error) {
+        console.error("Error validando producto:", error);
+        return false;
+    }
 }

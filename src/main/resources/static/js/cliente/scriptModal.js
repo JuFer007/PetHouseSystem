@@ -163,6 +163,10 @@ async function buscarPorDNI() {
 document.getElementById("formCita").addEventListener("submit", async (e) => {
     e.preventDefault();
 
+    const dni = document.getElementById("dni").value.trim();
+    const nombre = document.getElementById("nombre").value.trim();
+    const apellido = document.getElementById("apellido").value.trim();
+    const telefono = document.getElementById("telefono").value.trim();
     const servicioId = document.getElementById("servicio").value;
     const fechaInput = document.getElementById("fecha").value;
     const horaInput = document.getElementById("hora").value;

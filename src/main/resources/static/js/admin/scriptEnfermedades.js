@@ -20,9 +20,6 @@ async function cargarCatalogoEnfermedades() {
                     <button class="text-blue-500 hover:text-blue-700 mr-2" onclick="editarEnfermedad(${enfermedad.id})">
                         <i class="fas fa-edit"></i>
                     </button>
-                    <button class="text-red-500 hover:text-red-700" onclick="eliminarEnfermedad(${enfermedad.id})">
-                        <i class="fas fa-trash-alt"></i>
-                    </button>
                 </td>
             `;
             tbody.appendChild(row);
@@ -81,24 +78,6 @@ function abrirModalEditarEnfermedad() {
     const modal = document.getElementById('modalCatalogoEnfermedad');
     modal.style.display = 'flex';
     setTimeout(() => modal.classList.remove('hidden'), 10);
-}
-
-async function eliminarEnfermedad(id) {
-    if (!confirm('¿Está seguro de eliminar esta enfermedad del catálogo?')) return;
-
-    try {
-        const response = await fetch(`/api/enfermedades/${id}`, { method: 'DELETE' });
-
-        if (response.ok) {
-            showToast('success', 'Eliminado', 'Enfermedad eliminada del catálogo');
-            cargarCatalogoEnfermedades();
-        } else {
-            throw new Error('Error al eliminar');
-        }
-    } catch (error) {
-        console.error('Error eliminando enfermedad:', error);
-        showToast('error', 'Error', 'No se pudo eliminar la enfermedad');
-    }
 }
 
 document.getElementById('formCatalogoEnfermedad')?.addEventListener('submit', async function(e) {

@@ -208,6 +208,17 @@ document.getElementById("formServicio").addEventListener("submit", async (e) => 
         return;
     }
 
+    const existe = await servicioExiste(nombre, servicioEditId);
+
+    if (existe) {
+        showToast(
+            "warning",
+            "Servicio existente",
+            "Ya existe un servicio registrado con ese nombre."
+        );
+        return;
+    }
+
     try {
         const formData = new FormData();
         formData.append("servicio", new Blob([JSON.stringify({ nombre, descripcion, precio, activo: true})], { type: "application/json" }));
@@ -284,3 +295,21 @@ document.getElementById("servicioImagen").addEventListener("change", function (e
         reader.readAsDataURL(file);
     }
 });
+
+async function servicioExiste(nombre, idActual = null) {
+    try {
+        const res = await fetch(`${apiServiciosUrl}/buscar?nombre=${encodeURIComponent(nombre)}`);
+
+        if (!res.ok) return false;
+
+        const servicios = await res.json();
+
+        return servicios.some(s =>
+            s.nombre.toUpperCase() === nombre.toUpperCase() &&
+            (idActual ? s.id !== idActual : true)
+        );
+    } catch (error) {
+        console.error("Error verificando servicio:", error);
+        return false;
+    }
+}

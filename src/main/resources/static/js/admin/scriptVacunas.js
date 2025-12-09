@@ -21,9 +21,6 @@ async function cargarCatalogoVacunas() {
                     <button class="text-blue-500 hover:text-blue-700 mr-2" onclick="editarVacunaCatalogo(${vacuna.id})">
                         <i class="fas fa-edit"></i>
                     </button>
-                    <button class="text-red-500 hover:text-red-700" onclick="eliminarVacunaCatalogo(${vacuna.id})">
-                        <i class="fas fa-trash-alt"></i>
-                    </button>
                 </td>
             `;
             tbody.appendChild(row);
@@ -60,45 +57,19 @@ async function editarVacunaCatalogo(id) {
 
     try {
         const response = await fetch(`/api/vacunas/${id}`);
-
         if (!response.ok) throw new Error();
-
         const vacuna = await response.json();
-
         vacunaCatalogoActual = vacuna;
-
         document.getElementById('tituloModalVacunaCatalogo').textContent = 'Editar Vacuna';
         document.getElementById('vacunaCatalogoId').value = vacuna.id;
         document.getElementById('vacunaCatalogoNombre').value = vacuna.nombre.toUpperCase();
         document.getElementById('vacunaCatalogoDescripcion').value = vacuna.descripcion?.toUpperCase() || '';
         document.getElementById('vacunaCatalogoDosis').value = vacuna.dosisRequeridas || 1;
         document.getElementById('vacunaCatalogoIntervalo').value = vacuna.intervaloDias || 15;
-
         abrirModalVacuna();
-
     } catch (error) {
         console.error('Error cargando vacuna:', error);
         showToast('error','Error','No se pudo cargar la vacuna');
-    }
-
-}
-
-async function eliminarVacunaCatalogo(id) {
-
-    if (!confirm('¿Eliminar esta vacuna?')) return;
-
-    try {
-
-        const response = await fetch(`/api/vacunas/${id}`, { method:'DELETE' });
-
-        if(!response.ok) throw new Error();
-
-        showToast('success','Eliminado','Vacuna eliminada');
-        cargarCatalogoVacunas();
-
-    } catch (error) {
-        console.error('Error eliminando:', error);
-        showToast('error','Error','No se pudo eliminar');
     }
 
 }

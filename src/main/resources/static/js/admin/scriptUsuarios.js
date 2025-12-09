@@ -127,7 +127,7 @@ async function eliminarUsuario(id) {
         return;
     }
 
-    if (!confirm(`¿Está seguro de eliminar al usuario "${usuario.nombreUsuario}"?\n\nEsta acción no se puede deshacer.`)) {
+    if (!confirm(`¿Está seguro de eliminar al usuario?\n\nEsta acción no se puede deshacer.`)) {
         return;
     }
 
