@@ -116,18 +116,26 @@ async function eliminarCita(id) {
 }
 
 async function cambiarEstado(id, estadoActual) {
-
     if (estadoActual === "cancelada") {
         showToast("error","Acción no permitida","Las citas canceladas no cambian");
         return;
     }
 
     try {
-
         const resGet = await fetch(`${apiUrl}/${id}`);
         if (!resGet.ok) throw new Error("Error obteniendo cita");
 
         const cita = await resGet.json();
+
+        if (estadoActual === "pendiente") {
+            const ahora = new Date();
+            const fechaCita = new Date(`${cita.fecha}T${cita.hora || "00:00"}`);
+
+            if (fechaCita > ahora) {
+                showToast("warning", "Cita futura", "No puedes completar una cita que aún no ha ocurrido");
+                return;
+            }
+        }
 
         let nuevoEstado;
         if (estadoActual === "pendiente") nuevoEstado = "COMPLETADA";

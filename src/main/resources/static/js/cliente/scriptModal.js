@@ -59,7 +59,6 @@ async function cargarVeterinariosDisponibles() {
 async function abrirModalConServicio(servicioId) {
     servicioSeleccionadoId = servicioId;
 
-    // Limpiar formulario antes de cargar servicios
     limpiarCamposModal();
 
     cargarServiciosEnModal();
@@ -169,9 +168,59 @@ document.getElementById("formCita").addEventListener("submit", async (e) => {
     const horaInput = document.getElementById("hora").value;
     const veterinarioId = document.getElementById("veterinario").value;
 
+    if (!dni || dni.length !== 8) {
+        showToast("error", "DNI inválido", "El DNI debe tener 8 dígitos");
+        return;
+    }
+
+    if (!nombre || nombre.length < 2) {
+        showToast("error", "Nombre requerido", "Ingrese el nombre del cliente");
+        return;
+    }
+
+    if (!apellido || apellido.length < 2) {
+        showToast("error", "Apellido requerido", "Ingrese el apellido del cliente");
+        return;
+    }
+
+    if (!telefono || telefono.length !== 9) {
+        showToast("error", "Teléfono inválido", "El teléfono debe tener 9 dígitos");
+        return;
+    }
+
+    // VALIDACIONES DE LA MASCOTA
+    if (!nombreMascota || nombreMascota.length < 2) {
+        showToast("error", "Nombre de mascota requerido", "Ingrese el nombre de la mascota");
+        return;
+    }
+
+    if (!especie) {
+        showToast("error", "Especie requerida", "Seleccione la especie de la mascota");
+        return;
+    }
+
+    if (!raza) {
+        showToast("error", "Raza requerida", "Ingrese la raza de la mascota");
+        return;
+    }
+
+    if (!edad || parseInt(edad) < 0 || parseInt(edad) > 30) {
+        showToast("error", "Edad inválida", "La edad debe estar entre 0 y 30 años");
+        return;
+    }
+
+    if (!servicioId) {
+        showToast("warning", "Servicio requerido", "Debe seleccionar un servicio");
+        return;
+    }
+
     if (!veterinarioId) {
-        showToast("warning", "Veterinario requerido",
-            "Debe seleccionar un veterinario para la cita.");
+        showToast("warning", "Veterinario requerido", "Debe seleccionar un veterinario para la cita");
+        return;
+    }
+
+    if (!motivo || motivo.length < 5) {
+        showToast("warning", "Motivo requerido", "Describa brevemente el motivo de la cita (mín. 5 caracteres)");
         return;
     }
 
@@ -281,19 +330,17 @@ async function cargarMascotasDeCliente(clienteId) {
 }
 
 function cargarInfoMascota(mascota) {
-    // Asegurarse de que los valores existan antes de convertir
     const nombreMascota = mascota.nombre || '';
     const especie = mascota.especie || '';
     const raza = mascota.raza || '';
     const edad = mascota.edad || 0;
 
-    // Llenar los inputs con los valores
     document.getElementById("nombreMascota").value = nombreMascota.toUpperCase();
     document.getElementById("especie").value = especie.toUpperCase();
     document.getElementById("raza").value = raza.toUpperCase();
     document.getElementById("edad").value = edad;
 
-    console.log('Datos cargados:', {nombreMascota, especie, raza, edad}); // Para debug
+    console.log('Datos cargados:', {nombreMascota, especie, raza, edad});
 }
 
 function limpiarCamposMascota() {
@@ -311,19 +358,16 @@ function limpiarComboMascotas() {
 }
 
 function limpiarCamposModal() {
-    // Limpiar datos del cliente
     document.getElementById("dni").value = "";
     document.getElementById("nombre").value = "";
     document.getElementById("apellido").value = "";
     document.getElementById("telefono").value = "";
 
-    // Limpiar datos de mascota
     document.getElementById("nombreMascota").value = "";
     document.getElementById("especie").value = "";
     document.getElementById("raza").value = "";
     document.getElementById("edad").value = "";
 
-    // Limpiar datos de la cita
     document.getElementById("servicio").value = "";
     document.getElementById("fecha").value = "";
     document.getElementById("hora").value = "";
@@ -331,10 +375,8 @@ function limpiarCamposModal() {
     document.getElementById("veterinario").value = "";
     document.getElementById("veterinario-container").style.display = "none";
 
-    // Limpiar combo de mascotas
     limpiarComboMascotas();
 
-    // Habilitar campos de nuevo
     document.getElementById("dni").readOnly = false;
     document.getElementById("nombre").readOnly = false;
     document.getElementById("apellido").readOnly = false;

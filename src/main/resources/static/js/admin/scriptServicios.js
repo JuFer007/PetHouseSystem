@@ -163,6 +163,51 @@ document.getElementById("formServicio").addEventListener("submit", async (e) => 
     const precio = parseFloat(document.getElementById("servicioPrecio").value);
     const imagenFile = document.getElementById("servicioImagen").files[0];
 
+    if (!nombre) {
+        showToast("error", "Campo requerido", "El nombre del servicio es obligatorio");
+        return;
+    }
+
+    if (nombre.length < 3) {
+        showToast("warning", "Nombre muy corto", "El nombre debe tener al menos 3 caracteres");
+        return;
+    }
+
+    if (!descripcion) {
+        showToast("error", "Campo requerido", "La descripción es obligatoria");
+        return;
+    }
+
+    if (descripcion.length < 10) {
+        showToast("warning", "Descripción muy corta", "La descripción debe tener al menos 10 caracteres");
+        return;
+    }
+
+    if (isNaN(precio) || precio <= 0) {
+        showToast("error", "Precio inválido", "El precio debe ser mayor a 0");
+        return;
+    }
+
+    if (precio > 5000) {
+        showToast("warning", "Precio elevado", "Verifique el precio ingresado (máx. S/. 5,000)");
+        return;
+    }
+
+    if (!servicioEditId && !imagenFile) {
+        showToast("warning", "Imagen requerida", "Debe seleccionar una imagen para el servicio");
+        return;
+    }
+
+    if (imagenFile && imagenFile.size > 5 * 1024 * 1024) {
+        showToast("error", "Archivo muy grande", "La imagen no debe superar los 5 MB");
+        return;
+    }
+
+    if (imagenFile && !['image/jpeg', 'image/png', 'image/jpg'].includes(imagenFile.type)) {
+        showToast("error", "Formato inválido", "Solo se permiten imágenes JPG, JPEG o PNG");
+        return;
+    }
+
     try {
         const formData = new FormData();
         formData.append("servicio", new Blob([JSON.stringify({ nombre, descripcion, precio, activo: true})], { type: "application/json" }));

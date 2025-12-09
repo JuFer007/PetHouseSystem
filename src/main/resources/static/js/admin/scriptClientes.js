@@ -1,6 +1,5 @@
 let clienteActual = null;
 
-//Función para cargar clientes
 async function cargarClientes() {
     try {
         const response = await fetch('/api/clientes/clienteMascota');
@@ -86,10 +85,8 @@ function eliminarCliente(id) {
 document.addEventListener('DOMContentLoaded', function() {
     console.log('DOM cargado, inicializando...');
 
-    // Cargar clientes
     cargarClientes();
 
-    //Botón X para cerrar
     const btnCerrarX = document.getElementById('btnCerrarX');
     if (btnCerrarX) {
         btnCerrarX.addEventListener('click', function(e) {
@@ -100,7 +97,6 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
-    //Botón Cancelar
     const btnCancelar = document.getElementById('btnCancelar');
     if (btnCancelar) {
         btnCancelar.addEventListener('click', function(e) {
@@ -111,7 +107,6 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
-    //Cerrar al hacer clic fuera del modal
     const modal = document.getElementById('modalEditarCliente');
     if (modal) {
         modal.addEventListener('click', function(e) {
@@ -132,7 +127,6 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
 
-    //Validación en tiempo real del teléfono
     const inputTelefono = document.getElementById('editarTelefono');
     const errorTelefono = document.getElementById('errorTelefono');
 
@@ -153,7 +147,7 @@ document.addEventListener('DOMContentLoaded', function() {
     //Submit del formulario
     const form = document.getElementById('formEditarCliente');
     if (form) {
-        form.addEventListener('submit', function(e) {
+        form.addEventListener('submit', async function(e) {
             e.preventDefault();
             e.stopPropagation();
 
@@ -191,35 +185,52 @@ document.addEventListener('DOMContentLoaded', function() {
                 return;
             }
 
+            try {
+                const resTelefono = await fetch(`/api/clientes/telefono/${telefono}`);
+                if (resTelefono.ok) {
+                    const clienteExistente = await resTelefono.json();
+                    if (clienteExistente.id !== clienteActual.id) {
+                        errorTelefono.textContent = 'Este teléfono ya está registrado';
+                        errorTelefono.classList.remove('hidden');
+                        inputTelefono.classList.add('border-red-500');
+                        inputTelefono.focus();
+                        return;
+                    }
+                }
+            } catch (error) {
+                console.log('Error verificando teléfono duplicado:', error);
+            }
+
             console.log('Actualizando teléfono a:', telefono);
 
-            //Actualizar cliente
-            fetch(`/api/clientes/${clienteActual.id}`, {
-                method: 'PUT',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ ...clienteActual, telefono })
-            })
-            .then(res => {
+            try {
+                const res = await fetch(`/api/clientes/${clienteActual.id}`, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ ...clienteActual, telefono })
+                });
+
                 console.log('Respuesta recibida:', res.status);
+
                 if (!res.ok) throw new Error('Error al actualizar');
-                return res.json();
-            })
-            .then(data => {
+
+                const data = await res.json();
                 console.log('Cliente actualizado exitosamente:', data);
+
                 cerrarModalEditar();
                 cargarClientes();
 
                 if (typeof showToast === 'function') {
-                    showToast("success", "Cliente actualizado", `Teléfono actualizado correctamente.`);
+                    showToast("success", "Cliente actualizado", "Teléfono actualizado correctamente.");
                 }
-            })
-            .catch(err => {
+
+            } catch (err) {
                 console.error('Error al actualizar cliente:', err);
                 cerrarModalEditar();
                 if (typeof showToast === 'function') {
                     showToast("error", "Error", "No se pudo actualizar el cliente.");
                 }
-            });
+            }
         });
     } else {
         console.error('No se encontró el formulario');

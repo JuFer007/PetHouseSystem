@@ -1,6 +1,5 @@
 let editingId = null;
 
-//ABRIR MODAL
 function abrirModal(editar = false, trabajador = null) {
     document.getElementById("modalTrabajador").classList.remove("hidden");
     document.getElementById("divDNI").style.display = editar ? "none" : "block";
@@ -23,12 +22,10 @@ function abrirModal(editar = false, trabajador = null) {
 }
 
 
-//CERRAR MODAL
 function cerrarModal() {
     document.getElementById("modalTrabajador").classList.add("hidden");
 }
 
-//BUSCAR POR DNI
 async function buscarPorDNI() {
     const dni = document.getElementById("dniInput").value.trim();
     if (!dni) return showToast("error", "Error", "Ingrese un número de DNI.");
@@ -52,7 +49,6 @@ async function buscarPorDNI() {
     }
 }
 
-// GUARDAR TRABAJADOR
 async function guardarTrabajador() {
     const nombre = document.getElementById("nombreInput").value.trim();
     const apellido = document.getElementById("apellidoInput").value.trim();
@@ -62,15 +58,66 @@ async function guardarTrabajador() {
     const correo = document.getElementById("correoInput").value.trim();
     const activo = document.getElementById("activoInput").checked;
 
-    if (!nombre || !apellido || !cargo || isNaN(salario) || salario < 0 || !correo || !correo.includes("@")) {
-        return showToast("error", "Error", "Complete todos los campos correctamente.");
+    if (!editingId && (!dni || dni.length !== 8)) {
+        showToast("error", "DNI inválido", "El DNI debe tener 8 dígitos");
+        return;
+    }
+
+    if (!nombre || nombre.length < 2) {
+        showToast("error", "Nombre inválido", "El nombre debe tener al menos 2 caracteres");
+        return;
+    }
+
+    if (!apellido || apellido.length < 2) {
+        showToast("error", "Apellido inválido", "El apellido debe tener al menos 2 caracteres");
+        return;
+    }
+
+    if (!cargo) {
+        showToast("error", "Cargo requerido", "Debe seleccionar un cargo");
+        return;
+    }
+
+    if (isNaN(salario) || salario <= 0) {
+        showToast("error", "Salario inválido", "El salario debe ser mayor a 0");
+        return;
+    }
+
+    if (salario < 1025) {
+        showToast("warning", "Salario bajo", "El salario no puede ser menor al mínimo (S/. 1,025)");
+        return;
+    }
+
+    if (salario > 50000) {
+        showToast("warning", "Salario elevado", "Verifique el salario ingresado");
+        return;
+    }
+
+    if (!telefono || telefono.length !== 9) {
+        showToast("error", "Teléfono inválido", "El teléfono debe tener 9 dígitos");
+        return;
+    }
+
+    if (!/^9\d{8}$/.test(telefono)) {
+        showToast("warning", "Teléfono sospechoso", "Los teléfonos en Perú suelen comenzar con 9");
+    }
+
+    if (!correo || !correo.includes("@") || !correo.includes(".")) {
+        showToast("error", "Correo inválido", "Ingrese un correo electrónico válido");
+        return;
+    }
+
+    const dominiosValidos = ['gmail.com', 'hotmail.com', 'outlook.com', 'yahoo.com'];
+    const dominio = correo.split('@')[1];
+    if (!dominiosValidos.includes(dominio)) {
+        showToast("warning", "Dominio de correo", `¿Está seguro del dominio ${dominio}?`);
     }
 
     if (!editingId && dni) {
         const existe = await dniExisteEnBD(dni);
-
         if (existe) {
-            return showToast("error", "DNI duplicado", "Este DNI ya está registrado.");
+            showToast("error", "DNI duplicado", "Este DNI ya está registrado.");
+            return;
         }
     }
 
@@ -121,9 +168,6 @@ async function guardarTrabajador() {
     }
 }
 
-// =======================================================
-//                CARGAR LISTA DE TRABAJADORES
-// =======================================================
 async function cargarTrabajadores() {
     try {
         const res = await fetch("http://localhost:8080/api/trabajadores");
@@ -142,9 +186,6 @@ async function cargarTrabajadores() {
     }
 }
 
-// =======================================================
-//                  TEMPLATE DE CARD
-// =======================================================
 function generarCardTrabajador(t) {
     let imgCargo = `https://ui-avatars.com/api/?name=${t.nombre}+${t.apellido}&background=00CED1&color=fff`;
     if (t.cargo.toLowerCase().includes("veterinario")) imgCargo = "https://i.pinimg.com/1200x/7b/4d/e0/7b4de0c0abc72eb7e2553e9773a94f29.jpg";
@@ -191,10 +232,6 @@ function generarCardTrabajador(t) {
     `;
 }
 
-
-// =======================================================
-//            MOSTRAR / OCULTAR MENÚ
-// =======================================================
 function toggleMenu(id) {
     document.querySelectorAll("[id^='menu-']").forEach(m => {
         if (m.id !== `menu-${id}`) m.classList.add("hidden");
@@ -203,9 +240,6 @@ function toggleMenu(id) {
     menu.classList.toggle("hidden");
 }
 
-// =======================================================
-//               ACTIVAR TRABAJADOR
-// =======================================================
 async function activarTrabajador(id) {
     try {
         const res = await fetch(`http://localhost:8080/api/trabajadores/${id}/activar`, { method: "PUT" });
@@ -219,9 +253,6 @@ async function activarTrabajador(id) {
     }
 }
 
-// =======================================================
-//               DESACTIVAR TRABAJADOR
-// =======================================================
 async function desactivarTrabajador(id) {
     try {
         const res = await fetch(`http://localhost:8080/api/trabajadores/${id}/desactivar`, { method: "PUT" });
@@ -235,9 +266,6 @@ async function desactivarTrabajador(id) {
     }
 }
 
-// =======================================================
-//                   ELIMINAR TRABAJADOR
-// =======================================================
 async function eliminarTrabajador(id) {
     if (!confirm("¿Seguro que deseas eliminar este trabajador?")) return;
     try {
@@ -252,9 +280,6 @@ async function eliminarTrabajador(id) {
     }
 }
 
-// =======================================================
-//            Placeholder para editar
-// =======================================================
 async function editarTrabajador(id) {
     try {
         const res = await fetch(`http://localhost:8080/api/trabajadores/${id}`);
@@ -280,9 +305,6 @@ async function dniExisteEnBD(dni) {
     }
 }
 
-// =======================================================
-//                     Iniciar carga
-// =======================================================
 document.addEventListener("DOMContentLoaded", () => {
     cargarTrabajadores();
 });

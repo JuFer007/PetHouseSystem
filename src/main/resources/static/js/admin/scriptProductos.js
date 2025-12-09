@@ -98,6 +98,55 @@ async function editarProducto(id) {
 }
 
 async function guardarProducto() {
+    if (!nombre) {
+        showToast("error", "Campo requerido", "El nombre del producto es obligatorio");
+        return;
+    }
+
+    if (nombre.length < 3) {
+        showToast("warning", "Nombre muy corto", "El nombre debe tener al menos 3 caracteres");
+        return;
+    }
+
+    if (!categoria) {
+        showToast("error", "Campo requerido", "La categoría es obligatoria");
+        return;
+    }
+
+    if (isNaN(precio) || precio <= 0) {
+        showToast("error", "Precio inválido", "El precio debe ser mayor a 0");
+        return;
+    }
+
+    if (precio > 10000) {
+        showToast("warning", "Precio elevado", "Verifique el precio ingresado (máx. S/. 10,000)");
+        return;
+    }
+
+    if (isNaN(stock) || stock < 0) {
+        showToast("error", "Stock inválido", "El stock debe ser mayor o igual a 0");
+        return;
+    }
+
+    if (stock > 9999) {
+        showToast("warning", "Stock elevado", "El stock no puede superar 9,999 unidades");
+        return;
+    }
+
+    if (!editId && !file) {
+        showToast("warning", "Imagen requerida", "Debe seleccionar una imagen para el producto");
+        return;
+    }
+
+    if (file && file.size > 5 * 1024 * 1024) {
+        showToast("error", "Archivo muy grande", "La imagen no debe superar los 5 MB");
+        return;
+    }
+
+    if (file && !['image/jpeg', 'image/png', 'image/jpg'].includes(file.type)) {
+        showToast("error", "Formato inválido", "Solo se permiten imágenes JPG, JPEG o PNG");
+        return;
+    }
 
     const producto = {
         nombre: document.getElementById("productoNombre").value.toUpperCase(),

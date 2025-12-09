@@ -1,4 +1,3 @@
-// ==================== Verificar sesión ====================
 async function verificarAutenticacion() {
     try {
         const response = await fetch('/api/usuarios/session', {
@@ -20,7 +19,6 @@ async function verificarAutenticacion() {
     }
 }
 
-// ==================== Cargar datos del usuario en el dropdown ====================
 function cargarDatosUsuario() {
     const usuarioData = localStorage.getItem('usuario');
     if (!usuarioData) {
@@ -54,7 +52,6 @@ function cargarDatosUsuario() {
     console.log('Usuario logueado:', usuario);
 }
 
-// ==================== Cerrar sesión ====================
 async function cerrarSesion() {
     try {
         await fetch('/api/usuarios/logout', { method: 'POST', credentials: 'include' });
@@ -66,7 +63,6 @@ async function cerrarSesion() {
     }
 }
 
-// ==================== Utilidades ====================
 function obtenerUsuarioActual() {
     const usuarioData = localStorage.getItem('usuario');
     return usuarioData ? JSON.parse(usuarioData) : null;
@@ -78,13 +74,11 @@ function verificarRol(rolesPermitidos) {
     return rolesPermitidos.includes(usuario.rol);
 }
 
-// ==================== Inicialización ====================
 document.addEventListener('DOMContentLoaded', async () => {
     await verificarAutenticacion();
     cargarDatosUsuario();
 });
 
-// Exponer funciones globalmente
 window.cerrarSesion = cerrarSesion;
 window.obtenerUsuarioActual = obtenerUsuarioActual;
 window.verificarRol = verificarRol;

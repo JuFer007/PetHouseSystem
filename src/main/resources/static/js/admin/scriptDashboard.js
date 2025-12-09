@@ -1,9 +1,5 @@
 const API = "http://localhost:8080/api";
 
-// ----------------------------------------------------
-// 1. STATS CARDS
-// ----------------------------------------------------
-
 async function cargarStats() {
     try {
         document.getElementById("stats-citas").innerText = await getCitasHoy();
@@ -70,11 +66,6 @@ async function getTotalMascotas() {
     }
 }
 
-
-// ----------------------------------------------------
-// 2. ACTIVIDAD RECIENTE
-// ----------------------------------------------------
-
 async function cargarActividadReciente() {
     const cont = document.getElementById("actividad-reciente");
     cont.innerHTML = `<p class='text-gray-400'>Cargando...</p>`;
@@ -85,12 +76,10 @@ async function cargarActividadReciente() {
             return [];
         });
 
-        // Ventas desactivadas por error de serialización en el backend
         const ventas = [];
 
         const actividades = [];
 
-        // Procesar citas
         citas.forEach(c => {
             if (c.fecha && c.cliente && c.mascota) {
                 actividades.push({
@@ -103,7 +92,6 @@ async function cargarActividadReciente() {
             }
         });
 
-        // Procesar ventas
         ventas.forEach(v => {
             if (v.fecha) {
                 actividades.push({
@@ -114,12 +102,10 @@ async function cargarActividadReciente() {
             }
         });
 
-        // Ordenar por fecha descendente
         actividades.sort((a,b) => b.fecha - a.fecha);
 
         cont.innerHTML = "";
 
-        // Mostrar las 6 más recientes
         actividades.slice(0, 6).forEach(a => {
             let icon = "";
             let texto = "";
@@ -160,11 +146,6 @@ async function cargarActividadReciente() {
     }
 }
 
-
-// ----------------------------------------------------
-// 3. CITAS DE HOY
-// ----------------------------------------------------
-
 async function cargarCitasHoyLista() {
     const cont = document.getElementById("citas-hoy");
     cont.innerHTML = `<p class='text-gray-400'>Cargando citas...</p>`;
@@ -198,7 +179,6 @@ async function cargarCitasHoyLista() {
         }
 
         citas.forEach(c => {
-            // Convertir fecha a hora si es necesario
             let hora = "";
             if (c.fecha) {
                 const fechaObj = new Date(c.fecha);
@@ -242,17 +222,11 @@ async function cargarCitasHoyLista() {
     }
 }
 
-
-// ----------------------------------------------------
-// 4. EJECUTAR
-// ----------------------------------------------------
-
 document.addEventListener("DOMContentLoaded", function() {
     cargarStats();
     cargarActividadReciente();
     cargarCitasHoyLista();
 
-    // Recargar cada 30 segundos
     setInterval(() => {
         cargarStats();
         cargarActividadReciente();

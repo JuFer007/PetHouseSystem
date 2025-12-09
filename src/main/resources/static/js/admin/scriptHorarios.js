@@ -1,5 +1,3 @@
-// scriptHorarios.js - Versión Optimizada y Funcional
-
 let horarioActual = null;
 let todosTrabajadores = [];
 
@@ -15,7 +13,6 @@ const DIAS_SEMANA = {
 
 const formatHora = hora => hora ? hora.slice(0,5) : "-";
 
-// ==================== Cargar Trabajadores ====================
 async function cargarTrabajadoresHorario() {
     const response = await fetch('/api/trabajadores');
     todosTrabajadores = await response.json();
@@ -36,7 +33,6 @@ async function cargarTrabajadoresHorario() {
     });
 }
 
-// ==================== Crear Tarjeta de Trabajador ====================
 function crearTarjetaCompacta(trabajador, horarios) {
     const card = document.createElement('div');
     card.className = 'bg-white shadow-lg rounded-xl p-5 hover:shadow-xl transition';
@@ -95,7 +91,6 @@ function crearTarjetaCompacta(trabajador, horarios) {
     return card;
 }
 
-// ==================== Calcular Horas ====================
 function calcularHorasSemana(horarios) {
     return horarios.reduce((total, h) => {
         if (!h.activo) return total;
@@ -105,8 +100,6 @@ function calcularHorasSemana(horarios) {
     },0).toFixed(1);
 }
 
-// ==================== Cargar Todos los Horarios ====================
-// ==================== Cargar Todos los Horarios ====================
 async function cargarTodosLosHorarios(trabajadorId = null) {
     const contenedor = document.getElementById('contenedorHorarios');
     contenedor.innerHTML = '';
@@ -129,7 +122,6 @@ async function cargarTodosLosHorarios(trabajadorId = null) {
     }
 }
 
-// ==================== Modal ====================
 function abrirModalHorario(id = null){
     if(!id){
         const select = document.getElementById('veterinarioHorarioSelect').value;
@@ -148,7 +140,6 @@ function cerrarModalHorario(){
     document.getElementById("modalHorario").classList.add("hidden");
 }
 
-// ==================== Editar y Eliminar ====================
 async function editarHorario(id){
     const h = await fetch(`/api/horarios/${id}`).then(r => r.json());
     document.getElementById("horarioId").value = h.id;
@@ -167,7 +158,6 @@ async function eliminarHorario(id){
     await cargarTodosLosHorarios();
 }
 
-// ==================== Validar Cruce ====================
 function validarCruceHorarios(nuevo, existentes, editarId = null){
     const toMin = h => { const [hh, mm] = h.split(':').map(Number); return hh*60 + mm; };
     const nIni = toMin(nuevo.horaInicio);
@@ -182,7 +172,6 @@ function validarCruceHorarios(nuevo, existentes, editarId = null){
     });
 }
 
-// ==================== Formulario ====================
 document.getElementById("formHorario").addEventListener("submit", async e=>{
     e.preventDefault();
 
@@ -201,6 +190,30 @@ document.getElementById("formHorario").addEventListener("submit", async e=>{
     const horariosExistentes = await fetch(`/api/horarios/trabajador/${trabajador}`)
         .then(r=>r.json())
         .then(h=>h.filter(x=>x.diaSemana === diaSemana));
+
+    const horaInicio = document.getElementById("horaInicio").value;
+    const horaFin = document.getElementById("horaFin").value;
+
+    if (horaInicio >= horaFin) {
+        showToast("error", "Horario inválido", "La hora de fin debe ser posterior a la hora de inicio");
+        return;
+    }
+
+    const [hi, mi] = horaInicio.split(':').map(Number);
+    const [hf, mf] = horaFin.split(':').map(Number);
+    const minutosInicio = hi * 60 + mi;
+    const minutosFin = hf * 60 + mf;
+    const duracion = minutosFin - minutosInicio;
+
+    if (duracion < 60) {
+        showToast("error", "Duración insuficiente", "El turno debe tener una duración mínima de 1 hora");
+        return;
+    }
+
+    if (duracion > 720) {
+        showToast("error", "Duración excesiva", "El turno no puede superar las 12 horas");
+        return;
+    }
 
     if(validarCruceHorarios(data, horariosExistentes, horarioId || null)){
         showToast("error","Cruce de horario","Este turno se cruza con otro existente");
@@ -221,23 +234,21 @@ document.getElementById("formHorario").addEventListener("submit", async e=>{
     await cargarTodosLosHorarios();
 });
 
-// ==================== Select de trabajador ====================
 async function cargarHorariosVeterinario(){
     const select = document.getElementById('veterinarioHorarioSelect').value;
     if(select) await cargarTodosLosHorarios(select);
     else await cargarTodosLosHorarios();
 }
 
-// ==================== Inicialización ====================
 document.addEventListener("DOMContentLoaded", async ()=>{
     await cargarTrabajadoresHorario();
     await cargarTodosLosHorarios();
 });
 
 function obtenerTrabajadorLogueado() {
-    const usuarioJSON = localStorage.getItem('usuario'); // Ajusta la clave según tu almacenamiento
+    const usuarioJSON = localStorage.getItem('usuario');
     if (!usuarioJSON) return null;
-    return JSON.parse(usuarioJSON).trabajador; // Esto te da {id, nombre, apellido, cargo, ...}
+    return JSON.parse(usuarioJSON).trabajador;
 }
 
 async function cargarHorarioEmpleadoLogueado() {

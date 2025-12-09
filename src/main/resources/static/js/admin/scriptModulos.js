@@ -1,14 +1,10 @@
-// ==================== Mostrar módulo y resaltar sidebar ====================
 function showModule(moduleName, event = null) {
-    // Ocultar todos los módulos
     const modules = document.querySelectorAll('.module-content');
     modules.forEach(module => module.classList.remove('active'));
 
-    // Mostrar el módulo seleccionado
     const selectedModule = document.getElementById(moduleName);
     if (selectedModule) selectedModule.classList.add('active');
 
-    // Actualizar header
     const headerTitles = {
         'dashboard': 'Dashboard',
         'citas': 'Citas',
@@ -28,7 +24,6 @@ function showModule(moduleName, event = null) {
     };
     document.getElementById('header-title').textContent = headerTitles[moduleName] || 'Módulo';
 
-    // Resaltar sidebar-item activo
     const sidebarItems = document.querySelectorAll('.sidebar-item');
     sidebarItems.forEach(item => item.classList.remove('active', 'bg-cyan-500', 'text-white'));
 
@@ -41,7 +36,6 @@ function showModule(moduleName, event = null) {
     }
 }
 
-// ==================== Filtrar sidebar según rol ====================
 function filtrarSidebarPorRol() {
     const usuario = obtenerUsuarioActual();
     if (!usuario) return;
@@ -62,12 +56,9 @@ function filtrarSidebarPorRol() {
     });
 }
 
-// ==================== Inicialización ====================
 document.addEventListener('DOMContentLoaded', () => {
-    // Filtrar items según rol
     filtrarSidebarPorRol();
 
-    // Agregar eventos click a sidebar-items
     const sidebarItems = document.querySelectorAll('.sidebar-item');
     sidebarItems.forEach(item => {
         item.addEventListener('click', (e) => {
@@ -77,7 +68,6 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 
-    // Mostrar módulo inicial
     showModule('dashboard');
 });
 
@@ -87,23 +77,20 @@ document.addEventListener('DOMContentLoaded', () => {
 
     if (!toggle || !menu) return;
 
-    // Mostrar menú al pasar el mouse
     toggle.addEventListener('mouseenter', () => {
         menu.classList.remove('invisible', 'opacity-0');
         menu.classList.add('visible', 'opacity-100');
     });
 
-    // Ocultar menú al salir del toggle
     toggle.addEventListener('mouseleave', () => {
         setTimeout(() => {
-            if (!menu.matches(':hover')) { // solo si no estás sobre el menú
+            if (!menu.matches(':hover')) {
                 menu.classList.add('invisible', 'opacity-0');
                 menu.classList.remove('visible', 'opacity-100');
             }
         }, 100);
     });
 
-    // Mantener visible cuando el mouse esté sobre el menú
     menu.addEventListener('mouseenter', () => {
         menu.classList.remove('invisible', 'opacity-0');
         menu.classList.add('visible', 'opacity-100');

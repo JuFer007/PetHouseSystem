@@ -1,6 +1,5 @@
 let enfermedadActual = null;
 
-//Cargar catálogo de enfermedades
 async function cargarCatalogoEnfermedades() {
     try {
         const response = await fetch('/api/enfermedades');
@@ -35,7 +34,6 @@ async function cargarCatalogoEnfermedades() {
     }
 }
 
-//Abrir modal para nueva enfermedad
 function abrirModalNuevaEnfermedad() {
     enfermedadActual = null;
     document.getElementById('tituloModalEnfermedad').textContent = 'Nueva Enfermedad';
@@ -48,7 +46,6 @@ function abrirModalNuevaEnfermedad() {
 }
 
 
-//Cerrar modal
 function cerrarModalEnfermedad() {
     const modal = document.getElementById('modalCatalogoEnfermedad');
     modal.classList.add('hidden');
@@ -86,8 +83,6 @@ function abrirModalEditarEnfermedad() {
     setTimeout(() => modal.classList.remove('hidden'), 10);
 }
 
-
-// Eliminar enfermedad
 async function eliminarEnfermedad(id) {
     if (!confirm('¿Está seguro de eliminar esta enfermedad del catálogo?')) return;
 
@@ -106,7 +101,6 @@ async function eliminarEnfermedad(id) {
     }
 }
 
-//Guardar enfermedad (crear o actualizar)
 document.getElementById('formCatalogoEnfermedad')?.addEventListener('submit', async function(e) {
     e.preventDefault();
 
@@ -141,7 +135,6 @@ document.getElementById('formCatalogoEnfermedad')?.addEventListener('submit', as
     }
 });
 
-// Inicializar cuando el DOM esté listo
 document.addEventListener('DOMContentLoaded', () => {
     cargarCatalogoEnfermedades();
 });

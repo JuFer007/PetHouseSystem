@@ -1,41 +1,10 @@
-// ======= HISTORIA CLÍNICA - SCRIPT CORREGIDO =======
-
 document.addEventListener('DOMContentLoaded', () => {
 
-    // Estado global
     let mascotaHistoriaActual = null;
     let todasMascotas = [];
     let enfermedadesData = {};
-    let vacunasData = {}; // mapa de registros de mascota_vacuna (lista plana por id)
-    let catalogoVacunasCache = {}; // cache de vacunas del catálogo por id
-
-    // ---------- UTILIDADES ----------
-    function obtenerFechaActual() {
-        const hoy = new Date();
-        const year = hoy.getFullYear();
-        const mes = String(hoy.getMonth() + 1).padStart(2, '0');
-        const dia = String(hoy.getDate()).padStart(2, '0');
-        return `${year}-${mes}-${dia}`;
-    }
-
-    function formatearFecha(fechaStr) {
-        if (!fechaStr) return '-';
-        // permite strings yyyy-MM-dd o ISO
-        const f = new Date(fechaStr + (fechaStr.length === 10 ? 'T00:00:00' : ''));
-        if (isNaN(f)) return '-';
-        return f.toLocaleDateString('es-PE', { year: 'numeric', month: '2-digit', day: '2-digit' });
-    }
-
-    function toInputDate(fechaStr) {
-        if (!fechaStr) return '';
-        // intenta normalizar a yyyy-MM-dd
-        const d = new Date(fechaStr + (fechaStr.length === 10 ? 'T00:00:00' : ''));
-        if (isNaN(d)) return '';
-        const y = d.getFullYear();
-        const m = String(d.getMonth() + 1).padStart(2, '0');
-        const day = String(d.getDate()).padStart(2, '0');
-        return `${y}-${m}-${day}`;
-    }
+    let vacunasData = {};
+    let catalogoVacunasCache = {};
 
     function showToastFallback(type, title, msg) {
         if (typeof showToast === 'function') {
@@ -48,7 +17,31 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    // ---------- ACTUALIZAR TARJETAS ----------
+    function obtenerFechaActual() {
+        const hoy = new Date();
+        const year = hoy.getFullYear();
+        const mes = String(hoy.getMonth() + 1).padStart(2, '0');
+        const dia = String(hoy.getDate()).padStart(2, '0');
+        return `${year}-${mes}-${dia}`;
+    }
+
+    function formatearFecha(fechaStr) {
+        if (!fechaStr) return '-';
+        const f = new Date(fechaStr + (fechaStr.length === 10 ? 'T00:00:00' : ''));
+        if (isNaN(f)) return '-';
+        return f.toLocaleDateString('es-PE', { year: 'numeric', month: '2-digit', day: '2-digit' });
+    }
+
+    function toInputDate(fechaStr) {
+        if (!fechaStr) return '';
+        const d = new Date(fechaStr + (fechaStr.length === 10 ? 'T00:00:00' : ''));
+        if (isNaN(d)) return '';
+        const y = d.getFullYear();
+        const m = String(d.getMonth() + 1).padStart(2, '0');
+        const day = String(d.getDate()).padStart(2, '0');
+        return `${y}-${m}-${day}`;
+    }
+
     function actualizarEstadisticasHistoriaClinica(historia) {
         const estadoHistoria = historia && historia.mascotaId ? 'Activa' : 'Inactiva';
         const hcEstado = document.getElementById('hc-estado');
@@ -67,7 +60,6 @@ document.addEventListener('DOMContentLoaded', () => {
             if (el) el.textContent = 'Sin diagnósticos';
         }
 
-        // Dosis Aplicadas: contar vacunas con estado VIGENTE (o contar todas las aplicadas)
         let totalAplicadas = 0;
         if (historia.vacunas && historia.vacunas.length > 0) {
             totalAplicadas = historia.vacunas.filter(v => v.estado === 'VIGENTE').length;
@@ -76,7 +68,6 @@ document.addEventListener('DOMContentLoaded', () => {
         if (dosisEl) dosisEl.textContent = totalAplicadas;
     }
 
-    // ---------- CARGAR MASCOTAS (selector / buscador) ----------
     async function cargarSelectorMascotas() {
         try {
             const response = await fetch('/api/clientes/clienteMascota');
@@ -92,18 +83,15 @@ document.addEventListener('DOMContentLoaded', () => {
                 });
             });
 
-            // cargar aleatoria al inicio
             if (todasMascotas.length > 0) {
                 const mascotaAleatoria = todasMascotas[Math.floor(Math.random() * todasMascotas.length)];
                 cargarHistoriaPorId(mascotaAleatoria.id);
             }
         } catch (error) {
-            console.error('Error al cargar mascotas:', error);
             showToastFallback('error', 'Error', 'No se pudieron cargar las mascotas');
         }
     }
 
-    // buscador dinámico
     const inputMascota = document.getElementById('buscadorMascotaHistoria');
     const listaSugerencias = document.getElementById('listaSugerenciasMascota');
     if (inputMascota && listaSugerencias) {
@@ -140,7 +128,6 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // ---------- CARGAR HISTORIA ----------
     async function cargarHistoriaPorId(mascotaId) {
         try {
             const response = await fetch(`/api/mascotas/${mascotaId}/historia`);
@@ -151,7 +138,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
             actualizarEstadisticasHistoriaClinica(historia);
 
-            // actualizar info de la mascota en UI (verificar existencia de elementos)
             const setText = (id, value) => {
                 const el = document.getElementById(id);
                 if (el) el.textContent = value ?? '-';
@@ -175,7 +161,6 @@ document.addEventListener('DOMContentLoaded', () => {
             const link = document.getElementById('hc-dueno-telefono-link');
             if (link) link.href = telefono !== '-' ? `tel:${telefono}` : '#';
 
-            // mini tarjetas
             if (historia.enfermedades && historia.enfermedades.length > 0) {
                 const ultimaEnfermedad = historia.enfermedades[historia.enfermedades.length - 1];
                 const nombreEnf = ultimaEnfermedad.enfermedadNombre || 'Sin diagnósticos';
@@ -205,12 +190,10 @@ document.addEventListener('DOMContentLoaded', () => {
             if (cont) cont.style.display = 'block';
 
         } catch (error) {
-            console.error('Error al cargar historia:', error);
             showToastFallback('error', 'Error', 'No se pudo cargar la historia clínica');
         }
     }
 
-    // ---------- TABLA ENFERMEDADES (sin cambios mayores) ----------
     function cargarTablaEnfermedades(enfermedades) {
         const tbody = document.querySelector('#tabla-hc-enfermedades tbody');
         if (!tbody) return;
@@ -259,7 +242,6 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    // ---------- MODAL / CARGA CATALOGO VACUNAS ----------
     async function cargarVacunasSelect() {
         try {
             const response = await fetch('/api/vacunas');
@@ -271,12 +253,10 @@ document.addEventListener('DOMContentLoaded', () => {
             select.innerHTML = '<option value="">-- Seleccione --</option>';
 
             vacunas.forEach(v => {
-                // guardamos en cache para uso posterior (dosisRequeridas)
                 catalogoVacunasCache[v.id] = v;
                 select.innerHTML += `<option value="${v.id}">${v.nombre} (${v.dosisRequeridas ?? '1'} dosis)</option>`;
             });
 
-            // evento change para rellenar número de dosis automáticamente
             select.onchange = () => {
                 const id = select.value;
                 const dosisInput = document.getElementById('hc-vacuna-dosis');
@@ -290,12 +270,10 @@ document.addEventListener('DOMContentLoaded', () => {
             };
 
         } catch (error) {
-            console.error('Error al cargar vacunas:', error);
             showToastFallback('error', 'Error', 'No se pudo cargar el catálogo de vacunas');
         }
     }
 
-    // ---------- TABLA VACUNAS (ajustada) ----------
     function cargarTablaVacunas(vacunas) {
         const tbody = document.querySelector('#tabla-hc-vacunas tbody');
         if (!tbody) return;
@@ -308,7 +286,6 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         vacunas.forEach(v => {
-            // v es DTO de mascota_vacuna
             vacunasData[v.id] = v;
 
             const puedeEditar = v.estado !== 'VENCIDA';
@@ -346,46 +323,36 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    // ---------- EDITAR VACUNA (abrir modal) ----------
-    // Expuesto globalmente por el uso de onclick inline en la tabla
     window.editarVacunaHistoria = async function(id) {
-       const vacuna = vacunasData[id];
-           if (!vacuna) {
-               showToastFallback('error', 'Error', 'No se encontraron los datos de la vacuna');
-               return;
-           }
+        const vacuna = vacunasData[id];
+        if (!vacuna) {
+            showToastFallback('error', 'Error', 'No se encontraron los datos de la vacuna');
+            return;
+        }
 
-           if (vacuna.estado === 'VENCIDA') {
-               showToastFallback('warning', 'No permitido', 'No se puede editar una vacuna vencida');
-               return;
-           }
+        if (vacuna.estado === 'VENCIDA') {
+            showToastFallback('warning', 'No permitido', 'No se puede editar una vacuna vencida');
+            return;
+        }
 
-           if (vacuna.proximaDosis) {
-               const hoy = obtenerFechaActual();
-               const fechaProxima = toInputDate(vacuna.proximaDosis);
+        if (vacuna.proximaDosis) {
+            const hoy = obtenerFechaActual();
+            const fechaProxima = toInputDate(vacuna.proximaDosis);
+            if (fechaProxima > hoy) {
+                showToastFallback('warning', 'Aún no disponible', `Esta dosis no puede aplicarse hasta el ${formatearFecha(vacuna.proximaDosis)}`);
+                return;
+            }
+        }
 
-               if (fechaProxima > hoy) {
-                   showToastFallback(
-                       'warning',
-                       'Aún no disponible',
-                       `Esta dosis no puede aplicarse hasta el ${formatearFecha(vacuna.proximaDosis)}`
-                   );
-                   return;
-               }
-           }
-
-       try {
-            // llenamos modal con datos de la dosis (registro específico)
-            document.getElementById('hc-vacuna-id').value = vacuna.id; // id del registro mascota_vacuna
+        try {
+            document.getElementById('hc-vacuna-id').value = vacuna.id;
             document.getElementById('titulo-modal-vacuna').textContent = 'Aplicar / Editar Dosis';
             document.getElementById('btn-guardar-vacuna').textContent = 'Actualizar Dosis';
 
-            await cargarVacunasSelect(); // carga catálogo
+            await cargarVacunasSelect();
 
-            // seteos: bloquear select y numero de dosis (no se pueden cambiar)
             const select = document.getElementById('hc-vacuna-select');
             const dosisInput = document.getElementById('hc-vacuna-dosis');
-
             if (select) {
                 select.value = vacuna.vacunaId;
                 select.disabled = true;
@@ -395,7 +362,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 dosisInput.disabled = true;
             }
 
-            // fecha: si ya tiene fecha, mostrarla; si no, dejar la fecha actual para aplicar
             const fechaInput = document.getElementById('hc-vacuna-fecha');
             fechaInput.value = toInputDate(vacuna.fechaAplicacion) || obtenerFechaActual();
 
@@ -405,21 +371,17 @@ document.addEventListener('DOMContentLoaded', () => {
             const estadoSelect = document.getElementById('hc-vacuna-estado');
             if (estadoSelect) {
                 estadoSelect.value = vacuna.estado || 'PENDIENTE';
-                // bloqueamos el estado también: lo controla backend según fecha/proxima
                 estadoSelect.disabled = true;
             }
 
             document.getElementById('hc-vacuna-observaciones').value = vacuna.observaciones || '';
-
             document.getElementById('modalAgregarVacuna').classList.remove('hidden');
 
-       } catch (error) {
-            console.error('Error al cargar vacuna para editar:', error);
+        } catch (error) {
             showToastFallback('error', 'Error', 'No se pudieron cargar los datos de la vacuna');
-       }
+        }
     };
 
-    // ---------- ELIMINAR VACUNA ----------
     window.eliminarVacunaHistoria = async function(id) {
         const vacuna = vacunasData[id];
         if (!vacuna) {
@@ -439,46 +401,45 @@ document.addEventListener('DOMContentLoaded', () => {
                 await cargarHistoriaPorId(mascotaHistoriaActual.mascotaId);
             } else {
                 const text = await response.text();
-                console.error('Error servidor al eliminar vacuna:', text);
                 showToastFallback('error', 'Error', 'No se pudo eliminar la vacuna');
             }
         } catch (error) {
-            console.error('Error al eliminar vacuna:', error);
             showToastFallback('error', 'Error de conexión', 'No se pudo conectar con el servidor');
         }
     };
 
-    // ---------- ABRIR MODAL REGISTRAR VACUNA (nuevo) ----------
     window.abrirModalAgregarVacuna = async function() {
         if (!mascotaHistoriaActual) {
             showToastFallback('warning', 'Advertencia', 'Primero selecciona una mascota');
             return;
         }
 
-        // limpiar y preparar modal en modo 'registro'
+        await cargarVacunasSelect();
+
+        const select = document.getElementById('hc-vacuna-select');
+        if (select) {
+            const vacunasAplicadasIds = (mascotaHistoriaActual.vacunas || []).map(v => v.vacunaId);
+            [...select.options].forEach(option => {
+                if (option.value && vacunasAplicadasIds.includes(parseInt(option.value))) {
+                    option.disabled = true;
+                }
+            });
+        }
+
         document.getElementById('formAgregarVacuna').reset();
         document.getElementById('hc-vacuna-id').value = '';
         document.getElementById('titulo-modal-vacuna').textContent = 'Registrar Vacuna';
         document.getElementById('btn-guardar-vacuna').textContent = 'Guardar Vacuna';
 
-        await cargarVacunasSelect();
-
-        // habilitar campos para registro
-        const select = document.getElementById('hc-vacuna-select');
         const dosisInput = document.getElementById('hc-vacuna-dosis');
         const estadoSelect = document.getElementById('hc-vacuna-estado');
-
-        if (select) { select.disabled = false; select.value = ''; }
-        if (dosisInput) { dosisInput.disabled = true; dosisInput.value = '1'; } // readonly: se rellena por selección
+        if (dosisInput) { dosisInput.disabled = true; dosisInput.value = '1'; }
         if (estadoSelect) { estadoSelect.disabled = true; estadoSelect.value = 'VIGENTE'; }
-
         document.getElementById('hc-vacuna-fecha').value = obtenerFechaActual();
         document.getElementById('hc-vacuna-observaciones').value = '';
-
         document.getElementById('modalAgregarVacuna').classList.remove('hidden');
     };
 
-    // ---------- CERRAR MODAL ----------
     window.cerrarModalAgregarVacuna = function() {
         const select = document.getElementById('hc-vacuna-select');
         const dosisInput = document.getElementById('hc-vacuna-dosis');
@@ -490,20 +451,18 @@ document.addEventListener('DOMContentLoaded', () => {
         document.getElementById('modalAgregarVacuna').classList.add('hidden');
     };
 
-    // ---------- GUARDAR VACUNA (POST o PUT según modo) ----------
     const formVacuna = document.getElementById('formAgregarVacuna');
     if (formVacuna) {
         formVacuna.addEventListener('submit', async (e) => {
             e.preventDefault();
 
-            const vacunaRegistroId = document.getElementById('hc-vacuna-id').value; // id del registro (edición) o '' (nuevo)
+            const vacunaRegistroId = document.getElementById('hc-vacuna-id').value;
             const esEdicion = vacunaRegistroId !== '';
 
             const vacunaSelectValue = document.getElementById('hc-vacuna-select').value;
             const fechaAplicacion = document.getElementById('hc-vacuna-fecha').value;
             const observacionesValue = document.getElementById('hc-vacuna-observaciones').value.trim();
 
-            // validaciones mínimas
             if (!vacunaSelectValue && !esEdicion) {
                 showToastFallback('warning', 'Campos incompletos', 'Seleccione la vacuna');
                 return;
@@ -513,9 +472,28 @@ document.addEventListener('DOMContentLoaded', () => {
                 return;
             }
 
+            const vacunasAplicadasIds = (mascotaHistoriaActual.vacunas || []).map(v => v.vacunaId);
+            if (!esEdicion && vacunasAplicadasIds.includes(parseInt(vacunaSelectValue))) {
+                showToastFallback('error', 'No permitido', 'Esta vacuna ya fue registrada para la mascota');
+                return;
+            }
+
             try {
                 if (esEdicion) {
-                    // PUT -> aplicar/actualizar la dosis específica
+                    const registro = vacunasData[vacunaRegistroId];
+                    if(registro && registro.estado !== 'PENDIENTE'){
+                        showToastFallback('error', 'No permitido', 'Esta dosis ya fue aplicada');
+                        return;
+                    }
+                    const hoy = obtenerFechaActual();
+                    if (registro && registro.proximaDosis) {
+                        const fechaProxima = toInputDate(registro.proximaDosis);
+                        if (fechaProxima > hoy) {
+                            showToastFallback('error', 'No permitido', 'Esta dosis solo puede aplicarse desde: ' + formatearFecha(registro.proximaDosis));
+                            return;
+                        }
+                    }
+
                     const dto = {
                         fechaAplicacion: fechaAplicacion,
                         observaciones: observacionesValue !== '' ? observacionesValue.toUpperCase() : null
@@ -528,18 +506,16 @@ document.addEventListener('DOMContentLoaded', () => {
                     });
 
                     if (response.ok) {
-                        const resultado = await response.json();
+                        await response.json();
                         showToastFallback('success', 'Vacuna actualizada', 'Dosis actualizada correctamente');
                         cerrarModalAgregarVacuna();
                         await cargarHistoriaPorId(mascotaHistoriaActual.mascotaId);
                     } else {
                         const errorText = await response.text();
-                        console.error('Error servidor PUT vacuna:', errorText);
                         showToastFallback('error', 'Error al guardar', 'No se pudo actualizar la dosis: ' + errorText);
                     }
 
                 } else {
-                    // POST -> registrar primera dosis; backend genera todas las dosis automáticamente
                     const dto = {
                         mascotaId: mascotaHistoriaActual.mascotaId,
                         vacunaId: parseInt(vacunaSelectValue),
@@ -554,25 +530,21 @@ document.addEventListener('DOMContentLoaded', () => {
                     });
 
                     if (response.ok) {
-                        // backend devuelve lista de dosis creadas
-                        const resultado = await response.json();
+                        await response.json();
                         showToastFallback('success', 'Vacuna registrada', 'Vacunas registradas correctamente');
                         cerrarModalAgregarVacuna();
                         await cargarHistoriaPorId(mascotaHistoriaActual.mascotaId);
                     } else {
                         const errorText = await response.text();
-                        console.error('Error servidor POST vacuna:', errorText);
                         showToastFallback('error', 'Error al guardar', 'No se pudo registrar la vacuna: ' + errorText);
                     }
                 }
             } catch (error) {
-                console.error('Error al guardar vacuna:', error);
                 showToastFallback('error', 'Error de conexión', 'No se pudo conectar con el servidor');
             }
         });
     }
 
-    // ---------- EDITAR ENFERMEDAD (se mantiene) ----------
     window.editarEnfermedadHistoria = async function(id) {
         const enfermedad = enfermedadesData[id];
         if (!enfermedad) {
@@ -599,12 +571,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
             document.getElementById('modalAgregarEnfermedad').classList.remove('hidden');
         } catch (error) {
-            console.error('Error al cargar enfermedad:', error);
             showToastFallback('error', 'Error', 'No se pudieron cargar los datos de la enfermedad');
         }
     };
 
-    // ---------- CARGAR CATALOGO ENFERMEDADES (se mantiene) ----------
     async function cargarEnfermedadesSelect() {
         try {
             const response = await fetch('/api/enfermedades');
@@ -616,12 +586,10 @@ document.addEventListener('DOMContentLoaded', () => {
             select.innerHTML = '<option value="">-- Seleccione --</option>';
             enfermedades.forEach(e => select.innerHTML += `<option value="${e.id}">${e.nombre}</option>`);
         } catch (error) {
-            console.error('Error al cargar enfermedades:', error);
             showToastFallback('error', 'Error', 'No se pudo cargar el catálogo de enfermedades');
         }
     }
 
-    // ---------- GUARDAR / ACTUALIZAR ENFERMEDAD (se mantiene) ----------
     const formEnf = document.getElementById('formAgregarEnfermedad');
     if (formEnf) {
         formEnf.addEventListener('submit', async (e) => {
@@ -629,17 +597,34 @@ document.addEventListener('DOMContentLoaded', () => {
 
             const enfermedadId = document.getElementById('hc-enfermedad-id').value;
             const esEdicion = enfermedadId !== '';
+            const selectEnfermedadValue = document.getElementById('hc-enfermedad-select').value;
+            const fechaDiagnostico = document.getElementById('hc-enfermedad-fecha').value;
+            const estadoEnfermedad = document.getElementById('hc-enfermedad-estado').value;
+            const sintomas = document.getElementById('hc-enfermedad-sintomas').value.trim();
+            const observaciones = document.getElementById('hc-enfermedad-observaciones').value.trim();
 
-            const dto = {
-                mascotaId: mascotaHistoriaActual.mascotaId,
-                enfermedadId: parseInt(document.getElementById('hc-enfermedad-select').value),
-                fechaDiagnostico: document.getElementById('hc-enfermedad-fecha').value,
-                estado: document.getElementById('hc-enfermedad-estado').value,
-                sintomas: document.getElementById('hc-enfermedad-sintomas').value.trim() || null,
-                observaciones: document.getElementById('hc-enfermedad-observaciones').value.trim() || null
-            };
+            if (!selectEnfermedadValue) {
+                showToastFallback('warning', 'Campos incompletos', 'Seleccione la enfermedad');
+                return;
+            }
+            if (!fechaDiagnostico) {
+                showToastFallback('warning', 'Campos incompletos', 'Ingrese la fecha');
+                return;
+            }
+            if (!estadoEnfermedad) {
+                showToastFallback('warning', 'Campos incompletos', 'Ingrese el estado');
+                return;
+            }
 
             try {
+                const dto = {
+                    mascotaId: mascotaHistoriaActual.mascotaId,
+                    enfermedadId: parseInt(selectEnfermedadValue),
+                    fechaDiagnostico: fechaDiagnostico,
+                    estado: estadoEnfermedad,
+                    sintomas: sintomas || null,
+                    observaciones: observaciones || null
+                };
                 const url = esEdicion ? `/api/mascotas-enfermedades/${enfermedadId}` : '/api/mascotas-enfermedades';
                 const method = esEdicion ? 'PUT' : 'POST';
 
@@ -650,25 +635,20 @@ document.addEventListener('DOMContentLoaded', () => {
                 });
 
                 if (response.ok) {
-                    showToastFallback('success',
-                        esEdicion ? 'Diagnóstico actualizado' : 'Diagnóstico registrado',
-                        'Datos guardados correctamente');
+                    showToastFallback('success', esEdicion ? 'Diagnóstico actualizado' : 'Diagnóstico registrado', 'Datos guardados correctamente');
                     document.getElementById('formAgregarEnfermedad').reset();
                     document.getElementById('modalAgregarEnfermedad').classList.add('hidden');
                     await cargarHistoriaPorId(mascotaHistoriaActual.mascotaId);
                 } else {
                     const error = await response.text();
-                    console.error('Error del servidor:', error);
                     showToastFallback('error', 'Error al guardar', 'No se pudo guardar el diagnóstico');
                 }
             } catch (error) {
-                console.error('Error al guardar enfermedad:', error);
                 showToastFallback('error', 'Error de conexión', 'No se pudo conectar con el servidor');
             }
         });
     }
 
-    // ---------- ELIMINAR ENFERMEDAD (se mantiene) ----------
     window.eliminarEnfermedadHistoria = async function(id) {
         const enfermedad = enfermedadesData[id];
         if (!enfermedad) {
@@ -689,17 +669,13 @@ document.addEventListener('DOMContentLoaded', () => {
                 showToastFallback('error', 'Error', 'No se pudo eliminar el diagnóstico');
             }
         } catch (error) {
-            console.error('Error al eliminar enfermedad:', error);
             showToastFallback('error', 'Error de conexión', 'No se pudo conectar con el servidor');
         }
     };
 
-    // ---------- INICIALIZACIÓN ----------
-    // cargar selector de mascotas y catálogo vacunas inicial para UX
     cargarSelectorMascotas();
     cargarVacunasSelect();
 
-    // Exponer abrirModalAgregarEnfermedad (onclick)
     window.abrirModalAgregarEnfermedad = function() {
         if (!mascotaHistoriaActual) {
             showToastFallback('warning', 'Advertencia', 'Primero selecciona una mascota');

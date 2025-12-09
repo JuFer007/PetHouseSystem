@@ -1,6 +1,5 @@
 let mascotaActual = null;
 
-// Mapas de coincidencia de razas
 const mapRazasPerro = {
     husky: ["husky", "haski"],
     labrador: ["labrador", "lab"],
@@ -27,7 +26,6 @@ const mapRazasGato = {
     norwegian: ["norwegian", "norwegian forest"]
 };
 
-// Función para buscar coincidencia
 function buscarRazaCoincidente(nombreRaza, mapRazas) {
     const razaLower = nombreRaza.toLowerCase();
     for (const [key, variantes] of Object.entries(mapRazas)) {
@@ -36,7 +34,6 @@ function buscarRazaCoincidente(nombreRaza, mapRazas) {
     return null;
 }
 
-// Función para obtener imagen según especie y raza
 async function obtenerImagenMascota(mascota) {
     const { especie, raza } = mascota;
     const especieLower = especie.toLowerCase();
@@ -97,7 +94,6 @@ async function obtenerImagenMascota(mascota) {
     }
 }
 
-//Función para cargar mascotas
 async function cargarMascotas() {
     try {
         const response = await fetch('/api/clientes/clienteMascota');
@@ -169,7 +165,6 @@ async function cargarMascotas() {
     }
 }
 
-// Funciones para abrir y cerrar modal
 function abrirModalEditarMascota(mascotaId, nombreDueno, clienteId) {
     fetch(`/api/mascotas/${mascotaId}`)
         .then(res => res.ok ? res.json() : Promise.reject(`HTTP ${res.status}`))
@@ -206,7 +201,6 @@ function cerrarModalMascota() {
     document.getElementById('errorEdadMascota')?.classList.add('hidden');
 }
 
-// Event listeners
 document.addEventListener('DOMContentLoaded', () => {
     cargarMascotas();
 
@@ -245,13 +239,39 @@ document.addEventListener('DOMContentLoaded', () => {
         if (!mascotaActual) return;
 
         const nombre = inputNombre.value.trim().toUpperCase();
+        const especie = document.getElementById('editarEspecie').value.trim().toUpperCase();
+        const raza = document.getElementById('editarRaza').value.trim().toUpperCase();
         const edad = parseInt(inputEdad.value);
-        if (!nombre || isNaN(edad) || edad < 0 || edad > 30) return;
+
+        if (!nombre) {
+            showToast("error", "Campo requerido", "El nombre de la mascota es obligatorio");
+            return;
+        }
+
+        if (nombre.length < 2) {
+            showToast("warning", "Nombre muy corto", "El nombre debe tener al menos 2 caracteres");
+            return;
+        }
+
+        if (!especie) {
+            showToast("error", "Campo requerido", "La especie es obligatoria");
+            return;
+        }
+
+        if (!raza) {
+            showToast("error", "Campo requerido", "La raza es obligatoria");
+            return;
+        }
+
+        if (isNaN(edad) || edad < 0 || edad > 30) {
+            showToast("error", "Edad inválida", "La edad debe estar entre 0 y 30 años");
+            return;
+        }
 
         fetch(`/api/mascotas/${mascotaActual.id}`, {
             method: 'PUT',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ ...mascotaActual, nombre, edad })
+            body: JSON.stringify({ ...mascotaActual, nombre, especie, raza, edad })
         })
         .then(res => res.ok ? res.json() : Promise.reject())
         .then(() => {

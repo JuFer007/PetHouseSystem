@@ -54,14 +54,8 @@ async function cargarPagos() {
             const btnEliminar = tr.querySelector(".fa-trash");
             const btnPDF = tr.querySelector(".fa-file-pdf");
 
-            // -----------------------------------
-            // 1. VALIDACIÓN: YA COMPLETADO → BLOQUEAR
-            // -----------------------------------
             const pagoYaCerrado = estado === "COMPLETADO";
 
-            // -----------------------------------
-            // 2. REGISTRAR COMO PAGADO
-            // -----------------------------------
             btnRegistrar.addEventListener("click", async () => {
                 if (pagoYaCerrado) {
                     showToast("error", "Pago ya está completado", "No puedes modificar un pago cerrado.");
@@ -82,9 +76,6 @@ async function cargarPagos() {
                 }
             });
 
-            // -----------------------------------
-            // 3. ELIMINAR PAGO
-            // -----------------------------------
             btnEliminar.addEventListener("click", async () => {
                 try {
                     await fetch(`http://localhost:8080/api/pagos/${p.id}`, { method: "DELETE" });
@@ -96,9 +87,6 @@ async function cargarPagos() {
                 }
             });
 
-            // -----------------------------------
-            // 4. GENERAR TICKET PDF
-            // -----------------------------------
             btnPDF.addEventListener("click", async () => {
                 if (!pagoYaCerrado) {
                     showToast("error", "No disponible", "El ticket solo se genera cuando el pago está completado.");

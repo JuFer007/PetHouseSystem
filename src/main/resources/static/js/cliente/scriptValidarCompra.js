@@ -4,11 +4,8 @@ async function verificarSesionCliente() {
             method: 'GET',
             credentials: 'include'
         });
-
-        // Retornar true solo si la respuesta es exitosa
         return response.ok;
     } catch (error) {
-        // Si hay error, retornar false
         return false;
     }
 }
@@ -25,11 +22,9 @@ window.addToCart = async function(productoId, nombre, precio, stock, urlImagen) 
         return;
     }
 
-    // Si tiene sesión, ejecutar función original
     addToCartOriginal(productoId, nombre, precio, stock, urlImagen);
 };
 
-// Validar sesión en checkout
 const checkoutOriginal = window.checkout;
 
 window.checkout = async function() {
@@ -48,7 +43,7 @@ window.checkout = async function() {
 let navbarActualizado = false;
 
 async function actualizarNavbar() {
-    if (navbarActualizado) return; // Evitar múltiples ejecuciones
+    if (navbarActualizado) return;
 
     const tieneSesion = await verificarSesionCliente();
 
@@ -68,14 +63,13 @@ async function actualizarNavbar() {
                     }
                 }
             }
-            navbarActualizado = true; // Marcar como actualizado
+            navbarActualizado = true;
         } catch (error) {
-            // Ignorar errores
+            console.log(error);
         }
     }
 }
 
-// Ejecutar al cargar página solo una vez
 if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', () => {
         actualizarNavbar();

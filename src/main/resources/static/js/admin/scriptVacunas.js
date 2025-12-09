@@ -35,10 +35,6 @@ async function cargarCatalogoVacunas() {
     }
 }
 
-// =======================
-// MODALES
-// =======================
-
 function abrirModalVacunaNueva() {
     vacunaCatalogoActual = null;
     document.getElementById('tituloModalVacunaCatalogo').textContent = 'Nueva Vacuna';
@@ -59,10 +55,6 @@ function cerrarModalVacunaCatalogo() {
     modal.classList.add('hidden');
     setTimeout(() => modal.style.display = 'none', 300);
 }
-
-// =======================
-// EDICIÓN
-// =======================
 
 async function editarVacunaCatalogo(id) {
 
@@ -91,10 +83,6 @@ async function editarVacunaCatalogo(id) {
 
 }
 
-// =======================
-// ELIMINAR
-// =======================
-
 async function eliminarVacunaCatalogo(id) {
 
     if (!confirm('¿Eliminar esta vacuna?')) return;
@@ -114,10 +102,6 @@ async function eliminarVacunaCatalogo(id) {
     }
 
 }
-
-// =======================
-// GUARDAR
-// =======================
 
 document.getElementById('formCatalogoVacuna')?.addEventListener('submit', async e => {
 
@@ -169,9 +153,5 @@ document.getElementById('formCatalogoVacuna')?.addEventListener('submit', async 
     }
 
 });
-
-// =======================
-// LOAD
-// =======================
 
 document.addEventListener('DOMContentLoaded', cargarCatalogoVacunas);

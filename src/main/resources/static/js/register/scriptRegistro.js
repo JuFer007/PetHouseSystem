@@ -1,6 +1,3 @@
-// ========================
-// BUSCAR DNI
-// ========================
 async function buscarPorDNI() {
     const dni = document.getElementById('dni').value.trim();
 
@@ -29,17 +26,10 @@ async function buscarPorDNI() {
     }
 }
 
-// ========================
-// SOLO NÚMEROS EN TELÉFONO
-// ========================
 document.getElementById('telefono')?.addEventListener('input', function () {
     this.value = this.value.replace(/[^0-9]/g, '');
 });
 
-
-// ===================================
-// REGISTRO CLIENTE + USUARIO
-// ===================================
 document.getElementById('registerForm').addEventListener('submit', async (e) => {
     e.preventDefault();
 
@@ -49,27 +39,61 @@ document.getElementById('registerForm').addEventListener('submit', async (e) => 
     const telefono = document.getElementById('telefono').value.trim();
     const correo = document.getElementById('correo').value.trim().toLowerCase();
 
-    // =====================
-    // VALIDACIONES
-    // =====================
-    if (dni.length !== 8) {
-        showToast('warning', 'DNI inválido', 'Debe tener 8 dígitos');
+    if (dni.length !== 8 || !/^\d{8}$/.test(dni)) {
+        showToast('warning', 'DNI inválido', 'Debe tener 8 dígitos numéricos');
         return;
     }
 
-    if (telefono.length !== 9) {
-        showToast('warning', 'Teléfono inválido', 'Debe tener 9 dígitos');
+    if (!nombre || nombre.length < 2) {
+        showToast('warning', 'Nombre inválido', 'El nombre debe tener al menos 2 caracteres');
         return;
     }
 
-    if (!correo.includes('@')) {
+    if (!apellido || apellido.length < 2) {
+        showToast('warning', 'Apellido inválido', 'El apellido debe tener al menos 2 caracteres');
+        return;
+    }
+
+    if (telefono.length !== 9 || !/^\d{9}$/.test(telefono)) {
+        showToast('warning', 'Teléfono inválido', 'Debe tener 9 dígitos numéricos');
+        return;
+    }
+
+    if (!/^9\d{8}$/.test(telefono)) {
+        showToast('warning', 'Teléfono sospechoso', 'Los números en Perú suelen comenzar con 9');
+    }
+
+    if (!correo.includes('@') || !correo.includes('.')) {
         showToast('warning', 'Correo inválido', 'Correo electrónico incorrecto');
         return;
     }
 
-    // =====================
-    // CREAR CLIENTE
-    // =====================
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(correo)) {
+        showToast('error', 'Formato de correo', 'El formato del correo no es válido');
+        return;
+    }
+
+    try {
+        const respCorreo = await fetch(`/api/usuarios/correo/${correo}`);
+        if (respCorreo.ok) {
+            showToast('error', 'Correo ya registrado', 'Este correo ya tiene una cuenta');
+            return;
+        }
+    } catch (error) {
+        console.log(error)
+    }
+
+    try {
+        const respDNI = await fetch(`/api/clientes/dni/${dni}`);
+        if (respDNI.ok) {
+            showToast('error', 'DNI ya registrado', 'Este DNI ya está en el sistema');
+            return;
+        }
+    } catch (error) {
+        console.log(error);
+    }
+
     let clienteCreado = null;
 
     try {
@@ -98,10 +122,6 @@ document.getElementById('registerForm').addEventListener('submit', async (e) => 
         return;
     }
 
-
-    // =====================
-    // CREAR USUARIO
-    // =====================
     try {
         const usuario = {
             correoElectronico: correo,
@@ -133,5 +153,4 @@ document.getElementById('registerForm').addEventListener('submit', async (e) => 
         console.error("ERROR USUARIO:", error);
         showToast('error', 'Registro fallido', 'No se pudo crear el usuario');
     }
-
 });

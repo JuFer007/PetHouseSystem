@@ -5,7 +5,6 @@ async function cargarUsuarios() {
         const response = await fetch('/api/usuarios');
         usuariosActuales = await response.json();
 
-        // Filtrar solo usuarios que no sean CLIENTE
         const usuariosFiltrables = usuariosActuales.filter(u => u.rol !== 'CLIENTE');
 
         const tbody = document.querySelector('#tabla-usuarios tbody');
