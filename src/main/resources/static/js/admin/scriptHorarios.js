@@ -17,13 +17,9 @@ async function cargarTrabajadoresHorario() {
     const response = await fetch('/api/trabajadores');
     todosTrabajadores = await response.json();
 
-    todosTrabajadores = todosTrabajadores
-        .filter(t => t.activo && !t.cargo.toLowerCase().includes('admin'))
-        .sort((a, b) => {
-            const av = a.cargo.toLowerCase().includes('vet') ? 0 : 1;
-            const bv = b.cargo.toLowerCase().includes('vet') ? 0 : 1;
-            return av - bv;
-        });
+todosTrabajadores = todosTrabajadores
+    .filter(t => t.activo && !t.cargo.toLowerCase().includes('admin'))
+    .sort((a,b) => a.cargo.localeCompare(b.cargo));
 
     const select = document.getElementById('veterinarioHorarioSelect');
     select.innerHTML = '<option value="">Todos los trabajadores</option>';
@@ -101,24 +97,48 @@ function calcularHorasSemana(horarios) {
 }
 
 async function cargarTodosLosHorarios(trabajadorId = null) {
+
     const contenedor = document.getElementById('contenedorHorarios');
     contenedor.innerHTML = '';
 
-    const trabajadores = trabajadorId ? todosTrabajadores.filter(t => t.id == trabajadorId) : todosTrabajadores;
+    const trabajadores = trabajadorId
+        ? todosTrabajadores.filter(t => t.id == trabajadorId)
+        : todosTrabajadores;
 
     if(trabajadores.length === 0){
-        contenedor.innerHTML = '<div class="col-span-full text-center py-12 text-gray-500">No hay trabajadores</div>';
+        contenedor.innerHTML = `
+            <div class="col-span-full text-center py-12 text-gray-500">
+                No hay trabajadores
+            </div>`;
         return;
     }
 
     try {
-        for(const t of trabajadores){
-            const horarios = await fetch(`/api/horarios/trabajador/${t.id}`).then(r => r.json());
-            contenedor.appendChild(crearTarjetaCompacta(t, horarios));
-        }
-    } catch(err) {
-        contenedor.innerHTML = '<div class="col-span-full text-center py-12 text-red-500">Error cargando horarios</div>';
-        console.error(err);
+
+        const trabajos = trabajadores.map(async t => {
+            const horarios = await fetch(`/api/horarios/trabajador/${t.id}`)
+                                   .then(r => r.json());
+
+            return {
+                trabajador: t,
+                horarios
+            };
+        });
+
+        const resultados = await Promise.all(trabajos);
+
+        resultados.forEach(r => {
+            contenedor.appendChild(
+                crearTarjetaCompacta(r.trabajador, r.horarios)
+            );
+        });
+
+    } catch (err) {
+        console.error("Error al cargar horarios", err);
+        contenedor.innerHTML = `
+            <div class="col-span-full py-12 text-red-500 text-center">
+                Error cargando horarios
+            </div>`;
     }
 }
 
@@ -240,11 +260,6 @@ async function cargarHorariosVeterinario(){
     else await cargarTodosLosHorarios();
 }
 
-document.addEventListener("DOMContentLoaded", async ()=>{
-    await cargarTrabajadoresHorario();
-    await cargarTodosLosHorarios();
-});
-
 function obtenerTrabajadorLogueado() {
     const usuarioJSON = localStorage.getItem('usuario');
     if (!usuarioJSON) return null;
@@ -292,6 +307,8 @@ async function cargarHorarioEmpleadoLogueado() {
     }
 }
 
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener("DOMContentLoaded", async () => {
+    await cargarTrabajadoresHorario();
+    await cargarTodosLosHorarios();
     cargarHorarioEmpleadoLogueado();
 });

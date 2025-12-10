@@ -7,10 +7,8 @@ async function buscarPorDNI() {
     }
 
     try {
-        // API CONSULTA DNI
         const response = await fetch(`http://localhost:3002/dni/${dni}`);
-
-        if (!response.ok) throw new Error("DNI no encontrado");
+        if (!response.ok) throw new Error();
 
         const data = await response.json();
 
@@ -20,8 +18,7 @@ async function buscarPorDNI() {
 
         showToast('success', 'DNI encontrado', 'Datos cargados correctamente');
 
-    } catch (error) {
-        console.error('Error DNI:', error);
+    } catch {
         showToast('error', 'DNI no válido', 'No se encontraron datos del DNI');
     }
 }
@@ -39,62 +36,64 @@ document.getElementById('registerForm').addEventListener('submit', async (e) => 
     const telefono = document.getElementById('telefono').value.trim();
     const correo = document.getElementById('correo').value.trim().toLowerCase();
 
-    if (dni.length !== 8 || !/^\d{8}$/.test(dni)) {
-        showToast('warning', 'DNI inválido', 'Debe tener 8 dígitos numéricos');
+    if (!/^\d{8}$/.test(dni)) {
+        showToast('warning','DNI inválido','Debe tener 8 dígitos');
         return;
     }
 
-    if (!nombre || nombre.length < 2) {
-        showToast('warning', 'Nombre inválido', 'El nombre debe tener al menos 2 caracteres');
+    if (nombre.length < 2) {
+        showToast('warning','Nombre inválido','Debe tener mínimo 2 letras');
         return;
     }
 
-    if (!apellido || apellido.length < 2) {
-        showToast('warning', 'Apellido inválido', 'El apellido debe tener al menos 2 caracteres');
+    if (apellido.length < 2) {
+        showToast('warning','Apellido inválido','Debe tener mínimo 2 letras');
         return;
     }
 
-    if (telefono.length !== 9 || !/^\d{9}$/.test(telefono)) {
-        showToast('warning', 'Teléfono inválido', 'Debe tener 9 dígitos numéricos');
-        return;
-    }
-
-    if (!/^9\d{8}$/.test(telefono)) {
-        showToast('warning', 'Teléfono sospechoso', 'Los números en Perú suelen comenzar con 9');
-    }
-
-    if (!correo.includes('@') || !correo.includes('.')) {
-        showToast('warning', 'Correo inválido', 'Correo electrónico incorrecto');
+    if (!/^\d{9}$/.test(telefono)) {
+        showToast('warning','Teléfono inválido','Debe tener 9 dígitos');
         return;
     }
 
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(correo)) {
-        showToast('error', 'Formato de correo', 'El formato del correo no es válido');
+        showToast('error','Correo inválido','Formato incorrecto');
         return;
     }
 
     try {
-        const respCorreo = await fetch(`/api/usuarios/correo/${correo}`);
-        if (respCorreo.ok) {
-            showToast('error', 'Correo ya registrado', 'Este correo ya tiene una cuenta');
+        const resUsuarios = await fetch('/api/usuarios');
+        const usuarios = await resUsuarios.json();
+
+        const correoExiste = usuarios.some(
+            u => u.correoElectronico?.toLowerCase() === correo.toLowerCase()
+        );
+
+        if (correoExiste) {
+            showToast('error','Correo ya registrado','Este correo ya existe');
             return;
         }
-    } catch (error) {
-        console.log(error)
+
+    } catch {
+        showToast('error','Error','No se pudo validar el correo');
+        return;
     }
 
     try {
         const respDNI = await fetch(`/api/clientes/dni/${dni}`);
+
         if (respDNI.ok) {
-            showToast('error', 'DNI ya registrado', 'Este DNI ya está en el sistema');
+            showToast('error','DNI duplicado','Este DNI ya está registrado');
             return;
         }
-    } catch (error) {
-        console.log(error);
+
+    } catch {
+        showToast('error','Error','No se pudo validar DNI');
+        return;
     }
 
-    let clienteCreado = null;
+    let clienteCreado;
 
     try {
         const cliente = {
@@ -105,20 +104,18 @@ document.getElementById('registerForm').addEventListener('submit', async (e) => 
             activo: true
         };
 
-        const respCliente = await fetch('/api/clientes', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
+        const res = await fetch('/api/clientes', {
+            method:'POST',
+            headers:{'Content-Type':'application/json'},
             body: JSON.stringify(cliente)
         });
 
-        if (!respCliente.ok)
-            throw new Error("Error creando cliente");
+        if (!res.ok) throw new Error();
 
-        clienteCreado = await respCliente.json();
+        clienteCreado = await res.json();
 
-    } catch (error) {
-        console.error("ERROR CLIENTE:", error);
-        showToast('error', 'Registro fallido', 'No se pudo crear el cliente');
+    } catch {
+        showToast('error','Error','No se pudo crear cliente');
         return;
     }
 
@@ -128,29 +125,25 @@ document.getElementById('registerForm').addEventListener('submit', async (e) => 
             password: '123456',
             rol: 'CLIENTE',
             activo: true,
-
-            cliente: {
-                id: clienteCreado.id
-            }
+            cliente: { id: clienteCreado.id }
         };
 
-        const respUsuario = await fetch('/api/usuarios', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
+        const resUser = await fetch('/api/usuarios',{
+            method:'POST',
+            headers:{'Content-Type':'application/json'},
             body: JSON.stringify(usuario)
         });
 
-        if (!respUsuario.ok)
-            throw new Error("Error creando usuario");
+        if(!resUser.ok) throw new Error();
 
-        showToast('success', 'Registro exitoso', 'Tu cuenta fue creada correctamente');
+        showToast('success','Registro exitoso','Cuenta creada correctamente');
 
-        setTimeout(() => {
+        setTimeout(()=> {
             window.location.href = '/login';
-        }, 2000);
+        },2000);
 
-    } catch (error) {
-        console.error("ERROR USUARIO:", error);
-        showToast('error', 'Registro fallido', 'No se pudo crear el usuario');
+    } catch {
+        showToast('error','Registro fallido','No se pudo crear el usuario');
     }
+
 });

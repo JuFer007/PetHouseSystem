@@ -79,4 +79,9 @@ public class ProductoController {
     public ResponseEntity<List<ProductoEstadisticasDTO>> findAllConEstadisticas() {
         return ResponseEntity.ok(productoService.findAllConEstadisticas());
     }
+
+    @PutMapping("/{id}/cambiar-estado")
+    public ResponseEntity<Producto> cambiarEstado(@PathVariable Long id) {
+        return ResponseEntity.ok(productoService.cambiarEstado(id));
+    }
 }

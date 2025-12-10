@@ -3,13 +3,13 @@ let mascotaActual = null;
 const mapRazasPerro = {
     husky: ["husky", "haski"],
     labrador: ["labrador", "lab"],
-    cocker: ["cocker", "cocker spaniel"],
-    shihtzu: ["shih tzu", "shihtzu"],
+    "spaniel/cocker": ["cocker", "cocker spaniel"],
+    "shihtzu": ["shih tzu", "shihtzu"],
     bulldog: ["bulldog", "buldog"],
     poodle: ["poodle", "caniche"],
     beagle: ["beagle"],
     rottweiler: ["rottweiler", "rott"],
-    golden: ["golden", "golden retriever"],
+    "retriever/golden": ["golden", "golden retriever"],
     chihuahua: ["chihuahua", "chiuahua"]
 };
 
@@ -55,7 +55,8 @@ async function obtenerImagenMascota(mascota) {
 
         } else if (especieLower.includes('gato')) {
             const razaApi = buscarRazaCoincidente(raza, mapRazasGato);
-            const catToken = await fetch('/token.txt').then(r => r.text()).then(t => t.trim());
+
+            const catToken = 'live_FKcF6TY9yr4e8Dcv7UqQviwcEdQ38KjmHrtOthJmVW9zo40KopWna78M2Xj6V4XA';
 
             if (razaApi) {
                 const res = await fetch(`https://api.thecatapi.com/v1/images/search?breed_ids=${razaApi}`, {

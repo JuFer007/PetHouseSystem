@@ -102,4 +102,10 @@ public class ProductoService {
     public List<ProductoEstadisticasDTO> findAllConEstadisticas() {
         return productoRepository.findAllConEstadisticas();
     }
+
+    public Producto cambiarEstado(Long id) {
+        Producto producto = findById(id);
+        producto.setActivo(!producto.isActivo());
+        return productoRepository.save(producto);
+    }
 }

@@ -84,7 +84,7 @@ async function cargarActividadReciente() {
             if (c.fecha && c.cliente && c.mascota) {
                 actividades.push({
                     tipo: "cita",
-                    fecha: new Date(c.fecha), // Solo fecha, sin hora
+                    fecha: new Date(c.fecha),
                     cliente: c.cliente.nombre || "Cliente",
                     mascota: c.mascota.nombre || "Mascota",
                     motivo: c.motivo || "Cita"
@@ -179,10 +179,15 @@ async function cargarCitasHoyLista() {
         }
 
         citas.forEach(c => {
-            let hora = "";
-            if (c.fecha) {
-                const fechaObj = new Date(c.fecha);
-                hora = fechaObj.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
+            let hora = "S/H";
+
+            if (c.fecha && c.hora) {
+                const fechaHora = new Date(`${c.fecha}T${c.hora}`);
+                hora = fechaHora.toLocaleTimeString("es-PE", {
+                    hour: "2-digit",
+                    minute: "2-digit",
+                    hour12: false
+                });
             }
 
             const clienteNombre = c.cliente?.nombre || "Cliente";
@@ -205,7 +210,7 @@ async function cargarCitasHoyLista() {
                 <div class="flex items-center justify-between p-4 ${bgColor} rounded-lg border-l-4 ${borderColor}">
                     <div class="flex items-center space-x-3">
                         <div class="text-center">
-                            <p class="text-2xl font-bold text-cyan-600">${hora || "S/H"}</p>
+                            <p class="text-2xl font-bold text-cyan-600">${hora}</p>
                         </div>
                         <div>
                             <p class="font-semibold text-gray-800">${clienteNombre}</p>

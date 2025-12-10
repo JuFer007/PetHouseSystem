@@ -92,11 +92,6 @@ async function cargarServicios() {
                         <button class="btn-warning" onclick="cambiarEstadoServicio(${servicio.id}, ${servicio.activo})" title="${servicio.activo ? "Desactivar" : "Activar"}">
                             <i class="fas ${servicio.activo ? 'fa-toggle-on' : 'fa-toggle-off'}"></i>
                         </button>
-
-                        <!-- Eliminar -->
-                        <button class="btn-danger" onclick="eliminarServicio(${servicio.id})" title="Eliminar">
-                            <i class="fas fa-trash"></i>
-                        </button>
                     </div>
                 </div>
             `;
@@ -124,7 +119,6 @@ function abrirModalServicio(id = null) {
     imagenPreview.src = "";
 
     if (id) {
-        // Editar servicio
         fetch(`${apiServiciosUrl}/${id}`)
             .then(res => res.json())
             .then(servicio => {

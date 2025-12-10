@@ -160,6 +160,38 @@ async function buscarPorDNI() {
     }
 }
 
+async function verificarDisponibilidadVeterinario(veterinarioId, fecha, hora) {
+    try {
+        const response = await fetch(
+            `http://localhost:8080/api/citas/veterinario/${veterinarioId}`
+        );
+
+        if (!response.ok) return true;
+
+        const citasVeterinario = await response.json();
+
+        const nuevaFechaHora = new Date(`${fecha}T${hora}`).getTime();
+
+        const citaDuplicada = citasVeterinario.some(cita => {
+
+            if (cita.estado !== 'PENDIENTE') return false;
+
+            if (!cita.fecha || !cita.hora) return false;
+
+            const fechaHoraExistente =
+                new Date(`${cita.fecha}T${cita.hora}`).getTime();
+
+            return nuevaFechaHora === fechaHoraExistente;
+        });
+
+        return !citaDuplicada;
+
+    } catch (error) {
+        console.error('Error verificando disponibilidad:', error);
+        return true;
+    }
+}
+
 document.getElementById("formCita").addEventListener("submit", async (e) => {
     e.preventDefault();
 
@@ -171,6 +203,12 @@ document.getElementById("formCita").addEventListener("submit", async (e) => {
     const fechaInput = document.getElementById("fecha").value;
     const horaInput = document.getElementById("hora").value;
     const veterinarioId = document.getElementById("veterinario").value;
+
+    const nombreMascota = document.getElementById("nombreMascota").value.trim();
+    const especie = document.getElementById("especie").value.trim();
+    const raza = document.getElementById("raza").value.trim();
+    const edad = document.getElementById("edad").value.trim();
+    const motivo = document.getElementById("motivo").value.trim();
 
     if (!dni || dni.length !== 8) {
         showToast("error", "DNI inválido", "El DNI debe tener 8 dígitos");
@@ -192,7 +230,6 @@ document.getElementById("formCita").addEventListener("submit", async (e) => {
         return;
     }
 
-    // VALIDACIONES DE LA MASCOTA
     if (!nombreMascota || nombreMascota.length < 2) {
         showToast("error", "Nombre de mascota requerido", "Ingrese el nombre de la mascota");
         return;
@@ -223,12 +260,22 @@ document.getElementById("formCita").addEventListener("submit", async (e) => {
         return;
     }
 
-    if (!motivo || motivo.length < 5) {
-        showToast("warning", "Motivo requerido", "Describa brevemente el motivo de la cita (mín. 5 caracteres)");
+    if (!validarFechaHora(fechaInput, horaInput)) return;
+
+    const disponible = await verificarDisponibilidadVeterinario(
+        veterinarioId,
+        fechaInput,
+        horaInput
+    );
+
+    if (!disponible) {
+        showToast(
+            "error",
+            "Veterinario no disponible",
+            "El veterinario ya tiene una cita programada para esta fecha y hora. Por favor, seleccione otro horario."
+        );
         return;
     }
-
-    if (!validarFechaHora(fechaInput, horaInput)) return;
 
     const datos = {
         cliente: {

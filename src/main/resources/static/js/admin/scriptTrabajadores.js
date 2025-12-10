@@ -50,6 +50,7 @@ async function buscarPorDNI() {
 }
 
 async function guardarTrabajador() {
+    const dni = document.getElementById("dniInput").value.trim();
     const nombre = document.getElementById("nombreInput").value.trim();
     const apellido = document.getElementById("apellidoInput").value.trim();
     const cargo = document.getElementById("cargoInput").value;

@@ -34,6 +34,7 @@ public class VacunaService {
         vacunaExistente.setNombre(vacuna.getNombre());
         vacunaExistente.setDescripcion(vacuna.getDescripcion());
         vacunaExistente.setDosisRequeridas(vacuna.getDosisRequeridas());
+        vacunaExistente.setIntervaloDias(vacuna.getIntervaloDias());
         return vacunaRepository.save(vacunaExistente);
     }
 

@@ -6,8 +6,7 @@ const services = [
   { name: 'Factura', path: './factura-service/server.js', port: 3004 },
   { name: 'Index', path: './index-service/server.js', port: 3005 },
   { name: 'Raza', path: './raza-service/server.js', port: 3006 },
-  { name: 'Reniec', path: './reniec-service/server.js', port: 3002 },
-  { name: 'PDF', path: './pdf-service/server.js', port: 3007 }
+  { name: 'Reniec', path: './reniec-service/server.js', port: 3002 }
 ];
 
 const processes = [];

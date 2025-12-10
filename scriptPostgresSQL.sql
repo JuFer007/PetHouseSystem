@@ -1,5 +1,6 @@
-
+-- ========================================
 -- TABLA: cliente
+-- ========================================
 INSERT INTO cliente (dni, nombre, apellido, telefono) VALUES
 ('72345678', 'CARLOS', 'MARTINEZ LOPEZ', '987654321'),
 ('73456789', 'MARIA', 'GONZALEZ RUIZ', '987654322'),
@@ -27,7 +28,9 @@ INSERT INTO cliente (dni, nombre, apellido, telefono) VALUES
 ('75334567', 'MONICA', 'SALAZAR RIOS', '987654344'),
 ('76334567', 'OSCAR', 'PACHECO NUNEZ', '987654345');
 
+-- ========================================
 -- TABLA: mascota
+-- ========================================
 INSERT INTO mascota (nombre, especie, raza, edad, cliente_id) VALUES
 ('MAX', 'PERRO', 'LABRADOR', 3, 1),
 ('LUNA', 'GATO', 'PERSA', 2, 2),
@@ -55,7 +58,9 @@ INSERT INTO mascota (nombre, especie, raza, edad, cliente_id) VALUES
 ('MANCHAS', 'GATO', 'SIAMESE', 4, 24),
 ('COOPER', 'PERRO', 'BEAGLE', 3, 25);
 
+-- ========================================
 -- TABLA: enfermedad
+-- ========================================
 INSERT INTO enfermedad (nombre, descripcion, tratamiento, prevencion) VALUES
 ('PARVOVIRUS CANINO', 'INFECCIÓN VIRAL GRAVE QUE AFECTA EL SISTEMA GASTROINTESTINAL', 'FLUIDOTERAPIA INTRAVENOSA, ANTIBIÓTICOS, ANTIVIRALES', 'VACUNACIÓN COMPLETA Y EVITAR CONTACTO CON PERROS INFECTADOS'),
 ('MOQUILLO CANINO', 'ENFERMEDAD VIRAL MULTISISTÉMICA ALTAMENTE CONTAGIOSA', 'TRATAMIENTO DE SOPORTE, ANTIBIÓTICOS PARA INFECCIONES SECUNDARIAS', 'VACUNACIÓN SEGÚN CALENDARIO'),
@@ -73,17 +78,21 @@ INSERT INTO enfermedad (nombre, descripcion, tratamiento, prevencion) VALUES
 ('ALERGIAS ALIMENTARIAS', 'REACCIÓN ADVERSA A CIERTOS ALIMENTOS', 'DIETA HIPOALERGÉNICA', 'IDENTIFICACIÓN Y ELIMINACIÓN DE ALÉRGENOS'),
 ('GASTROENTERITIS', 'INFLAMACIÓN DEL TRACTO GASTROINTESTINAL', 'DIETA BLANDA, REHIDRATACIÓN, PROBIÓTICOS', 'ALIMENTACIÓN DE CALIDAD Y EVITAR CAMBIOS BRUSCOS');
 
+-- ========================================
 -- TABLA: vacuna
-INSERT INTO vacuna (nombre, descripcion, dosis_requeridas) VALUES
-('ANTIRRÁBICA', 'PREVIENE LA RABIA', 1),
-('TRIPLE FELINA', 'PROTEGE CONTRA PANLEUCOPENIA, RINOTRAQUEITIS Y CALICIVIRUS', 2),
-('SÉXTUPLE CANINA', 'PROTEGE CONTRA MOQUILLO, PARVOVIRUS, HEPATITIS, LEPTOSPIROSIS Y PARAINFLUENZA', 3),
-('LEUCEMIA FELINA', 'PREVIENE LA LEUCEMIA EN GATOS', 2),
-('TOS DE LAS PERRERAS', 'PROTEGE CONTRA BORDETELLA BRONCHISEPTICA', 1),
-('GIARDIA', 'PREVIENE LA GIARDIASIS INTESTINAL', 2),
-('CORONAVIRUS CANINO', 'PROTEGE CONTRA CORONAVIRUS', 2);
+-- ========================================
+INSERT INTO vacuna (nombre, descripcion, dosis_requeridas, intervalo_dias) VALUES
+('ANTIRRÁBICA', 'PREVIENE LA RABIA', 1, 365),
+('TRIPLE FELINA', 'PROTEGE CONTRA PANLEUCOPENIA, RINOTRAQUEITIS Y CALICIVIRUS', 2, 21),
+('SÉXTUPLE CANINA', 'PROTEGE CONTRA MOQUILLO, PARVOVIRUS, HEPATITIS, LEPTOSPIROSIS Y PARAINFLUENZA', 3, 21),
+('LEUCEMIA FELINA', 'PREVIENE LA LEUCEMIA EN GATOS', 2, 21),
+('TOS DE LAS PERRERAS', 'PROTEGE CONTRA BORDETELLA BRONCHISEPTICA', 1, 365),
+('GIARDIA', 'PREVIENE LA GIARDIASIS INTESTINAL', 2, 21),
+('CORONAVIRUS CANINO', 'PROTEGE CONTRA CORONAVIRUS', 2, 21);
 
+-- ========================================
 -- TABLA: trabajador
+-- ========================================
 INSERT INTO trabajador (nombre, apellido, cargo, salario, telefono, activo) VALUES
 ('DR. ROBERTO', 'SILVA MENDOZA', 'VETERINARIO', 3500.00, '987123456', true),
 ('DRA. CLAUDIA', 'RAMOS TORRES', 'VETERINARIO', 3500.00, '987123457', true),
@@ -92,39 +101,45 @@ INSERT INTO trabajador (nombre, apellido, cargo, salario, telefono, activo) VALU
 ('DR. FERNANDO', 'CASTRO VEGA', 'VETERINARIO', 3500.00, '987123460', true),
 ('LUCIA', 'MORALES DIAZ', 'RECEPCIONISTA', 1500.00, '987123461', true);
 
+-- ========================================
 -- TABLA: usuario
+-- ========================================
 INSERT INTO usuario (correo_electronico, password, rol, activo, trabajador_id) VALUES
 ('roberto.silva@pethouse.com', '$2a$10$Scaxh5pbOy25XF/YZKvXwe2AZpV4v8DGbqRvrXMgfeEiY2JPkJRLC', 'VETERINARIO', true, 1),
 ('claudia.ramos@pethouse.com', '$2a$10$Scaxh5pbOy25XF/YZKvXwe2AZpV4v8DGbqRvrXMgfeEiY2JPkJRLC', 'VETERINARIO', true, 2),
-('maria.lopez@pethouse.com', '$$2a$10$Scaxh5pbOy25XF/YZKvXwe2AZpV4v8DGbqRvrXMgfeEiY2JPkJRLC', 'RECEPCIONISTA', true, 3),
+('maria.lopez@pethouse.com', '$2a$10$Scaxh5pbOy25XF/YZKvXwe2AZpV4v8DGbqRvrXMgfeEiY2JPkJRLC', 'RECEPCIONISTA', true, 3),
 ('pedro.gonzalez@pethouse.com', '$2a$10$Scaxh5pbOy25XF/YZKvXwe2AZpV4v8DGbqRvrXMgfeEiY2JPkJRLC', 'ADMIN', true, 4),
 ('fernando.castro@pethouse.com', '$2a$10$Scaxh5pbOy25XF/YZKvXwe2AZpV4v8DGbqRvrXMgfeEiY2JPkJRLC', 'VETERINARIO', true, 5),
 ('lucia.morales@pethouse.com', '$2a$10$Scaxh5pbOy25XF/YZKvXwe2AZpV4v8DGbqRvrXMgfeEiY2JPkJRLC', 'RECEPCIONISTA', true, 6);
 
--- TABLA: pago (TODOS COMPLETADOS)
+-- ========================================
+-- TABLA: pago
+-- ========================================
 INSERT INTO pago (cliente_id, servicio_id, monto, metodo_pago, fecha_pago, estado, id_cita) VALUES
 (1, 2, 60.00, 'EFECTIVO', '2025-01-15 09:30:00', 'COMPLETADO', 1),
 (2, 3, 50.00, 'YAPE', '2025-01-15 11:00:00', 'COMPLETADO', 2),
 (3, 1, 40.00, 'PLIN', '2025-01-16 14:30:00', 'COMPLETADO', 3),
-(4, 5, 45.00, 'EFECTIVO', '2025-01-17 11:30:00', 'COMPLETADO', 4),
+(4, 4, 35.00, 'EFECTIVO', '2025-01-17 11:30:00', 'COMPLETADO', 4),
 (5, 3, 50.00, 'YAPE', '2025-01-18 10:00:00', 'COMPLETADO', 5),
-(6, 8, 120.00, 'PLIN', '2025-01-19 15:30:00', 'COMPLETADO', 6),
+(6, 1, 40.00, 'PLIN', '2025-01-19 15:30:00', 'COMPLETADO', 6),
 (7, 2, 60.00, 'EFECTIVO', '2025-01-20 10:30:00', 'COMPLETADO', 7),
 (8, 3, 50.00, 'YAPE', '2025-01-21 16:30:00', 'COMPLETADO', 8),
-(9, 9, 80.00, 'PLIN', '2025-01-22 12:00:00', 'COMPLETADO', 9),
+(9, 4, 35.00, 'PLIN', '2025-01-22 12:00:00', 'COMPLETADO', 9),
 (10, 1, 40.00, 'EFECTIVO', '2025-01-23 15:00:00', 'COMPLETADO', 10),
-(11, 10, 90.00, 'YAPE', '2025-01-24 09:30:00', 'COMPLETADO', 11),
-(12, 5, 45.00, 'PLIN', '2025-01-25 11:00:00', 'COMPLETADO', 12),
+(11, 3, 50.00, 'YAPE', '2025-01-24 09:30:00', 'COMPLETADO', 11),
+(12, 2, 60.00, 'PLIN', '2025-01-25 11:00:00', 'COMPLETADO', 12),
 (13, 3, 50.00, 'EFECTIVO', '2025-01-26 16:00:00', 'COMPLETADO', 13),
 (14, 2, 60.00, 'YAPE', '2025-01-27 11:30:00', 'COMPLETADO', 14),
-(15, 1, 40.00, 'PLIN', '2025-01-28 17:00:00', 'COMPLETADO', 15),
+(15, 4, 35.00, 'PLIN', '2025-01-28 17:00:00', 'COMPLETADO', 15),
 (16, 3, 50.00, 'EFECTIVO', '2025-01-29 10:00:00', 'COMPLETADO', 16),
-(17, 6, 250.00, 'YAPE', '2025-01-30 08:30:00', 'COMPLETADO', 17),
-(18, 8, 120.00, 'PLIN', '2025-01-31 14:30:00', 'COMPLETADO', 18),
+(17, 1, 40.00, 'YAPE', '2025-01-30 08:30:00', 'COMPLETADO', 17),
+(18, 3, 50.00, 'PLIN', '2025-01-31 14:30:00', 'COMPLETADO', 18),
 (19, 3, 50.00, 'EFECTIVO', '2025-02-01 10:30:00', 'COMPLETADO', 19),
-(20, 7, 180.00, 'YAPE', '2025-02-02 12:30:00', 'COMPLETADO', 20);
+(20, 2, 60.00, 'YAPE', '2025-02-02 12:30:00', 'COMPLETADO', 20);
 
+-- ========================================
 -- TABLA: mascota_enfermedad
+-- ========================================
 INSERT INTO mascota_enfermedad (mascota_id, enfermedad_id, fecha_diagnostico, sintomas, observaciones, estado, fecha_recuperacion) VALUES
 (1, 1, '2024-12-15', 'VÓMITOS, DIARREA CON SANGRE, LETARGIA', 'CASO GRAVE, REQUIRIÓ HOSPITALIZACIÓN', 'RECUPERADO', '2025-01-05'),
 (3, 2, '2024-11-20', 'FIEBRE, SECRECIÓN NASAL, TOS', 'RESPUESTA FAVORABLE AL TRATAMIENTO', 'RECUPERADO', '2024-12-20'),
@@ -141,7 +156,10 @@ INSERT INTO mascota_enfermedad (mascota_id, enfermedad_id, fecha_diagnostico, si
 (6, 5, '2024-11-10', 'PÉRDIDA DE PELO, PIEL SECA', 'RELACIONADO CON ALIMENTACIÓN', 'RECUPERADO', '2024-12-25'),
 (8, 12, '2024-06-20', 'VÓMITOS, AUMENTO DE SED', 'REQUIERE DIETA ESPECIAL', 'CRONICO', NULL),
 (10, 9, '2025-01-12', 'DIARREA INTERMITENTE', 'DESPARASITACIÓN EN CURSO', 'EN_TRATAMIENTO', NULL);
+
+-- ========================================
 -- TABLA: mascota_vacuna
+-- ========================================
 INSERT INTO mascota_vacuna (mascota_id, vacuna_id, fecha_aplicacion, proxima_dosis, numero_dosis, estado, observaciones) VALUES
 (1, 1, '2024-06-15', NULL, 1, 'VIGENTE', 'VACUNACIÓN ANUAL COMPLETA'),
 (1, 3, '2024-03-10', '2025-03-10', 3, 'VIGENTE', 'ESQUEMA COMPLETO'),

@@ -46,7 +46,8 @@ document.getElementById('contactForm').addEventListener('submit', async (e) => {
         showToast("success", "Mensaje enviado", result.message || "Tu mensaje fue enviado correctamente.");
 
         form.mensaje.value = '';
-
+        form.nombre.value = '';
+        form.email.value = '';
     } catch (err) {
         console.error(err);
         showToast("error", "Error", "Hubo un problema al enviar el mensaje.");
